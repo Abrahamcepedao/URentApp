@@ -15,6 +15,13 @@ a {
   box-sizing: border-box;
 }
 
+/* root colors */
+:root {
+  --logo__primary: #A58453;
+  --dark__text: #957F35;
+  --light__text: #E6E3D9;
+  --dark__back: #1F2122;
+}
 @media (prefers-color-scheme: dark) {
   html {
     color-scheme: dark;
@@ -24,3 +31,17 @@ a {
     background: black;
   }
 }
+
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover, 
+input:-webkit-autofill:focus, 
+input:-webkit-autofill:active {
+  transition: background-color 5000s;
+  -webkit-text-fill-color: #E6E3D9 !important;
+  background: none !important;
+}
+input:-internal-autofill-selected {
+  background-color: transparent !important;
+}
+

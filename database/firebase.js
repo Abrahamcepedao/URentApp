@@ -1,4 +1,6 @@
-import firebase from 'firebase';
+import { initializeApp } from 'firebase/app'
+import { getAuth } from 'firebase/auth'
+import { getFirestore } from 'firebase/firestore'
 
  const firebaseConfig = {
    apiKey: process.env.NEXT_PUBLIC_API_KEY,
@@ -9,8 +11,7 @@ import firebase from 'firebase';
    messagingSenderId: process.env.NEXT_PUBLIC_MESSAGING_SENDER_ID,
  };
 
-if(firebase.apps.length === 0){
-    firebase.initializeApp(firebaseConfig);
-}
-
-export default firebase;
+const app = initializeApp(firebaseConfig);
+const auth = getAuth()
+const db = getFirestore()
+export { app, auth, db };
