@@ -5,10 +5,23 @@ import React, { useState, useEffect } from 'react'
 import type { NextPage } from 'next'
 import Head from 'next/head'
 import Image from 'next/image'
+import Link from 'next/link'
+import { useRouter } from 'next/router'
+
+//CSS
 import styles from '../styles/Home.module.css'
+
+//firebase
+//import firebase from '../database/firebase'
+
+//Auth
+import { useAuth } from '../context/AuthContext'
 
 //logo-image
 import Logo from '../public/logo.png'
+
+//loader spinner
+import { ThreeDots } from 'react-loader-spinner'
 
 //Material UI - icons
 import EmailRoundedIcon from '@mui/icons-material/EmailRounded';
@@ -18,7 +31,7 @@ import LockRoundedIcon from '@mui/icons-material/LockRounded';
 import BusinessRoundedIcon from '@mui/icons-material/BusinessRounded';
 import CheckCircleRoundedIcon from '@mui/icons-material/CheckCircleRounded';
 import HighlightOffRoundedIcon from '@mui/icons-material/HighlightOffRounded';
-import Link from 'next/link'
+
 
 interface formData {
   mail: string,
@@ -31,6 +44,13 @@ interface formData {
 
 //sign-up page
 const Home: NextPage = () => {
+  //Router
+  const router = useRouter()
+
+  //Context
+  const { user, signup } = useAuth()
+  
+  //useState
   const [formData, setFormData] = useState<formData>({
     mail: "",
     name: "",
@@ -38,6 +58,11 @@ const Home: NextPage = () => {
     phone: "",
     password: "",
     confirmPassword: ""
+  })
+
+  const [values, setValues] = useState({
+    error: "",
+    loading: false,
   })
 
   const handleInputChange = (e:React.ChangeEvent<HTMLInputElement>) => {
@@ -48,8 +73,39 @@ const Home: NextPage = () => {
 
   }
 
-  const handleSignUp = () => {
+  const verifyData = () => {
+    if(formData.password === "" || formData.confirmPassword === "") {
+      return false
+    }
+    return formData.password === formData.confirmPassword
+  }
 
+  const handleSignUp = async(e:React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    e.preventDefault()
+
+    if(verifyData()){
+      setValues({
+        ...values,
+        loading: true
+      })
+
+      try {
+        const { mail, password, name, phone, orgName } = formData
+        await signup(mail, password, name, phone, orgName)
+        router.push('/dashboard')
+      } catch (err) {
+        console.log(err)
+        setValues({...values, error: "Ocurrión un error"})
+      }
+    
+
+
+    } else {
+      setValues({
+        ...values,
+        error: "Las contraseñas no coinciden"
+      })
+    }
   }
 
   return (
@@ -103,17 +159,23 @@ const Home: NextPage = () => {
                 <input placeholder='Confirmar contraseña' type="password" name='confirmPassword' value={formData.confirmPassword} onChange={(e) => {handleInputChange(e)}} className={styles.input}/>
               </div>
             </div>
-            {/* forgot password */}
-            <div className={styles.forgot__container}>
-              <Link href={"/forgot-password"} className={styles.forgot__link}>
-                ¿Olvidaste la contraseña?
-              </Link>
-            </div>
 
             {/* login button */}
-            <button className={styles.gradient__btn}>
-              Registrate
-            </button>
+            <div>
+              <button type='submit' className={styles.gradient__btn} onClick={(e) => {handleSignUp(e)}}>
+                Regístrate
+              </button>
+              {values.error !== "" && (
+                <div className={styles.error_container}>
+                  <p className={styles.error__text}>{values.error}</p>
+                </div>
+              )}
+              {values.loading && (
+                <div className={styles.loader}>
+                    <ThreeDots color="#A58453" height={100} width={100} />
+                </div>
+              )}
+            </div>
           </form>
 
           {/* login button */}

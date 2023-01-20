@@ -20,11 +20,7 @@ a {
   --logo__primary: #A58453;
   --dark__text: #957F35;
   --light__text: #E6E3D9;
-  --blue__secondary: #C2DBFF;
-  --gray: #766F6F;
-  --lightgray: #F1F6FA;
-  --black: rgb(34,34,34);
-  --white: #ffffff; 
+  --dark__back: #1F2122;
 }
 @media (prefers-color-scheme: dark) {
   html {
