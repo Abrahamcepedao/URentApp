@@ -13,6 +13,7 @@ import Logo from '../public/logo.png'
 
 //Auth
 import { useAuth } from '../context/AuthContext'
+import { getUserByMail } from '../database/functions/user'
 
 //Material UI - icons
 import EmailRoundedIcon from '@mui/icons-material/EmailRounded';
@@ -29,7 +30,7 @@ const Login: NextPage = () => {
     //router
     const router = useRouter()
     //context
-    const { user, login } = useAuth()
+    const { user, login, managerSignUp } = useAuth()
 
     //useState
     const [formData, setFormData] = useState<formData>({
@@ -42,16 +43,58 @@ const Login: NextPage = () => {
         loading: false,
     })
 
+
+    //useEffect
+    useEffect(() => {
+      if(user !== null && user !== undefined){
+        router.push('/dashboard')
+      }
+    },[user])
+
     const handleInputChange = (e:React.ChangeEvent<HTMLInputElement>) => {
         setFormData({
         ...formData,
         [e.target.name]: e.target.value
         })
-
     }
 
-    const handleLogin = async(e:React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-        e.preventDefault()
+    const handleLoginClick = async(e:React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+      e.preventDefault()
+
+      try {
+          const temp = await getUserByMail(formData.mail)
+          console.log(temp)
+          if(temp !== null) {
+            //@ts-ignore
+            if(temp.type === "user" && !temp.signedUp){
+              //@ts-ignore
+              if(temp.password === formData.password) {
+                //sign up user
+                try { 
+                  //@ts-ignore
+                  await managerSignUp(temp.mail, temp.password, temp.orgName, temp.phone, temp.name)
+                  router.push('/dashboard')
+                } catch (err) {
+                  console.log(err)
+                  setValues({...values, error: "Ocurró un error"})
+                }
+              } else {
+                setValues({...values, error: "Contraseña incorrecta"})
+              }
+              
+            } else {
+              handleLogin()
+            }
+          }
+          
+      } catch(err) {
+          console.log(err)
+          setValues({...values, error: "Ocurró un error"})
+      }
+    }
+
+    const handleLogin = async() => {
+        
 
         try {
             const { mail, password } = formData
@@ -109,7 +152,7 @@ const Login: NextPage = () => {
 
             {/* login button */}
             <div>
-                <button className={styles.gradient__btn} onClick={(e) => {handleLogin(e)}}>
+                <button className={styles.gradient__btn} onClick={(e) => {handleLoginClick(e)}}>
                     Iniciar sesión
                 </button>
                 {values.error !== "" && (

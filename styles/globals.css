@@ -45,3 +45,25 @@ input:-internal-autofill-selected {
   background-color: transparent !important;
 }
 
+
+/* Cusomize scrollbar */
+::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+  background: none;
+}
+
+::-webkit-scrollbar-track {
+  background: none;
+}
+ 
+::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,0.25); 
+  border-radius: 10px;
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  //background: #555; 
+} 

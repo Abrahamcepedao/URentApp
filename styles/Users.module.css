@@ -1,0 +1,110 @@
+/* container */
+.container {
+    height: 100%;
+    width: 100%;
+    border-radius: 10px;
+    background: var(--dark__back);
+    box-shadow: -8px 8px 20px 4px rgba(0, 0, 0, 0.6), inset -1px 1px 4px 2px rgba(108, 105, 105, 0.1);
+    padding: 20px;
+    color: var(--light__text);
+    
+}
+.inner__container {
+    overflow-y: scroll;
+    max-height: 100%;
+}
+
+
+/* header */
+.users__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    max-width: 800px;
+    margin: auto;
+}
+
+/* add user */
+.add__container {
+    width: 100%;
+    max-width: 800px;
+    margin: auto;
+    margin-top: 30px;
+    text-align: center;
+}
+.inputs__container {
+    width: 100%;
+    display: grid;
+    column-gap: 20px;
+    grid-template-columns: auto auto;
+}
+.input__container {
+  width: 100%;
+  padding: 10px;
+  border-radius: 10px;
+  border: 1px solid var(--logo__primary);
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  margin-bottom: 20px;
+}
+.input__icon {
+  margin-right: 10px;
+  color: var(--logo__primary);
+}
+.input {
+  width: 100%;
+  background: none;
+  border: none;
+  outline: none !important;
+  color: var(--light__text);
+}
+.gradient__btn {
+  background-image: linear-gradient(90deg, #E0B14E -0.25%, #E3C37E 100.63%);
+  padding: 15px 100px;
+  border-radius: 10px;
+  border: none;
+  color: var(--dark__text);
+  font-size: 18px;
+  cursor: pointer;
+  transition: transform 450ms;
+  margin: auto;
+}
+.gradient__btn:hover {
+  transform: scale(1.1);
+}
+
+/* table */
+.users__table {
+    width: 100%;
+    max-width: 800px;
+    margin: auto;
+    margin-top: 50px;
+}
+.table__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    opacity: 0.5;
+}
+
+.header__cell {
+    width: 250px;
+}
+.header__cell__lg {
+    flex: 1;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.table__row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.cell__btns {
+    display: flex;
+    justify-content: space-center;
+    align-items: center;
+}
