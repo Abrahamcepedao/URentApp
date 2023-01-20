@@ -1,4 +1,4 @@
-import {createContext, use, useContext}  from 'react'
+import {createContext, useContext}  from 'react'
 import { 
     onAuthStateChanged, 
     createUserWithEmailAndPassword, 
@@ -7,7 +7,7 @@ import {
 from 'firebase/auth'
 import React, { useEffect, useState } from 'react'
 import { auth } from '../database/firebase'
-import { addUser, getUser } from '../database/functions/user'
+import { addUser, getUser, signUpManager } from '../database/functions/user'
 
 const AuthContext = createContext<any>({})
 
@@ -18,13 +18,11 @@ export const AuthContextProvider = ({children}: {children:React.ReactNode}) => {
     const [loading, setLoading] = useState<boolean>(true)
 
     useEffect(() => {
-        const unsubscribe = onAuthStateChanged(auth, (user) => {
+        const unsubscribe = onAuthStateChanged(auth, async (user) => {
             if(user){
-                setUser({
-                    uid: user.uid,
-                    mail: user.email,
-                    name: user.displayName
-                })
+                const temp = await getUser(user.uid)
+                console.log(temp)
+                setUser(temp)
             } else {
                 setUser(null)
             }
@@ -41,19 +39,35 @@ export const AuthContextProvider = ({children}: {children:React.ReactNode}) => {
                 mail,
                 name,
                 phone,
-                orgName
+                orgName,
+                type: "master"
             }
             setUser(temp)
             addUser(temp)
         })
     }
 
+    const managerSignUp = async (mail:string, password:string, orgName:string, phone:string, name:string) => {
+        return await createUserWithEmailAndPassword(auth, mail, password).then((result) => {
+            const temp = {
+                uid: result.user.uid,
+                mail,
+                orgName,
+                phone,
+                name,
+                type: 'userr'
+            }
+            setUser(temp)
+            signUpManager(mail, orgName, result.user.uid)
+        })
+    }
+
     const login = async (mail:string, password:string) => {
         return signInWithEmailAndPassword(auth, mail, password)
-            .then((result) => {
-                const temp =  getUser(result.user.uid)
-                console.log(temp)
-                setUser(temp)
+            .then(async (result) => {
+                const item = await getUser(result.user.uid)
+                console.log(item)
+                setUser(item)
             })
     }
 
@@ -62,7 +76,24 @@ export const AuthContextProvider = ({children}: {children:React.ReactNode}) => {
         await signOut(auth)
     }
 
-    return <AuthContext.Provider value={{user, login, signup, logout}}>
+    const createUser = async (mail:string, password:string, name:string, phone:string, orgName:string) => {
+        
+        console.log("Current user", user)
+        
+        const temp = {
+            uid: orgName + "_" + mail,
+            mail,
+            name,
+            phone,
+            orgName,
+            password,
+            type: "user"
+        }
+        console.log(temp)
+        addUser(temp)
+    }
+
+    return <AuthContext.Provider value={{user, login, signup, logout, createUser, managerSignUp}}>
         {loading ? null : children}
     </AuthContext.Provider>
 }

@@ -1,7 +1,29 @@
+/* main - container */
 .main {
     background-image: linear-gradient(126.16deg, #1F2122 15.77%, #121314 86.34%);
     width: 100%;
     height: 100vh;
     max-height: 100vh;
     padding: 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* subtitle */
+.subtitle {
+    margin: 0px;
+    font-size: 25px;
+    font-weight: bold;
+}
+
+/* icons */
+.header__icon, .table__icon {
+    color: var(--logo__primary);
+    width: 30px !important;
+    height: 30px !important;
+}
+.table__icon {
+    width: 25px !important;
+    height: 25px !important;
 }
