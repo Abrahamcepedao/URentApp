@@ -25,26 +25,7 @@ import LockRoundedIcon from '@mui/icons-material/LockRounded';
 import { useAuth } from '../context/AuthContext'
 import { useUsers } from '../context/UsersContext'
 
-/* const users = [
-        {
-            mail: "abrahamgolf@gmail.com",
-            name: "Abraham Cepeda",
-            phone: "9993654620",
-            signedUp: false
-        },
-        {
-            mail: "abrahamgolf2@gmail.com",
-            name: "Abraham Cepeda2",
-            phone: "9993654620",
-            signedUp: false
-        },
-        {
-            mail: "abrahamgolf3@gmail.com",
-            name: "Abraham Cepeda3",
-            phone: "9993654620",
-            signedUp: false
-        }
-    ] */
+
 interface Manager {
     mail: string,
     name: string,
@@ -206,7 +187,7 @@ const Users: NextPage = () => {
                         {/* table header */}
                         <div className={styles.table__header}>
                             <div className={styles.header__cell}>
-                                Name
+                                Nombre
                             </div>
                             <div className={styles.header__cell}>
                                 Email
