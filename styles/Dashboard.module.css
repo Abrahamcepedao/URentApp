@@ -22,8 +22,13 @@
     color: var(--logo__primary);
     width: 30px !important;
     height: 30px !important;
+    transition: transform 450ms;
 }
 .table__icon {
     width: 25px !important;
     height: 25px !important;
 }
+
+.table__icon:hover, .header__icon {
+    transform: scale(1.08)
+} 
