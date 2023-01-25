@@ -5,6 +5,7 @@ import React, { useState, useEffect } from 'react'
 import type { NextPage } from 'next'
 import { useRouter } from 'next/router'
 import Head from 'next/head'
+import Link from 'next/link'
 import Image from 'next/image'
 import styles from '../styles/Home.module.css'
 
@@ -15,10 +16,13 @@ import Logo from '../public/logo.png'
 import { useAuth } from '../context/AuthContext'
 import { getUserByMail } from '../database/functions/user'
 
+//loader spinner
+import { ThreeDots } from 'react-loader-spinner'
+
 //Material UI - icons
 import EmailRoundedIcon from '@mui/icons-material/EmailRounded';
 import LockRoundedIcon from '@mui/icons-material/LockRounded';
-import Link from 'next/link'
+
 
 interface formData {
   mail: string,
@@ -159,6 +163,11 @@ const Login: NextPage = () => {
                     <div className={styles.error_container}>
                     <p className={styles.error__text}>{values.error}</p>
                     </div>
+                )}
+                {values.loading && (
+                  <div className={styles.loader}>
+                      <ThreeDots color="#A58453" height={100} width={100} />
+                  </div>
                 )}
             </div>
           </form>
