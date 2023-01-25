@@ -109,7 +109,7 @@
     padding: 10px 0px;
 }
 
-.cancel__btn, .save__btn {
+.cancel__btn, .save__btn, .cancel__fill__btn, .save__fill__btn {
     border-radius: 25px;
     padding: 10px;
     background: none;
@@ -127,6 +127,11 @@
     background: var(--cancel);
     color: var(--light__text);
 }
+.cancel__fill__btn {
+    background: var(--cancel);
+    border: none;
+    transition: transform 450ms;
+}
 .save__btn {
     border: 1px solid var(--logo__primary);
     color: var(--logo__primary);
@@ -134,4 +139,32 @@
 .save__btn:hover {
     background: var(--logo__primary);
     color: var(--light__text);
+}
+.save__fill__btn {
+    background: var(--success);
+    border: none;
+    transition: transform 450ms;
+}
+.cancel__fill__btn:hover, .save__fill__btn:hover {
+    transform: scale(1.08);
+}
+
+/* error message */
+.error__container, .success__container {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    color: var(--light__text);
+    background: var(--cancel);
+    border-radius: 10px;
+    padding: 15px;
+    margin-top: 30px;
+    margin-bottom: 30px;
+    max-width: 400px;
+}
+.success__container {
+    background: var(--success);
+}
+.error__icon, .success__icon {
+    margin-right: 10px;
 }

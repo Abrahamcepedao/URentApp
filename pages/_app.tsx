@@ -4,6 +4,7 @@ import type { AppProps } from 'next/app'
 //Context
 import { AuthContextProvider } from '../context/AuthContext'
 import { UsersContextProvider } from '../context/UsersContext'
+import { PropertiesContextProvider } from '../context/PropertiesContext'
 
 //Routers
 import { useRouter } from 'next/router'
@@ -20,17 +21,19 @@ function MyApp({ Component, pageProps }: AppProps) {
   return (
       <AuthContextProvider>
         <UsersContextProvider>
-          {masterAuthRequired.includes(router.pathname) ? (
-            <MasterRoute>
+          <PropertiesContextProvider>
+            {masterAuthRequired.includes(router.pathname) ? (
+              <MasterRoute>
+                <Component {...pageProps} />
+              </MasterRoute>
+            ) : !noAuthRequired.includes(router.pathname) ? (
+              <ProtectedRoute>
+                <Component {...pageProps} />
+              </ProtectedRoute>
+            ) : (
               <Component {...pageProps} />
-            </MasterRoute>
-          ) : !noAuthRequired.includes(router.pathname) ? (
-            <ProtectedRoute>
-              <Component {...pageProps} />
-            </ProtectedRoute>
-          ) : (
-            <Component {...pageProps} />
-          )}
+            )}
+          </PropertiesContextProvider>
         </UsersContextProvider>
       </AuthContextProvider>
   )
