@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react'
 
 //next
 import type { NextPage } from 'next'
+import { useRouter } from 'next/router'
 import Head from 'next/head'
 import Link from 'next/link'
 
@@ -25,14 +26,20 @@ import FileUploadRoundedIcon from '@mui/icons-material/FileUploadRounded';
 import { contractStatus } from '../components/utils/functions/contractStatus'
 
 
+
 //Dashboard page
 const AddProperty: NextPage = () => {
+    //router
+    const router = useRouter()
+
+    //useState - property
     const [property, setProperty] = useState({
         name: "",
         type: "house",
         status: false
     })
     
+    //useState - tenant
     const [tenant, setTenant] = useState({
         name: "",
         razon: "",
@@ -40,6 +47,7 @@ const AddProperty: NextPage = () => {
         mail: "",
     })
 
+    //useState - contract
     const [contract, setContract] = useState({
         cost: 0,
         type: "month",
@@ -115,6 +123,10 @@ const AddProperty: NextPage = () => {
                 alert("El archivo debe ser de tipo PDF")
             }
         }
+    }
+
+    const handleCancelClick = () => {
+        router.push('/properties')
     }
 
   return (
@@ -245,9 +257,10 @@ const AddProperty: NextPage = () => {
                     </div>
                 </Collapse>
 
-                {/* Save property */}
-                <div>
-                    
+                {/* Save or cancel property */}
+                <div className={styles.actions__container} style={{marginTop: property.status ? "0px": "30px"}}>
+                    <button className={styles.cancel__btn} onClick={handleCancelClick}>Cancelar</button>
+                    <button className={styles.save__btn}>Guardar propiedad</button>
                 </div>
 
             </div>

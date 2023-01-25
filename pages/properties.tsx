@@ -250,11 +250,13 @@ const Dashboard: NextPage = () => {
                   </IconButton>
                 </Tooltip>
 
-                <Tooltip title="Agregar" placement='top'>
-                  <IconButton>
-                    <AddCircleRoundedIcon className={dash.header__icon}/>
-                  </IconButton>
-                </Tooltip>
+                <Link href={"/add_property"}>
+                  <Tooltip title="Agregar" placement='top'>
+                    <IconButton>
+                      <AddCircleRoundedIcon className={dash.header__icon}/>
+                    </IconButton>
+                  </Tooltip>
+                </Link>
               </div>
             </div>
 
