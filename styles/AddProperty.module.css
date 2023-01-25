@@ -1,0 +1,101 @@
+/* container */
+.container {
+    height: 100%;
+    width: 100%;
+    border-radius: 10px;
+    background: var(--dark__back);
+    box-shadow: -8px 8px 20px 4px rgba(0, 0, 0, 0.6), inset -1px 1px 4px 2px rgba(108, 105, 105, 0.1);
+    padding: 20px;
+    padding-top: 40px;
+    color: var(--light__text);
+    
+}
+.inner__container {
+    overflow-y: scroll;
+    max-height: 100%;
+}
+
+/* header */
+.header {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 800px;
+    margin: auto;
+}
+
+/* form */
+.form__container {
+    width: 100%;
+    max-width: 800px;
+    margin: auto;
+}
+.input__label {
+    opacity: 0.5;
+}
+/* inputs */
+.inputs__row {
+    display: grid;
+    grid-template-columns: auto auto auto;
+    column-gap: 20px;
+}
+.input {
+  width: 100%;
+  background: none;
+  border: none;
+  border-bottom: 1px solid var(--light__text);
+  padding-bottom: 8px;
+  outline: none !important;
+  color: var(--light__text);
+}
+
+.file__input {
+    background: var(--logo__primary);
+    border-radius: 25px;
+
+}
+/* tenant */
+.tenant {
+    margin-top: 30px;
+}
+.tenant__container {
+    display: grid;
+    grid-template-columns: auto auto auto;
+    grid-gap: 20px;
+}
+
+/* file input */
+.file__input {
+    position: absolute;
+    z-index: -1;
+    top: 15px;
+    left: 20px;
+    font-size: 17px;
+    color: #b8b8b8;
+}
+.button-wrap {
+    position: relative;
+}
+.button {
+    display: inline-block;
+    background: #E3C37E;
+    border-radius: 25px;
+    color: #957F35;
+    text-align: center;
+    padding: 10px;
+    transition: all 0.5s;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    //margin: 5px;
+}
+.button p {
+    margin: 0px;
+    margin-right: 10px;
+
+}
+.button:hover {
+    background: #E3C37E;
+}
