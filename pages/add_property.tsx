@@ -54,7 +54,7 @@ const AddProperty: NextPage = () => {
     const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
 
     //Context - property
-    const { isFirst, checkIfFirst, addFirstProperty, addNewProperty } = useProperties()
+    const { isFirst, checkIfFirst, addFirstProperty, addNewProperty, fecthProperties } = useProperties()
     
     //useState - property
     const [property, setProperty] = useState({
@@ -92,10 +92,19 @@ const AddProperty: NextPage = () => {
 
     //useEffect
     useEffect(() => {
-        if(!isFirst){
-            checkIfFirst()
-        }
+        setUp()
     },[isFirst])
+
+    const setUp = async() => {
+        console.log(isFirst)
+        if(isFirst){
+            if(!checkIfFirst()){
+                await fecthProperties()
+            }
+        } else {
+            await fecthProperties()
+        }
+    }
 
 
     const handleClose = () => {

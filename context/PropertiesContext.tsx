@@ -11,7 +11,7 @@ export const useProperties = () => useContext(PropertiesContext)
 export const PropertiesContextProvider = ({children}: {children:React.ReactNode}) => {
     const [properties,setProperties] = useState<any>([])
     const [propertiesLength, setPropertiesLength] = useState<number>(0);
-    const [isFirst, setIsFirst] = useState<boolean>(false)
+    const [isFirst, setIsFirst] = useState<boolean>(true)
     const [editProperty, setEditProperty] = useState(null)
 
     //context
@@ -38,7 +38,7 @@ export const PropertiesContextProvider = ({children}: {children:React.ReactNode}
         
         if(res) {
             
-            setProperties(res)
+            //setProperties(res)
             setPropertiesLength(1)
             return true
         } 
@@ -87,7 +87,8 @@ export const PropertiesContextProvider = ({children}: {children:React.ReactNode}
         fecthProperties,
         updateEditProperty,
         editProperty,
-        addNewProperty
+        addNewProperty,
+        propertiesLength
     }}>
         {children}
     </PropertiesContext.Provider>
