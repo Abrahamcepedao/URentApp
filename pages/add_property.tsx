@@ -54,7 +54,7 @@ const AddProperty: NextPage = () => {
     const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
 
     //Context - property
-    const { isFirst, checkIfFirst, addFirstProperty } = useProperties()
+    const { isFirst, checkIfFirst, addFirstProperty, addNewProperty } = useProperties()
     
     //useState - property
     const [property, setProperty] = useState({
@@ -95,7 +95,7 @@ const AddProperty: NextPage = () => {
         if(!isFirst){
             checkIfFirst()
         }
-    })
+    },[isFirst])
 
 
     const handleClose = () => {
@@ -144,7 +144,6 @@ const AddProperty: NextPage = () => {
                     //calculate contract status
                     //@ts-ignore
                     let status = contractStatus(e.target.value)
-                    console.log(status)
 
                     //set start date
                     setContract({...contract, end: e.target.value, status: status})
@@ -155,7 +154,6 @@ const AddProperty: NextPage = () => {
             } else {
                 //@ts-ignore
                 let status = contractStatus(e.target.value)
-                console.log(status)
                 //set start date
                 setContract({...contract, end: e.target.value, status: status})
             }
@@ -239,20 +237,20 @@ const AddProperty: NextPage = () => {
             name: property.name,
             type: property.type,
             status: property.status,
-            rentHistory: [
-                {
-                    name: tenant.name,
-                    razon: tenant.razon,
-                    phone: tenant.phone,
-                    mail: tenant.mail,
-                    start: contract.start,
-                    end: contract.end,
-                    type: contract.type,
-                    cost: contract.cost,
-                    pdfName: contract.pdfName,
-                    pdf: contract.pdf
-                }
-            ]
+            tenant: {
+                name: tenant.name,
+                razon: tenant.razon,
+                phone: tenant.phone,
+                mail: tenant.mail,
+            },
+            contract: {
+                start: contract.start,
+                end: contract.end,
+                type: contract.type,
+                cost: contract.cost,
+                pdfName: contract.pdfName,
+                pdf: contract.pdf
+            }       
         }
         const res = await addFirstProperty(temp)
         if(res) {
@@ -264,8 +262,34 @@ const AddProperty: NextPage = () => {
         }
     }
 
-    const handleAddProperty = () => {
-
+    const handleAddProperty = async () => {
+        let temp = {
+            name: property.name,
+            type: property.type,
+            status: property.status,
+            tenant: {
+                name: tenant.name,
+                razon: tenant.razon,
+                phone: tenant.phone,
+                mail: tenant.mail,
+            },
+            contract: {
+                start: contract.start,
+                end: contract.end,
+                type: contract.type,
+                cost: contract.cost,
+                pdfName: contract.pdfName,
+                pdf: contract.pdf
+            }       
+        }
+        const res = await addNewProperty(temp)
+        if(res) {
+            //alert success
+            setUtils({...utils, error: "", loading: false, open: true})
+        } else {
+            //alert error
+            setUtils({...utils, error: "Ocurrión un error al subir la propiedad", loading: false})
+        }
     }
 
     const handleSaveClick = () => {
@@ -276,39 +300,8 @@ const AddProperty: NextPage = () => {
                 handleAddFirst()
             } else {
                 handleAddProperty()
-                let data = []
-                if(property.status){
-                    data.push({
-                        name: property.name,
-                        type: property.type,
-                        status: property.status,
-                        rentHistory: [
-                            {
-                                name: tenant.name,
-                                razon: tenant.razon,
-                                phone: tenant.phone,
-                                mail: tenant.mail,
-                                start: contract.start,
-                                end: contract.end,
-                                type: contract.type,
-                                cost: contract.cost,
-                                pdfName: contract.pdfName,
-                                pdf: contract.pdf
-                            }
-                        ]
-                    })
-                } else {
-                    data.push({
-                        name: property.name,
-                        type: property.type,
-                        status: property.status
-                    })
-                }
-                console.log(data)
-            }
-
-            
-            
+                
+            }  
         } 
     }
 
@@ -363,7 +356,7 @@ const AddProperty: NextPage = () => {
                             </div>
                             <div className={styles.input__container}>
                                 <p className={styles.input__label}>En renta</p>
-                                <GreenSwitch value={property.status} onChange={(e: { target: { checked: any } }) => {setProperty({...property, status: e.target.checked})}}/>
+                                <GreenSwitch checked={property.status} onChange={(e: { target: { checked: any } }) => {setProperty({...property, status: e.target.checked})}}/>
                             </div>
                         </div>
 

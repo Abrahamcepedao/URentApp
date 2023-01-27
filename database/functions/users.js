@@ -10,13 +10,13 @@ const getUsers = async (orgName) => {
         let data = []
         snapshot.docs.forEach((doc) => {
             if(doc.exists){
-                console.log(doc.data())
+                
                 if(doc.data().type === 'user') {
                     data.push(doc.data())
                 }
             }
         })
-        console.log(data)
+        
         return data
     } catch (error) {
         console.log(error)

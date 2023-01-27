@@ -20,7 +20,7 @@ export const UsersContextProvider = ({children}: {children:React.ReactNode}) => 
 
     const fecthUsers = async (orgName:string) => {
         const temp = await getUsers(orgName)
-        console.log(temp)
+        
         setUsers(temp)
         return temp
     }

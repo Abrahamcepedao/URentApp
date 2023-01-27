@@ -27,7 +27,7 @@ const addUser = async (user) => {
                 type: user.type,
                 accountType: "demo"
             }
-            console.log(payload)
+            
             await setDoc(docRef, payload)
         }
         
@@ -40,7 +40,7 @@ const getUser = async (uid) => {
     try {
         const docRef = doc(db, 'users', uid)
         const res = await getDoc(docRef)
-        console.log(res.data())
+        
 
         return res.data()
     } catch (error) {
@@ -60,7 +60,7 @@ const getUserByMail = async (mail) => {
                 user = doc.data()
             }
         })
-        console.log(user)
+        
         return user
     } catch (error) {
         console.log(error)

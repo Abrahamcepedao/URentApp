@@ -5,6 +5,7 @@ import React, { useState, useEffect } from 'react'
 import type { NextPage } from 'next'
 import Head from 'next/head'
 import Link from 'next/link'
+import { useRouter } from 'next/router'
 
 //CSS
 import dash from '../styles/Dashboard.module.css'
@@ -53,13 +54,30 @@ interface Property {
   name: string,
   type: string,
   status: number,
-  rentHistory: Rent[],
+  tenant: {
+    name: string,
+    razon: string,
+    phone: string,
+    mail: string,
+  },
+  contract: {
+    start: string
+    end: string,
+    type: string,
+    cost: string,
+    pdfName: string,
+    pdfUrl: string,
+    status: number
+  }
 }
 
 //Dashboard page
 const Properties: NextPage = () => {
   //Context
-  const { properties, fecthProperties, isFirst, checkIfFirst } = useProperties()
+  const { properties, fecthProperties, isFirst, checkIfFirst, updateEditProperty, propertiesLength } = useProperties()
+
+  //Router
+  const router = useRouter()
 
   //useState - properties
   const [state, setState] = useState({
@@ -78,44 +96,61 @@ const Properties: NextPage = () => {
 
   },[])
 
-  
-
-  const handleFecthProperties = async() => {
-    if(!isFirst) {
-      const flag = await checkIfFirst()
-      if(flag) {
-        //set properties to empty array
-      } else {
-        //get properties
-        let data = await fecthProperties()
-        if(data !== false) {
-          //set properties state
-          setState({
-            ...state,
-            properties: data,
-            propertiesList: data
-          })
-        } 
-      }
-    } else {
-      let data = await fecthProperties()
-      if(data !== false) {
-        //set properties state
-        setState({
-          ...state,
-          properties: data,
-          propertiesList: data
-        })
-      } 
-    }
+  const getProperties = async() => {
+    let data = await fecthProperties()
+    if(data !== false) {
+      //set properties state
+      setState({
+        ...state,
+        properties: data,
+        propertiesList: data
+      })
+    } 
   }
 
+  const handleFecthProperties = async() => {
+    if(properties){
+        if(properties.length === 0){
+        
+        if(!isFirst) {
+          const flag = await checkIfFirst()
+          if(flag) {
+            //set properties to empty array
+          } else {
+            //get properties
+            getProperties()
+          }
+        } else {
+          getProperties()
+        }
+      } else {
+        if(properties.length !== propertiesLength){
+          getProperties()
+        } else {
+          setState({
+            ...state,
+            properties: properties,
+            propertiesList: properties
+          })
+        }
+      }
+    }
+    
+  }
+
+  /* filter menu functions */
   const handleClick = (event:any) => {
     setAnchorEl(event.currentTarget);
   };
   const handleClose = () => {
     setAnchorEl(null);
   };
+
+  /* handle edit property click */
+  const handleEditClick = (property:Property) => {
+    updateEditProperty(property)
+    router.push(`/edit_property`)
+  }
 
   return (
     <div>
@@ -188,19 +223,19 @@ const Properties: NextPage = () => {
               </div>
 
               {/* propperties list */}
-              {state.propertiesList.length !== 0 && state.propertiesList.map((item:Property, i) => (
+              {state.propertiesList.length !== 0 ? state.propertiesList.map((item:Property, i) => (
                 <div key={i} className={styles.table__row}>
-                   <div className={styles.header__cell}>
+                    <div className={styles.header__cell}>
                         {item.name}
                     </div>
                     <div className={styles.header__cell}>
-                        {item.rentHistory ? item.rentHistory[0].name : "-"}
+                        {item.tenant.name ? item.tenant.name : "-"}
                     </div>
                     <div className={styles.header__cell}>
                         {item.type ? getPropertyType(item.type) : ""}
                     </div>
                     <div className={styles.header__cell}>
-                        {item.rentHistory ? formatMoney(item.rentHistory[0].cost) : "-"}
+                        {item.contract ? formatMoney(item.contract.cost) : "-"}
                     </div>
                     <div className={styles.header__cell__lg}>
                         {item.status === 0 ? (
@@ -210,7 +245,7 @@ const Properties: NextPage = () => {
                         )}
                         <div className={styles.cell__btns}>
                             <Tooltip title="Editar usuario" placement='top'>
-                                <IconButton>
+                                <IconButton onClick={() => {handleEditClick(item)}}>
                                     <EditRoundedIcon className={dash.table__icon}/>
                                 </IconButton>
                             </Tooltip>
@@ -222,7 +257,13 @@ const Properties: NextPage = () => {
                         </div>
                     </div>
                 </div>
-              ))}
+              )) : (
+                <div className={styles.table__row}>
+                  <div className={styles.header__cell}>
+                      Todavía no hay propiedades
+                  </div>
+                </div>
+              )}
 
             </div>
 

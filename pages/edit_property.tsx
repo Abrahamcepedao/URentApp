@@ -31,10 +31,11 @@ import { useTheme } from '@mui/material/styles';
 import FileUploadRoundedIcon from '@mui/icons-material/FileUploadRounded';
 import ErrorRoundedIcon from '@mui/icons-material/ErrorRounded';
 import CheckCircleRoundedIcon from '@mui/icons-material/CheckCircleRounded';
+import DownloadRoundedIcon from '@mui/icons-material/DownloadRounded';
 
 //Utils
 import { contractStatus } from '../components/utils/functions/contractStatus'
-
+import openInNewTab from '../components/utils/functions/openInNewTab'
 //Context
 import { useProperties } from '../context/PropertiesContext'
 
@@ -54,23 +55,19 @@ const AddProperty: NextPage = () => {
     const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
 
     //Context - property
-    const { isFirst, checkIfFirst, addFirstProperty } = useProperties()
+    const { editProperty } = useProperties()
     
-    //useState - property
+    //useState - property & tenant
     const [property, setProperty] = useState({
         name: "",
         type: "house",
-        status: false
-    })
-    
-    //useState - tenant
-    const [tenant, setTenant] = useState({
-        name: "",
+        status: false,
+        tenantName: "",
         razon: "",
         phone: "",
         mail: "",
     })
-
+    
     //useState - contract
     const [contract, setContract] = useState({
         cost: 0,
@@ -78,7 +75,9 @@ const AddProperty: NextPage = () => {
         start: "",
         end: "",
         pdf: "",
+        pdfUrl: "",
         pdfName: "",
+        newPdfName: "",
         status: -1 //vencidos, 1 mes, 2 meses, 3-6 meses, 7 meses - 1 año, 1+ año
     })
 
@@ -86,27 +85,64 @@ const AddProperty: NextPage = () => {
     const [utils, setUtils] = useState({
         error: "",
         loading: false,
-        open: false
+        open: false,
     })
 
 
     //useEffect
     useEffect(() => {
-        if(!isFirst){
-            checkIfFirst()
+        if(editProperty){
+            //set property data
+            if(editProperty.status) {
+                //set tenant
+                setProperty({
+                    ...property,
+                    name: editProperty.name,
+                    type: editProperty.type,
+                    status: editProperty.status,
+                    tenantName: editProperty.tenant.name,
+                    razon: editProperty.tenant.razon,
+                    phone: editProperty.tenant.phone,
+                    mail: editProperty.tenant.mail
+                })
+
+                //set contract
+                setContract({
+                    ...contract,
+                    cost: editProperty.contract.cost,
+                    type: editProperty.contract.type,
+                    start: editProperty.contract.start,
+                    end: editProperty.contract.end,
+                    pdfName: editProperty.contract.pdfName,
+                    pdfUrl: editProperty.contract.pdfUrl,
+                    status: contractStatus(editProperty.contract.end)
+                })
+            } else {
+                setProperty({
+                    ...property,
+                    name: editProperty.name,
+                    type: editProperty.type,
+                    status: editProperty.status
+                })
+            }
+        } else {
+            router.push('/properties')
         }
-    })
+    },[editProperty])
 
 
     const handleClose = () => {
         setUtils({...utils, open: false})
-        setProperty({...property, name: "", status: false, type: "house"})
-        setTenant({
-            name: "",
+        setProperty({...property, 
+            name: "", 
+            status: false, 
+            type: "house",
+            tenantName: "",
             razon: "",
             phone: "",
             mail: "",
         })
+
         setContract({
             cost: 0,
             type: "month",
@@ -114,12 +150,14 @@ const AddProperty: NextPage = () => {
             end: "",
             pdf: "",
             pdfName: "",
+            newPdfName: "",
+            pdfUrl: "",
             status: -1
         })
     };
 
     const handleReturnClick = () => {
-        router.push('/properties')
+        //router.push('/properties')
     }
     
     const handleDateChange = (e:React.ChangeEvent<HTMLInputElement>, n:number) => {
@@ -185,9 +223,62 @@ const AddProperty: NextPage = () => {
         }
     }
 
+    /* check if property and tenant values change */
+    const checkChanges = () => {
+        if(editProperty.name !== property.name){
+            return true
+        }
+        if(editProperty.type !== property.type){
+            return true
+        }
+        if(editProperty.status !== property.status){
+            return true
+        }
+        if(property.status){
+            if(editProperty.tenant.name !== property.tenantName){
+                return true
+            }
+            if(editProperty.tenant.razon !== property.razon){
+                return true
+            }
+            if(editProperty.tenant.mail !== property.mail){
+                return true
+            }
+            if(editProperty.tenant.phone !== property.phone){
+                return true
+            }
+
+            if(editProperty.contract.start !== contract.start){
+                return true
+            }
+            if(editProperty.contract.end !== contract.end){
+                return true
+            }
+            if(editProperty.contract.type !== contract.type){
+                return true
+            }
+            if(editProperty.contract.cost !== contract.cost){
+                return true
+            }
+            if(contract.newPdfName !== ""){
+                return true
+            }
+        }
+        return false
+    }
+
+    /* handle input change (property and tenant) */
+    const handleInputChange = (e:React.ChangeEvent<HTMLInputElement>) => {
+        setProperty({
+        ...property,
+            [e.target.name]: e.target.value
+        })
+    }
+
     /* handle cancel click */
     const handleCancelClick = () => {
-        router.push('/properties')
+        //router.push('/properties')
+        //delete data from property
     }
 
     /* handle save click */
@@ -198,19 +289,19 @@ const AddProperty: NextPage = () => {
             return false
         }
         if(property.status){
-            if(tenant.name === "") {
+            if(property.tenantName === "") {
                 setUtils({...utils, error: "Agrega el nombre del arrendatario"})
                 return false
             }
-            if(tenant.razon === "") {
+            if(property.razon === "") {
                 setUtils({...utils, error: "Agrega la razón social del arrendatario"})
                 return false
             }
-            if(tenant.phone === "") {
+            if(property.phone === "") {
                 setUtils({...utils, error: "Agrega el teléfono del arrendatario"})
                 return false
             }
-            if(tenant.mail === "") {
+            if(property.mail === "") {
                 setUtils({...utils, error: "Agrega el mail del arrendatario"})
                 return false
             }
@@ -234,82 +325,62 @@ const AddProperty: NextPage = () => {
         return flag
     }
 
-    const handleAddFirst = async() => {
-        let temp = {
-            name: property.name,
-            type: property.type,
-            status: property.status,
-            rentHistory: [
-                {
-                    name: tenant.name,
-                    razon: tenant.razon,
-                    phone: tenant.phone,
-                    mail: tenant.mail,
-                    start: contract.start,
-                    end: contract.end,
-                    type: contract.type,
-                    cost: contract.cost,
-                    pdfName: contract.pdfName,
-                    pdf: contract.pdf
-                }
-            ]
-        }
-        const res = await addFirstProperty(temp)
-        if(res) {
-            //alert success
-            setUtils({...utils, error: "", loading: false, open: true})
-        } else {
-            //alert error
-            setUtils({...utils, error: "Ocurrión un error al subir la propiedad", loading: false})
-        }
-    }
+
 
     const handleAddProperty = () => {
 
     }
 
     const handleSaveClick = () => {
-        if(verifyData()) {
-            setUtils({...utils, error: "", loading: true})
-            console.log(isFirst)
-            if(isFirst){
-                handleAddFirst()
-            } else {
-                handleAddProperty()
-                let data = []
-                if(property.status){
-                    data.push({
-                        name: property.name,
-                        type: property.type,
-                        status: property.status,
-                        rentHistory: [
-                            {
-                                name: tenant.name,
-                                razon: tenant.razon,
-                                phone: tenant.phone,
-                                mail: tenant.mail,
-                                start: contract.start,
-                                end: contract.end,
-                                type: contract.type,
-                                cost: contract.cost,
-                                pdfName: contract.pdfName,
-                                pdf: contract.pdf
-                            }
-                        ]
-                    })
-                } else {
-                    data.push({
-                        name: property.name,
-                        type: property.type,
-                        status: property.status
-                    })
+       if(checkChanges()){
+            //changes exist
+            //update changes
+            if(contract.newPdfName !== ""){
+                //udpate with new contract
+                let temp = {
+                    name: property.name,
+                    type: property.type,
+                    status: property.status,
+                    tenant: {
+                        name: property.tenantName,
+                        razon: property.razon,
+                        phone: property.phone,
+                        mail: property.mail,
+                    },
+                    contract: {
+                        start: contract.start,
+                        end: contract.end,
+                        type: contract.type,
+                        cost: contract.cost,
+                        pdfName: contract.newPdfName,
+                        pdf: contract.pdf
+                    }       
                 }
-                console.log(data)
+            } else {
+                //update with same contract
+                let temp = {
+                    name: property.name,
+                    type: property.type,
+                    status: property.status,
+                    tenant: {
+                        name: property.tenantName,
+                        razon: property.razon,
+                        phone: property.phone,
+                        mail: property.mail,
+                    },
+                    contract: {
+                        start: contract.start,
+                        end: contract.end,
+                        type: contract.type,
+                        cost: contract.cost,
+                        pdfName: contract.pdfName,
+                        pdfUrl: contract.pdfUrl
+                    }       
+                }
             }
-
-            
-            
-        } 
+       } else {
+            //there are no changes
+       }
     }
 
     return (
@@ -340,7 +411,7 @@ const AddProperty: NextPage = () => {
                         <div className={styles.inputs__row}>
                             <div className={styles.input__container}>
                                 <p className={styles.input__label}>Nombre</p>
-                                <input placeholder='Ingrese el nombre' className={styles.input} value={property.name} onChange={(e) => {setProperty({...property, name: e.target.value})}}/>
+                                <input placeholder='Ingrese el nombre' name="name" className={styles.input} value={property.name} onChange={(e) => {handleInputChange(e)}}/>
                             </div>
                             <div className={styles.input__container}>
                                 <p className={styles.input__label}>Tipo</p>
@@ -363,7 +434,7 @@ const AddProperty: NextPage = () => {
                             </div>
                             <div className={styles.input__container}>
                                 <p className={styles.input__label}>En renta</p>
-                                <GreenSwitch value={property.status} onChange={(e: { target: { checked: any } }) => {setProperty({...property, status: e.target.checked})}}/>
+                                <GreenSwitch checked={property.status} onChange={(e: { target: { checked: any } }) => {setProperty({...property, status: e.target.checked})}}/>
                             </div>
                         </div>
 
@@ -374,19 +445,19 @@ const AddProperty: NextPage = () => {
                                 <div className={styles.tenant__container}>
                                     <div className={styles.input__container}>
                                         <p className={styles.input__label}>Nombre</p>
-                                        <input placeholder='Ingrese el nombre' className={styles.input} value={tenant.name} onChange={(e) => {setTenant({...tenant, name: e.target.value})}}/>
+                                        <input placeholder='Ingrese el nombre' name="tenantName" className={styles.input} value={property.tenantName} onChange={(e) => {handleInputChange(e)}}/>
                                     </div>
                                     <div className={styles.input__container}>
                                         <p className={styles.input__label}>Razón social</p>
-                                        <input placeholder='Ingrese la razón social' className={styles.input} value={tenant.razon} onChange={(e) => {setTenant({...tenant, razon: e.target.value})}}/>
+                                        <input placeholder='Ingrese la razón social' name="razon" className={styles.input} value={property.razon} onChange={(e) => {handleInputChange(e)}}/>
                                     </div>
                                     <div className={styles.input__container}>
                                         <p className={styles.input__label}>Teléfono</p>
-                                        <input type="number" className={styles.input} value={tenant.phone} onChange={(e) => {setTenant({...tenant, phone: e.target.value})}}/>
+                                        <input type="number" className={styles.input} name="phone" value={property.phone} onChange={(e) => {handleInputChange(e)}}/>
                                     </div>
                                     <div className={styles.input__container}>
                                         <p className={styles.input__label}>Email</p>
-                                        <input placeholder='Ingrese el mail' className={styles.input} value={tenant.mail} onChange={(e) => {setTenant({...tenant, mail: e.target.value})}}/>
+                                        <input placeholder='Ingrese el mail' name="mail" className={styles.input} value={property.mail} onChange={(e) => {handleInputChange(e)}}/>
                                     </div>
 
                                     {/* contract */}
@@ -424,16 +495,26 @@ const AddProperty: NextPage = () => {
                                             <Chip title={contractStatusList[contract.status]} background={contractStatusBackground[contract.status]} color={contractStatusColor[contract.status]}/>
                                         )}
                                     </div>
-                                    {/* add contract */}
                                     <div className={styles.input__container}>
                                         <p className={styles.input__label}>PDF de contrato</p>
+                                        {contract.pdfUrl !== "" && (
+                                            <Tooltip title="Descargar" placement='top'>
+                                                <IconButton onClick={() => {openInNewTab(contract.pdfUrl)}}>
+                                                    <DownloadRoundedIcon className={dash.table__icon}/>
+                                                </IconButton>
+                                            </Tooltip>
+                                        )}
+                                    </div>
+                                    {/* add contract */}
+                                    <div className={styles.input__container}>
+                                        <p className={styles.input__label}>Cambiar PDF</p>
                                         <div>
                                             <label htmlFor='file' className={styles.button}>
                                                 <p>Agregar archivo</p>
                                                 <FileUploadRoundedIcon className={dash.table__icon}/>
                                             </label>
                                             <input name='file' id='file' type="file" onChange={(e) => {handlePDFChange(e)}} className={styles.file__input}/>
-                                            <p>{contract.pdfName.length > 20 ? contract.pdfName.substring(0,20) + "..." : contract.pdfName}</p>
+                                            <p>{contract.newPdfName.length > 20 ? contract.newPdfName.substring(0,20) + "..." : contract.newPdfName}</p>
                                         </div>
                                     </div>
                                 </div>
@@ -455,8 +536,10 @@ const AddProperty: NextPage = () => {
 
                         {/* Save or cancel property */}
                         <div className={styles.actions__container} style={{marginTop: property.status ? "0px": "30px"}}>
-                            <button className={styles.cancel__btn} onClick={handleCancelClick}>Cancelar</button>
-                            <button className={styles.save__btn} onClick={handleSaveClick}>Guardar propiedad</button>
+                            <button className={styles.cancel__btn} onClick={handleCancelClick}>Terminar contrato</button>    
+                            <button className={styles.save__btn} onClick={handleSaveClick}>Guardar cambios</button>
+                            
+                            
                         </div>
 
                     </div>
