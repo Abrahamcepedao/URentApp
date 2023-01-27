@@ -124,6 +124,8 @@ const Properties: NextPage = () => {
           getProperties()
         }
       } else {
+        console.log(properties)
+        console.log(propertiesLength)
         if(properties.length !== propertiesLength){
           getProperties()
         } else {
