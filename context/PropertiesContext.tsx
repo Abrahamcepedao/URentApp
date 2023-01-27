@@ -1,7 +1,7 @@
 import {createContext, useContext}  from 'react'
 import React, { useState, useEffect } from 'react'
 
-import { addFirst, isFirstFirebase } from '../database/functions/property'
+import { addFirst, isFirstFirebase, getProperties } from '../database/functions/property'
 import { useAuth } from './AuthContext'
 
 const PropertiesContext = createContext<any>({})
@@ -24,8 +24,9 @@ export const PropertiesContextProvider = ({children}: {children:React.ReactNode}
             const first = await isFirstFirebase(user.uid)
             console.log(first)
             setIsFirst(first)
+            return first
         }
-        
+        return false
     }
 
     const addFirstProperty = async (property:any) => {
@@ -45,10 +46,20 @@ export const PropertiesContextProvider = ({children}: {children:React.ReactNode}
     }
 
     const fecthProperties = async () => {
-        
+        const res = await getProperties(user.uid)
+        if(res !== false) {
+            setProperties(res)
+            return res
+        }
+        return false
     }
 
-    return <PropertiesContext.Provider value={{properties, isFirst, addFirstProperty, checkIfFirst}}>
+    return <PropertiesContext.Provider value={{properties, 
+        isFirst, 
+        addFirstProperty, 
+        checkIfFirst,
+        fecthProperties}}
+    >
         {children}
     </PropertiesContext.Provider>
 }

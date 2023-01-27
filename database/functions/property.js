@@ -85,12 +85,14 @@ const addFirst = async(property,uid) => {
 const getProperties = async(uid) => {
     try {
       const propertiesRef = doc(db, 'properties', uid)
-      const ref = await getDoc(propertiesRef)
-      console.log(ref.data())
+      const res = await getDoc(propertiesRef)
+      
+      console.log(res.data().data)
 
-      return res.data()
+      return res.data().data
     } catch (error) {
       console.log(error)
+      return false
     }
     
 }
