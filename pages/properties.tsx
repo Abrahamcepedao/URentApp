@@ -15,7 +15,7 @@ import SideBar from '../components/user/SideBar'
 import Chip from '../components/user/Chip'
 
 //Material UI
-import { Tooltip, IconButton, Collapse } from '@mui/material'
+import { Tooltip, IconButton } from '@mui/material'
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import ListItemIcon from '@mui/material/ListItemIcon';
@@ -28,181 +28,87 @@ import DeleteRoundedIcon from '@mui/icons-material/DeleteRounded';
 import EditRoundedIcon from '@mui/icons-material/EditRounded';
 import Settings from '@mui/icons-material/Settings';
 
-const temp = [
-  {
-    name: "Tablaje 1019",
-    tenant: "José Guemez",
-    type: "Bodega",
-    cost: 95156.00,
-    status: 1 // 1 = en renta, 0 = libre
-  },
-  {
-    name: "Tablaje 1019",
-    tenant: "José Guemez",
-    type: "Bodega",
-    cost: 95156.00,
-    status: 1 // 1 = en renta, 0 = libre
-  },
-  {
-    name: "Tablaje 1019",
-    tenant: "José Guemez",
-    type: "Bodega",
-    cost: 95156.00,
-    status: 0 // 1 = en renta, 0 = libre
-  },
-  {
-    name: "Tablaje 1019",
-    tenant: "José Guemez",
-    type: "Bodega",
-    cost: 95156.00,
-    status: 1 // 1 = en renta, 0 = libre
-  },
-  {
-    name: "Tablaje 1019",
-    tenant: "José Guemez",
-    type: "Bodega",
-    cost: 95156.00,
-    status: 1 // 1 = en renta, 0 = libre
-  },
-  {
-    name: "Tablaje 1019",
-    tenant: "José Guemez",
-    type: "Bodega",
-    cost: 95156.00,
-    status: 1 // 1 = en renta, 0 = libre
-  },
-  {
-    name: "Tablaje 1019",
-    tenant: "José Guemez",
-    type: "Bodega",
-    cost: 95156.00,
-    status: 1 // 1 = en renta, 0 = libre
-  },
-  {
-    name: "Tablaje 1019",
-    tenant: "José Guemez",
-    type: "Bodega",
-    cost: 95156.00,
-    status: 1 // 1 = en renta, 0 = libre
-  },
-  {
-    name: "Tablaje 1019",
-    tenant: "José Guemez",
-    type: "Bodega",
-    cost: 95156.00,
-    status: 0 // 1 = en renta, 0 = libre
-  },
-  {
-    name: "Tablaje 1019",
-    tenant: "José Guemez",
-    type: "Bodega",
-    cost: 95156.00,
-    status: 1 // 1 = en renta, 0 = libre
-  },
-  {
-    name: "Tablaje 1019",
-    tenant: "José Guemez",
-    type: "Bodega",
-    cost: 95156.00,
-    status: 1 // 1 = en renta, 0 = libre
-  },
-  {
-    name: "Tablaje 1019",
-    tenant: "José Guemez",
-    type: "Bodega",
-    cost: 95156.00,
-    status: 1 // 1 = en renta, 0 = libre
-  },
-  {
-    name: "Tablaje 1019",
-    tenant: "José Guemez",
-    type: "Bodega",
-    cost: 95156.00,
-    status: 1 // 1 = en renta, 0 = libre
-  },
-  {
-    name: "Tablaje 1019",
-    tenant: "José Guemez",
-    type: "Bodega",
-    cost: 95156.00,
-    status: 1 // 1 = en renta, 0 = libre
-  },
-  {
-    name: "Tablaje 1019",
-    tenant: "José Guemez",
-    type: "Bodega",
-    cost: 95156.00,
-    status: 0 // 1 = en renta, 0 = libre
-  },
-  {
-    name: "Tablaje 1019",
-    tenant: "José Guemez",
-    type: "Bodega",
-    cost: 95156.00,
-    status: 1 // 1 = en renta, 0 = libre
-  },
-  {
-    name: "Tablaje 1019",
-    tenant: "José Guemez",
-    type: "Bodega",
-    cost: 95156.00,
-    status: 1 // 1 = en renta, 0 = libre
-  },
-  {
-    name: "Tablaje 1019",
-    tenant: "José Guemez",
-    type: "Bodega",
-    cost: 95156.00,
-    status: 1 // 1 = en renta, 0 = libre
-  },
-  {
-    name: "Tablaje 1019",
-    tenant: "José Guemez",
-    type: "Bodega",
-    cost: 95156.00,
-    status: 1 // 1 = en renta, 0 = libre
-  },
-  {
-    name: "Tablaje 1019",
-    tenant: "José Guemez",
-    type: "Bodega",
-    cost: 95156.00,
-    status: 1 // 1 = en renta, 0 = libre
-  },
-  {
-    name: "Tablaje 1019",
-    tenant: "José Guemez",
-    type: "Bodega",
-    cost: 95156.00,
-    status: 0 // 1 = en renta, 0 = libre
-  },
-  {
-    name: "Tablaje 1019",
-    tenant: "José Guemez",
-    type: "Bodega",
-    cost: 95156.00,
-    status: 1 // 1 = en renta, 0 = libre
-  },
-  {
-    name: "Tablaje 1019",
-    tenant: "José Guemez",
-    type: "Bodega",
-    cost: 95156.00,
-    status: 1 // 1 = en renta, 0 = libre
-  },
-  {
-    name: "Tablaje 1019",
-    tenant: "José Guemez",
-    type: "Bodega",
-    cost: 95156.00,
-    status: 1 // 1 = en renta, 0 = libre
-  },
-]
+//Context
+import { useProperties } from '../context/PropertiesContext'
+
+//utils
+import formatMoney from '../components/utils/functions/formatMoney'
+import getPropertyType from '../components/utils/functions/getPropertyType'
+
+//interfaces
+interface Rent {
+  name: string,
+  razon: string,
+  phone: string,
+  mail: string,
+  date: string,
+  end: string,
+  type: string,
+  cost: number,
+  pdfName: string,
+  pdfUrl: string
+}
+
+interface Property {
+  name: string,
+  type: string,
+  status: number,
+  rentHistory: Rent[],
+}
 
 //Dashboard page
-const Dashboard: NextPage = () => {
+const Properties: NextPage = () => {
+  //Context
+  const { properties, fecthProperties, isFirst, checkIfFirst } = useProperties()
+
+  //useState - properties
+  const [state, setState] = useState({
+    properties: [],
+    propertiesList: [],
+    filter: ""
+  })
+
+  //useState - menu
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
+
+
+  useEffect(() => {
+      handleFecthProperties()
+
+  },[])
+
+  
+
+  const handleFecthProperties = async() => {
+    if(!isFirst) {
+      const flag = await checkIfFirst()
+      if(flag) {
+        //set properties to empty array
+      } else {
+        //get properties
+        let data = await fecthProperties()
+        if(data !== false) {
+          //set properties state
+          setState({
+            ...state,
+            properties: data,
+            propertiesList: data
+          })
+        } 
+      }
+    } else {
+      let data = await fecthProperties()
+      if(data !== false) {
+        //set properties state
+        setState({
+          ...state,
+          properties: data,
+          propertiesList: data
+        })
+      } 
+    }
+  }
 
   const handleClick = (event:any) => {
     setAnchorEl(event.currentTarget);
@@ -282,19 +188,19 @@ const Dashboard: NextPage = () => {
               </div>
 
               {/* propperties list */}
-              {temp.map((item, i) => (
+              {state.propertiesList.length !== 0 && state.propertiesList.map((item:Property, i) => (
                 <div key={i} className={styles.table__row}>
                    <div className={styles.header__cell}>
                         {item.name}
                     </div>
                     <div className={styles.header__cell}>
-                        {item.tenant}
+                        {item.rentHistory ? item.rentHistory[0].name : "-"}
                     </div>
                     <div className={styles.header__cell}>
-                        {item.type}
+                        {item.type ? getPropertyType(item.type) : ""}
                     </div>
                     <div className={styles.header__cell}>
-                        {item.cost}
+                        {item.rentHistory ? formatMoney(item.rentHistory[0].cost) : "-"}
                     </div>
                     <div className={styles.header__cell__lg}>
                         {item.status === 0 ? (
@@ -373,4 +279,4 @@ const Dashboard: NextPage = () => {
   )
 }
 
-export default Dashboard
+export default Properties
