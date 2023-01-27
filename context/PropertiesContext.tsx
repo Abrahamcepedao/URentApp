@@ -42,8 +42,10 @@ export const PropertiesContextProvider = ({children}: {children:React.ReactNode}
             return true
         } 
         return false
-        
+    }
 
+    const fecthProperties = async () => {
+        
     }
 
     return <PropertiesContext.Provider value={{properties, isFirst, addFirstProperty, checkIfFirst}}>
