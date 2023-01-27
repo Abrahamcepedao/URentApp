@@ -3,7 +3,6 @@ const contractStatus = (end) => {
     const date2 = new Date(end);
     const diffTime = date2 - today;
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
-    console.log(diffDays)
 
     if(diffDays < 0) {
         return 0

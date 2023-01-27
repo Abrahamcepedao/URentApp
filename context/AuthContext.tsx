@@ -21,7 +21,7 @@ export const AuthContextProvider = ({children}: {children:React.ReactNode}) => {
         const unsubscribe = onAuthStateChanged(auth, async (user) => {
             if(user){
                 const temp = await getUser(user.uid)
-                console.log(temp)
+                
                 setUser(temp)
             } else {
                 setUser(null)
@@ -66,7 +66,7 @@ export const AuthContextProvider = ({children}: {children:React.ReactNode}) => {
         return signInWithEmailAndPassword(auth, mail, password)
             .then(async (result) => {
                 const item = await getUser(result.user.uid)
-                console.log(item)
+                
                 setUser(item)
             })
     }
@@ -77,9 +77,6 @@ export const AuthContextProvider = ({children}: {children:React.ReactNode}) => {
     }
 
     const createUser = async (mail:string, password:string, name:string, phone:string, orgName:string) => {
-        
-        console.log("Current user", user)
-        
         const temp = {
             uid: orgName + "_" + mail,
             mail,
@@ -89,7 +86,7 @@ export const AuthContextProvider = ({children}: {children:React.ReactNode}) => {
             password,
             type: "user"
         }
-        console.log(temp)
+        
         addUser(temp)
     }
 
