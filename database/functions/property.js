@@ -14,6 +14,7 @@ const isFirstFirebase = async(uid) => {
     return !flag
 }
 
+/* add first property */
 const addFirst = async(property,uid) => {
     const file = property.rentHistory[0].pdf
     console.log(file)
@@ -78,7 +79,21 @@ const addFirst = async(property,uid) => {
     return true
 }
 
+/* add property (not first) */
+
+/* get list of properties */
+const getProperties = async(uid) => {
+    try {
+      const propertiesRef = doc(db, 'properties', uid)
+      const ref = await getDoc(propertiesRef)
+      console.log(ref.data())
+
+      return res.data()
+    } catch (error) {
+      console.log(error)
+    }
+    
+}
 
 
-
-export { addFirst, isFirstFirebase }
+export { addFirst, isFirstFirebase, getProperties }
