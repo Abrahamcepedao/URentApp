@@ -74,7 +74,7 @@ interface Property {
 //Dashboard page
 const Properties: NextPage = () => {
   //Context
-  const { properties, fecthProperties, isFirst, checkIfFirst, updateEditProperty, propertiesLength } = useProperties()
+  const { properties, fecthProperties, isFirst, checkIfFirst, updateEditProperty } = useProperties()
 
   //Router
   const router = useRouter()
@@ -124,18 +124,10 @@ const Properties: NextPage = () => {
           getProperties()
         }
       } else {
-        console.log(properties)
-        console.log(propertiesLength)
-        if(properties.length !== propertiesLength){
-          getProperties()
-        } else {
-          setState({
-            ...state,
-            properties: properties,
-            propertiesList: properties
-          })
-        }
+        getProperties()
       }
+    } else {
+      getProperties()
     }
     
   }
