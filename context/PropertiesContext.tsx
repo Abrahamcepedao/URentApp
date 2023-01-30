@@ -1,7 +1,15 @@
 import {createContext, useContext}  from 'react'
 import React, { useState, useEffect } from 'react'
 
-import { addFirst, isFirstFirebase, getProperties, addProperty, updateNewContract, updateSameContract } from '../database/functions/property'
+import { 
+    addFirst, 
+    isFirstFirebase, 
+    getProperties, 
+    addProperty, 
+    updateNewContract, 
+    updateSameContract,
+    registerPayment
+} from '../database/functions/property'
 import { useAuth } from './AuthContext'
 
 const PropertiesContext = createContext<any>({})
@@ -20,6 +28,7 @@ export const PropertiesContextProvider = ({children}: {children:React.ReactNode}
         
     })
 
+    /* check if is first property */
     const checkIfFirst = async() => {
         if(user){
             const first = await isFirstFirebase(user.uid)
@@ -30,6 +39,7 @@ export const PropertiesContextProvider = ({children}: {children:React.ReactNode}
         return false
     }
 
+    /* add first property */
     const addFirstProperty = async (property:any) => {
         
 
@@ -43,6 +53,7 @@ export const PropertiesContextProvider = ({children}: {children:React.ReactNode}
         return false
     }
 
+    /* add new property */
     const addNewProperty = async(property:any) => {
         const res = await addProperty(properties, property, user.uid)
         
@@ -53,6 +64,7 @@ export const PropertiesContextProvider = ({children}: {children:React.ReactNode}
         return false
     }
 
+    /* fetch properties */
     const fecthProperties = async () => {
         const res = await getProperties(user.uid)
         if(res !== false) {
@@ -62,10 +74,12 @@ export const PropertiesContextProvider = ({children}: {children:React.ReactNode}
         return false
     }
 
+    /* update edit property */
     const updateEditProperty = (property:any) => {
         setEditProperty(property)
     }
 
+    /* update property */
     const updateProperty = async(property:any, type: boolean) => {
         if(type) {
             //update property with new contract
@@ -84,6 +98,15 @@ export const PropertiesContextProvider = ({children}: {children:React.ReactNode}
         }
     }
     
+    /* add payment to property */
+    const addPayment = async(property:any, payment:any) => {
+        const res = await registerPayment(properties, property, user.uid, payment)
+        if(res !== false) {
+            return res
+        }
+        return false
+    }
+    
 
     return <PropertiesContext.Provider value={{
         properties, 
@@ -94,7 +117,8 @@ export const PropertiesContextProvider = ({children}: {children:React.ReactNode}
         updateEditProperty,
         editProperty,
         addNewProperty,
-        updateProperty
+        updateProperty,
+        addPayment
     }}>
         {children}
     </PropertiesContext.Provider>

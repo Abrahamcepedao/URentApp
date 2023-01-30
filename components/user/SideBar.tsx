@@ -46,7 +46,7 @@ const SideBar = () => {
                     <p className={styles.tab__label} style={{opacity: router.pathname === '/properties' ? 1 : 0.5}}>Propiedades</p>
                 </Link>
                 <Link className={styles.tab} href="/payments">
-                    <MapsHomeWorkRoundedIcon className={styles.tab__icon}/>
+                    <PaymentsRoundedIcon className={styles.tab__icon}/>
                     <p className={styles.tab__label} style={{opacity: router.pathname === '/payments' ? 1 : 0.5}}>Pagos</p>
                 </Link>
                 <Link className={styles.tab} href="/users">

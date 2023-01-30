@@ -12,6 +12,8 @@ import SideBar from '../components/user/SideBar'
 
 //Material UI
 import { Tooltip, IconButton, Collapse } from '@mui/material'
+import Snackbar from '@mui/material/Snackbar';
+import MuiAlert, { AlertProps } from '@mui/material/Alert';
 
 //Material UI - icons
 import AddCircleRoundedIcon from '@mui/icons-material/AddCircleRounded';
@@ -30,6 +32,17 @@ import { useAuth } from '../context/AuthContext'
 import { useProperties } from '../context/PropertiesContext'
 
 //interfaces
+interface Payment {
+    date: string,
+    month: string,
+    year: number,
+    amount: number,
+    method: number,
+    fileName: string,
+    fileUrl: string,
+    comment: string,
+    property: string
+}
 interface Property {
   name: string,
   type: string,
@@ -48,19 +61,29 @@ interface Property {
     pdfName: string,
     pdfUrl: string,
     status: number
-  }
+  },
+  payments: Payment[]
 }
+
+//Alert
+const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
+  props,
+  ref,
+) {
+  return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+});
 
 //Dashboard page
 const Payments: NextPage = () => {
     //Context
     const { user } = useAuth()
-    const { properties, fecthProperties } = useProperties()
+    const { properties, fecthProperties, addPayment } = useProperties()
 
     //useState
     const [state, setState] = useState({
         payments: [],
         addOpen: false,
+        open: false,
         error: "",
         properties: [],
     })
@@ -73,13 +96,22 @@ const Payments: NextPage = () => {
         amount: 0,
         method: "",
         file: "",
-        fileName: ""
+        fileName: "",
+        comment: ""
     })
 
     useEffect(() => {
-       
         setUp()
     },[])
+
+    /* handle snack close */
+    const handleClose = (event?: React.SyntheticEvent | Event, reason?: string) => {
+        if (reason === 'clickaway') {
+        return;
+        }
+
+        setState({...state, open: false})
+    };
 
     const setUp = () => {
         if(properties.length !== 0){
@@ -89,7 +121,6 @@ const Payments: NextPage = () => {
             //formData
             let today = new Date()
             let date = today.toISOString().split('T')[0]
-            console.log(properties)
             if(properties.length !== 0){
                 const pr:Property = properties[0]
                 setFormData({...formData, date: date, month: months[today.getMonth()].en, year: today.getFullYear(), property: pr.name, amount: pr.contract.cost})
@@ -102,30 +133,29 @@ const Payments: NextPage = () => {
     }
 
     const getProperties = async() => {
-    let data = await fecthProperties()
-    if(data !== false) {
-        //set properties state
-        let temp = data.filter((pr:Property) => pr.status)
-        setState({
-            ...state,
-            properties: temp
-        })
-        //formData
-        let today = new Date()
-        let date = today.toISOString().split('T')[0]
-        console.log(temp)
-        if(temp.length !== 0){
-            const pr:Property = temp[0]
-            setFormData({...formData, date: date, month: months[today.getMonth()].en, year: today.getFullYear(), property: pr.name, amount: pr.contract.cost})
-        } else {
-            setFormData({...formData, date: date, month: months[today.getMonth()].en, year: today.getFullYear()})
-        }
+        let data = await fecthProperties()
+        if(data !== false) {
+            //set properties state
+            let temp = data.filter((pr:Property) => pr.status)
+            setState({
+                ...state,
+                properties: temp
+            })
+            //formData
+            let today = new Date()
+            let date = today.toISOString().split('T')[0]
+            console.log(temp)
+            if(temp.length !== 0){
+                const pr:Property = temp[0]
+                setFormData({...formData, date: date, month: months[today.getMonth()].en, year: today.getFullYear(), property: pr.name, amount: pr.contract.cost})
+            } else {
+                setFormData({...formData, date: date, month: months[today.getMonth()].en, year: today.getFullYear()})
+            }
 
-    } 
-  }
+        } 
+    }
 
     const handleInputChange = (e:React.ChangeEvent<HTMLInputElement>) => {
-        console.log(e.target.value)
         setFormData({
         ...formData,
             [e.target.name]: e.target.value
@@ -145,16 +175,9 @@ const Payments: NextPage = () => {
 
     /* handle file change */
     const handleFileChange = (e:React.ChangeEvent<HTMLInputElement>) => {
-        console.log(e.target.files)
         if(e.target.files?.length !== 0) {
             //@ts-ignore
-            if(validPdf(e.target.files[0])) {
-                //@ts-ignore
-                setContract({...contract, pdf: e.target.files[0], pdfName: e.target.files[0].name});
-            } else {
-                //prompt error here
-                alert("El archivo debe ser de tipo PDF")
-            }
+            setFormData({...formData, file: e.target.files[0], fileName: e.target.files[0].name});
         }
     }
 
@@ -168,9 +191,31 @@ const Payments: NextPage = () => {
         return true
     }
 
-    const handleRegisterPayment = () => {
+    const handleRegisterPayment = async() => {
         if(verifyData()){
             //save payment
+            let pr:Property|undefined = state.properties.find((el:Property) => el.name === formData.property)
+            if(pr !== undefined) {
+                let temp = {
+                    date: formData.date,
+                    month: formData.month,
+                    year: formData.year,
+                    amount: formData.amount,
+                    method: formData.method,
+                    fileName: formData.fileName,
+                    file: formData.file,
+                    comment: formData.comment
+                }
+                const res = await addPayment(pr,temp)
+                if(res) {
+                    //alert success
+                    setState({...state, error: "",  open: true})
+                    setFormData({...formData, file: "", fileName: "", comment: ""})
+                } else {
+                    //alert error
+                    setState({...state, error: "Ocurrió un error al registrar el pago"})
+                }
+            }
         }
     }
 
@@ -222,9 +267,7 @@ const Payments: NextPage = () => {
                                             onChange={(e) => {handlePropertyChange(e)}}
                                         >
                                            {state.properties.map((item:Property, i) => (
-                                            <>
                                                 <option key={i} value={item.name}>{item.name}</option>
-                                            </>
                                            ))}
                                         </select>
                                     </div>
@@ -246,16 +289,14 @@ const Payments: NextPage = () => {
                                             onChange={(e) => {setFormData({...formData, month: e.target.value})}}
                                         >
                                            {months.map((item, i) => (
-                                            <>
                                                 <option key={i} value={item.en}>{item.es}</option>
-                                            </>
                                            ))}
                                         </select>
                                     </div>
 
                                     {/* year */}
                                     <div className={styles.input__container}>
-                                        <p className={styles.input__label}>año</p>
+                                        <p className={styles.input__label}>Año</p>
                                         <input name='year' value={formData.year} onChange={(e) => {handleInputChange(e)}} className={styles.input}/>
                                     </div>
 
@@ -276,16 +317,19 @@ const Payments: NextPage = () => {
                                             onChange={(e) => {setFormData({...formData, method: e.target.value})}}
                                         >
                                            {methods.map((item, i) => (
-                                            <>
                                                 <option key={i} value={item}>{item}</option>
-                                            </>
                                            ))}
                                         </select>
                                     </div>
 
+                                    <div className={styles.input__container}>
+                                        <p className={styles.input__label}>Comentario (op.)</p>
+                                        <input name='comment' value={formData.comment} onChange={(e) => {handleInputChange(e)}} className={styles.input}/>
+                                    </div>
+
                                     {/* add ticket */}
                                     <div className={styles.input__container}>
-                                        <p className={styles.input__label}>Comprobante</p>
+                                        <p className={styles.input__label}>Comprobante (op.)</p>
                                         <div>
                                             <label htmlFor='file' className={styles.button}>
                                                 <p>Agregar archivo</p>
@@ -313,19 +357,22 @@ const Payments: NextPage = () => {
                             {/* table header */}
                             <div className={styles.table__header}>
                                 <div className={styles.header__cell}>
-                                    Fecha
-                                </div>
-                                <div className={styles.header__cell}>
-                                    Año
-                                </div>
-                                <div className={styles.header__cell}>
-                                    Mes
-                                </div>
-                                <div className={styles.header__cell}>
                                     Propiedad
                                 </div>
-                                <div className={styles.header__cell}>
+                                <div className={styles.header__cell__sm}>
+                                    Fecha
+                                </div>
+                                <div className={styles.header__cell__sm}>
+                                    Año
+                                </div>
+                                <div className={styles.header__cell__sm}>
+                                    Mes
+                                </div>
+                                <div className={styles.header__cell__sm}>
                                     Monto
+                                </div>
+                                <div className={styles.header__cell}>
+                                    Comentario
                                 </div>
                                 <div className={styles.header__cell__lg}>
                                     Comprobante
@@ -337,6 +384,13 @@ const Payments: NextPage = () => {
                         </div>
                     </div>
                 </div>
+
+                {/* snack bar */}
+                <Snackbar open={state.open} autoHideDuration={4000} onClose={handleClose}>
+                    <Alert onClose={handleClose} severity="success" sx={{ width: '100%' }}>
+                        ¡Se registró el pago exitosamente!
+                    </Alert>
+                </Snackbar>
             </main>
         </div>
     )

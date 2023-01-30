@@ -331,5 +331,146 @@ const getProperties = async(uid) => {
     
 }
 
+/* register new payment */
+const registerPayment = async(properties, property, uid, payment) => {
+  if(payment.fileName !== "" || payment.file) {
+      let name = property.name.replace(/\s+/g, '');
+      const file = payment.file
+      const storageRef = ref(storage, `files/${uid}/payments/${name}/${payment.year}/${payment.month}/${payment.fileName}`)
+      console.log(storageRef)
+      const uploadTask = uploadBytesResumable(storageRef, file);
+      uploadTask.on("state_changed",
+        (snapshot) => {
+          const progress =
+            Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100);
+          console.log(progress);
+        },
+        (error) => {
+          console.log(error);
+          return false
+        },
+        () => {
+          getDownloadURL(uploadTask.snapshot.ref).then(async (downloadURL) => {
+            //upload property to firestore
+              try {
+                  console.log(downloadURL)
+                  let payments = []
+                  if(property.payments){
+                      payments = property.payments
+                  }
 
-export { addFirst, isFirstFirebase, getProperties, addProperty, updateNewContract, updateSameContract }
+                  payments.push({
+                    date: payment.date,
+                    month: payment.month,
+                    year: payment.year,
+                    amount: payment.amount,
+                    method: payment.method,
+                    fileName: payment.fileName,
+                    fileUrl: downloadURL,
+                    comment: payment.comment
+                  })
+
+                  const temp = {
+                    name: property.name,
+                    type: property.type,
+                    status: property.status,
+                    tenant: {
+                        name: property.tenant.name,
+                        razon: property.tenant.razon,
+                        phone: property.tenant.phone,
+                        mail: property.tenant.mail,
+                    },
+                    contract: {
+                        start: property.contract.start,
+                        end: property.contract.end,
+                        type: property.contract.type,
+                        cost: property.contract.cost,
+                        pdfName: property.contract.pdfName,
+                        pdfUrl: property.contract.pdfUrl
+                    },
+                    payments: payments
+                  }
+
+                  console.log(temp)
+                  
+                  //delete property with same name
+                  let data = properties.filter(el => el.name !== property.name)
+                  
+                  data.push(temp)
+                  let payload = {
+                      data: data
+                  }
+                  console.log(properties)
+                  console.log(payload)
+                  const docRef = doc(db, 'properties', uid)
+                  await setDoc(docRef, payload)
+                  return true
+              } catch (err) {
+                  console.log(err)
+                  return false
+              }
+          });
+        })
+  } else {
+      try {
+        let payments = []
+        if(property.payments){
+            payments = property.payments
+        } else {
+            payments = []
+        }
+
+        payments.push({
+          date: payment.date,
+          month: payment.month,
+          year: payment.year,
+          amount: payment.amount,
+          method: payment.method,
+          fileName: "",
+          fileUrl: "",
+          comment: payment.comment
+        })
+
+        const temp = {
+          name: property.name,
+          type: property.type,
+          status: property.status,
+          tenant: {
+              name: property.tenant.name,
+              razon: property.tenant.razon,
+              phone: property.tenant.phone,
+              mail: property.tenant.mail,
+          },
+          contract: {
+              start: property.contract.start,
+              end: property.contract.end,
+              type: property.contract.type,
+              cost: property.contract.cost,
+              pdfName: property.contract.pdfName,
+              pdfUrl: property.contract.pdfUrl
+          },
+          payments: payments
+        }
+
+        console.log(temp)
+        
+        //delete property with same name
+        let data = properties.filter(el => el.name !== property.name)
+        
+        data.push(temp)
+        let payload = {
+            data: data
+        }
+        const docRef = doc(db, 'properties', uid)
+        await setDoc(docRef, payload)
+        return true
+    } catch (err) {
+        console.log(err)
+        return false
+    }
+  }
+  return true
+}
+
+
+export { addFirst, isFirstFirebase, getProperties, addProperty, updateNewContract, updateSameContract, registerPayment }
