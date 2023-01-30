@@ -6,7 +6,6 @@
     background: var(--dark__back);
     box-shadow: -8px 8px 20px 4px rgba(0, 0, 0, 0.6), inset -1px 1px 4px 2px rgba(108, 105, 105, 0.1);
     padding: 20px;
-    padding-top: 40px;
     color: var(--light__text);
     
 }
@@ -15,31 +14,30 @@
     max-height: 100%;
 }
 
+
 /* header */
-.header {
-    width: 100%;
+.payments__header {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    width: 100%;
     max-width: 800px;
     margin: auto;
 }
 
-/* form */
-.form__container {
+/* add payment */
+.add__container {
     width: 100%;
     max-width: 800px;
     margin: auto;
+    margin-top: 30px;
+    text-align: center;
 }
-.input__label {
-    opacity: 0.5;
-}
-/* inputs */
-.inputs__row {
+.inputs__container {
     display: grid;
-    grid-template-columns: auto auto auto;
+    grid-template-columns: auto auto auto auto;
     column-gap: 20px;
-}
+} 
 .input {
   width: 100%;
   background: none;
@@ -49,19 +47,9 @@
   outline: none !important;
   color: var(--light__text);
 }
-
-.file__input {
-    background: var(--logo__primary);
-    border-radius: 25px;
-}
-/* tenant */
-.tenant {
-    margin-top: 30px;
-}
-.tenant__container {
-    display: grid;
-    grid-template-columns: auto auto auto;
-    grid-gap: 20px;
+.input__label {
+    opacity: 0.5;
+    text-align: left;
 }
 
 /* file input */
@@ -82,7 +70,7 @@
     border-radius: 25px;
     color: #957F35;
     text-align: center;
-    padding: 8px;
+    padding: 6px;
     transition: all 0.5s;
     cursor: pointer;
     display: flex;
@@ -99,16 +87,7 @@
     background: #E3C37E;
 }
 
-/* action buttons */
-.actions__container {
-    width: 100%;
-    display: flex;
-    justify-content: flex-start;
-    align-items: center;
-    padding: 10px 0px;
-}
-
-.cancel__btn, .save__btn, .cancel__fill__btn, .save__fill__btn {
+.save__btn {
     border-radius: 25px;
     padding: 10px;
     background: none;
@@ -116,22 +95,6 @@
     width: 160px;
     cursor: pointer;
     transition: transform 450ms;
-}
-.cancel__btn {
-    border: 1px solid var(--cancel);
-    color: var(--cancel);
-    margin-right: 20px;
-}
-.cancel__btn:hover {
-    background: var(--cancel);
-    color: var(--light__text);
-}
-.cancel__fill__btn {
-    background: var(--cancel);
-    border: none;
-    transition: transform 450ms;
-}
-.save__btn {
     border: 1px solid var(--logo__primary);
     color: var(--logo__primary);
 }
@@ -139,13 +102,39 @@
     background: var(--logo__primary);
     color: var(--light__text);
 }
-.save__fill__btn {
-    background: var(--success);
-    border: none;
-    transition: transform 450ms;
+
+/* table */
+.payments__table {
+    width: 100%;
+    max-width: 800px;
+    margin: auto;
+    margin-top: 50px;
 }
-.cancel__fill__btn:hover, .save__fill__btn:hover {
-    transform: scale(1.08);
+.table__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    opacity: 0.5;
+}
+
+.header__cell {
+    width: 250px;
+}
+.header__cell__lg {
+    flex: 1;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.table__row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.cell__btns {
+    display: flex;
+    justify-content: space-center;
+    align-items: center;
 }
 
 /* error message */
@@ -157,6 +146,7 @@
     background: var(--cancel);
     border-radius: 10px;
     padding: 15px;
+    margin: auto;
     margin-top: 30px;
     margin-bottom: 30px;
     max-width: 400px;
