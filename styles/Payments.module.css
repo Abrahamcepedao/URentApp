@@ -21,14 +21,14 @@
     justify-content: space-between;
     align-items: center;
     width: 100%;
-    max-width: 800px;
+    max-width: 1000px;
     margin: auto;
 }
 
 /* add payment */
 .add__container {
     width: 100%;
-    max-width: 800px;
+    max-width: 1000px;
     margin: auto;
     margin-top: 30px;
     text-align: center;
@@ -106,7 +106,7 @@
 /* table */
 .payments__table {
     width: 100%;
-    max-width: 800px;
+    max-width: 1000px;
     margin: auto;
     margin-top: 50px;
 }
@@ -118,7 +118,10 @@
 }
 
 .header__cell {
-    width: 250px;
+    width: 200px;
+}
+.header__cell__sm {
+    width: 100px;
 }
 .header__cell__lg {
     flex: 1;

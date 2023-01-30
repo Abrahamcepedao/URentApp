@@ -297,7 +297,7 @@ const AddProperty: NextPage = () => {
             setUtils({...utils, error: "", loading: false, open: true})
         } else {
             //alert error
-            setUtils({...utils, error: "Ocurrión un error al subir la propiedad", loading: false})
+            setUtils({...utils, error: "Ocurrió un error al subir la propiedad", loading: false})
         }
     }
 
