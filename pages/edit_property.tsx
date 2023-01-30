@@ -55,7 +55,7 @@ const AddProperty: NextPage = () => {
     const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
 
     //Context - property
-    const { editProperty } = useProperties()
+    const { editProperty, updateProperty } = useProperties()
     
     //useState - property & tenant
     const [property, setProperty] = useState({
@@ -331,7 +331,7 @@ const AddProperty: NextPage = () => {
 
     }
 
-    const handleSaveClick = () => {
+    const handleSaveClick = async() => {
        if(checkChanges()){
             //changes exist
             //update changes
@@ -356,6 +356,7 @@ const AddProperty: NextPage = () => {
                         pdf: contract.pdf
                     }       
                 }
+                await updateProperty(temp, true)
             } else {
                 //update with same contract
                 let temp = {
@@ -377,9 +378,11 @@ const AddProperty: NextPage = () => {
                         pdfUrl: contract.pdfUrl
                     }       
                 }
+                await updateProperty(temp, false)
             }
        } else {
             //there are no changes
+            setUtils({...utils, error: "No se han hecho cambios"})
        }
     }
 

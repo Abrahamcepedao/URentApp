@@ -136,7 +136,7 @@ const addProperty = async(properties, property, uid) => {
 
 
 /* update property with new contract */
-const updateNewContract = async(property, uid) => {
+const updateNewContract = async(properties, property, uid) => {
   const file = property.contract.pdf
   console.log(file)
   const storageRef = ref(storage, `files/${uid}/${property.type}/${property.contract.pdfName}`)
@@ -155,8 +155,6 @@ const updateNewContract = async(property, uid) => {
     () => {
       getDownloadURL(uploadTask.snapshot.ref).then(async (downloadURL) => {
         //upload property to firestore
-          
-
           try {
               console.log(downloadURL)
               const temp = {
@@ -178,7 +176,9 @@ const updateNewContract = async(property, uid) => {
                       pdfUrl: downloadURL
                   }
               }
-              let data = []
+              //delete property with same name
+              let data = properties.filter(el => el.name === property.name)
+              
               data.push(temp)
               let payload = {
                   data: data
@@ -197,6 +197,46 @@ const updateNewContract = async(property, uid) => {
   return true
 }
 
+const updateSameContract = async(properties, property, uid) => {
+    try {
+      const temp = {
+          name: property.name,
+          type: property.type,
+          status: property.status,
+          tenant: {
+              name: property.tenant.name,
+              razon: property.tenant.razon,
+              phone: property.tenant.phone,
+              mail: property.tenant.mail,
+          },
+          contract: {
+              start: property.contract.start,
+              end: property.contract.end,
+              type: property.contract.type,
+              cost: property.contract.cost,
+              pdfName: property.contract.pdfName,
+              pdfUrl: property.contract.pdfUrl
+          }
+      }
+
+      //delete property with same name
+      let data = properties.filter(el => el.name !== property.name)
+      console.log(data)
+      data.push(temp)
+      let payload = {
+          data: data
+      }
+      
+      const docRef = doc(db, 'properties', uid)
+      await setDoc(docRef, payload)
+      return true
+
+    } catch (err) {
+      console.log(err)
+      return false
+    } 
+}
+
 /* get list of properties */
 const getProperties = async(uid) => {
     try {
@@ -212,4 +252,4 @@ const getProperties = async(uid) => {
 }
 
 
-export { addFirst, isFirstFirebase, getProperties, addProperty }
+export { addFirst, isFirstFirebase, getProperties, addProperty, updateNewContract, updateSameContract }
