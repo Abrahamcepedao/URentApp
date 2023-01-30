@@ -557,7 +557,9 @@ const AddProperty: NextPage = () => {
 
                         {/* Save or cancel property */}
                         <div className={styles.actions__container} style={{marginTop: property.status ? "0px": "30px"}}>
-                            <button className={styles.cancel__btn} onClick={handleCancelClick}>Terminar contrato</button>    
+                            {property.status && (
+                                <button className={styles.cancel__btn} onClick={handleCancelClick}>Terminar contrato</button>    
+                            )}
                             <button className={styles.save__btn} onClick={handleSaveClick}>Guardar cambios</button>
                         </div>
                     </div>
