@@ -16,120 +16,192 @@ const isFirstFirebase = async(uid) => {
 
 /* add first property */
 const addFirst = async(property,uid) => {
-    const file = property.contract.pdf
+    if(property.status){
+      const file = property.contract.pdf
     
-    const storageRef = ref(storage, `files/${uid}/${property.type}/${property.contract.pdfName}`)
-    
-    const uploadTask = uploadBytesResumable(storageRef, file);
-    uploadTask.on("state_changed",
-      (snapshot) => {
-        const progress =
-          Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100);
-        console.log(progress);
-      },
-      (error) => {
-        console.log(error);
-        return false
-      },
-      () => {
-        getDownloadURL(uploadTask.snapshot.ref).then(async (downloadURL) => {
-          //upload property to firestore
-            try {
-                console.log(downloadURL)
-                const temp = {
-                    name: property.name,
-                    type: property.type,
-                    status: property.status,
-                    tenant: {
-                        name: property.tenant.name,
-                        razon: property.tenant.razon,
-                        phone: property.tenant.phone,
-                        mail: property.tenant.mail,
-                    },
-                    contract: {
-                        start: property.contract.start,
-                        end: property.contract.end,
-                        type: property.contract.type,
-                        cost: property.contract.cost,
-                        pdfName: property.contract.pdfName,
-                        pdfUrl: downloadURL
-                    }
-                }
-                let data = []
-                data.push(temp)
-                let payload = {
-                    data: data
-                }
-                const docRef = doc(db, 'properties', uid)
-                await setDoc(docRef, payload)
-                return payload.data
-            } catch (err) {
-                console.log(err)
-                return false
-            }
-        });
+      const storageRef = ref(storage, `files/${uid}/${property.type}/${property.contract.pdfName}`)
+      
+      const uploadTask = uploadBytesResumable(storageRef, file);
+      uploadTask.on("state_changed",
+        (snapshot) => {
+          const progress =
+            Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100);
+          console.log(progress);
+        },
+        (error) => {
+          console.log(error);
+          return false
+        },
+        () => {
+          getDownloadURL(uploadTask.snapshot.ref).then(async (downloadURL) => {
+            //upload property to firestore
+              try {
+                  console.log(downloadURL)
+                  const temp = {
+                      name: property.name,
+                      type: property.type,
+                      status: property.status,
+                      tenant: {
+                          name: property.tenant.name,
+                          razon: property.tenant.razon,
+                          phone: property.tenant.phone,
+                          mail: property.tenant.mail,
+                      },
+                      contract: {
+                          start: property.contract.start,
+                          end: property.contract.end,
+                          type: property.contract.type,
+                          cost: property.contract.cost,
+                          pdfName: property.contract.pdfName,
+                          pdfUrl: downloadURL
+                      }
+                  }
+                  let data = []
+                  data.push(temp)
+                  let payload = {
+                      data: data
+                  }
+                  const docRef = doc(db, 'properties', uid)
+                  await setDoc(docRef, payload)
+                  return payload.data
+              } catch (err) {
+                  console.log(err)
+                  return false
+              }
+          });
+        }
+      );
+    } else {
+      try {
+          const temp = {
+              name: property.name,
+              type: property.type,
+              status: property.status,
+              tenant: {
+                  name: "",
+                  razon: "",
+                  phone: "",
+                  mail: "",
+              },
+              contract: {
+                  start: "",
+                  end: "",
+                  type: "",
+                  cost: 0,
+                  pdfName: "",
+                  pdfUrl: ""
+              }
+          }
+          let data = []
+          data.push(temp)
+          let payload = {
+              data: data
+          }
+          const docRef = doc(db, 'properties', uid)
+          await setDoc(docRef, payload)
+          return payload.data
+      } catch (err) {
+          console.log(err)
+          return false
       }
-    );
+    }
+    
   
     return true
 }
 
 /* add property (not first) */
 const addProperty = async(properties, property, uid) => {
-    const file = property.contract.pdf
-    const storageRef = ref(storage, `files/${uid}/${property.type}/${property.contract.pdfName}`)
-    const uploadTask = uploadBytesResumable(storageRef, file);
+    if(property.status) {
+      const file = property.contract.pdf
+      const storageRef = ref(storage, `files/${uid}/${property.type}/${property.contract.pdfName}`)
+      const uploadTask = uploadBytesResumable(storageRef, file);
 
-    uploadTask.on("state_changed",
-      (snapshot) => {
-        const progress =
-          Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100);
-        console.log(progress);
-      },
-      (error) => {
-        console.log(error);
-        return false
-      },
-      () => {
-        getDownloadURL(uploadTask.snapshot.ref).then(async (downloadURL) => {
-          //upload property to firestore
-            try {
-                console.log(downloadURL)
-                const temp = {
-                    name: property.name,
-                    type: property.type,
-                    status: property.status,
-                    tenant: {
-                        name: property.tenant.name,
-                        razon: property.tenant.razon,
-                        phone: property.tenant.phone,
-                        mail: property.tenant.mail,
-                    },
-                    contract: {
-                        start: property.contract.start,
-                        end: property.contract.end,
-                        type: property.contract.type,
-                        cost: property.contract.cost,
-                        pdfName: property.contract.pdfName,
-                        pdfUrl: downloadURL
-                    }
-                }
-                let data = properties
-                data.push(temp)
-                let payload = {
-                    data: data
-                }
-                console.log(payload)
-                const docRef = doc(db, 'properties', uid)
-                await setDoc(docRef, payload)
-                return payload.data
-            } catch (err) {
-                console.log(err)
-                return false
-            }
-        });
+      uploadTask.on("state_changed",
+        (snapshot) => {
+          const progress =
+            Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100);
+          console.log(progress);
+        },
+        (error) => {
+          console.log(error);
+          return false
+        },
+        () => {
+          getDownloadURL(uploadTask.snapshot.ref).then(async (downloadURL) => {
+            //upload property to firestore
+              try {
+                  console.log(downloadURL)
+                  const temp = {
+                      name: property.name,
+                      type: property.type,
+                      status: property.status,
+                      tenant: {
+                          name: property.tenant.name,
+                          razon: property.tenant.razon,
+                          phone: property.tenant.phone,
+                          mail: property.tenant.mail,
+                      },
+                      contract: {
+                          start: property.contract.start,
+                          end: property.contract.end,
+                          type: property.contract.type,
+                          cost: property.contract.cost,
+                          pdfName: property.contract.pdfName,
+                          pdfUrl: downloadURL
+                      }
+                  }
+                  let data = properties
+                  data.push(temp)
+                  let payload = {
+                      data: data
+                  }
+                  console.log(payload)
+                  const docRef = doc(db, 'properties', uid)
+                  await setDoc(docRef, payload)
+                  return payload.data
+              } catch (err) {
+                  console.log(err)
+                  return false
+              }
+          });
+        }
+      );
+    } else {
+      try {
+          const temp = {
+              name: property.name,
+              type: property.type,
+              status: property.status,
+              tenant: {
+                  name: "",
+                  razon: "",
+                  phone: "",
+                  mail: "",
+              },
+              contract: {
+                  start: "",
+                  end: "",
+                  type: "",
+                  cost: 0,
+                  pdfName: "",
+                  pdfUrl: ""
+              }
+          }
+          let data = properties
+          data.push(temp)
+          let payload = {
+              data: data
+          }
+          const docRef = doc(db, 'properties', uid)
+          await setDoc(docRef, payload)
+          return payload.data
+      } catch (err) {
+          console.log(err)
+          return false
       }
-    );
+    }
+    
 
     return true
 }

@@ -27,7 +27,13 @@ import FilterAltRoundedIcon from '@mui/icons-material/FilterAltRounded';
 import AddCircleRoundedIcon from '@mui/icons-material/AddCircleRounded';
 import DeleteRoundedIcon from '@mui/icons-material/DeleteRounded';
 import EditRoundedIcon from '@mui/icons-material/EditRounded';
-import Settings from '@mui/icons-material/Settings';
+import RefreshRoundedIcon from '@mui/icons-material/RefreshRounded';
+import ApartmentRoundedIcon from '@mui/icons-material/ApartmentRounded';
+import PersonRoundedIcon from '@mui/icons-material/PersonRounded';
+import MapsHomeWorkRoundedIcon from '@mui/icons-material/MapsHomeWorkRounded';
+import AttachMoneyRoundedIcon from '@mui/icons-material/AttachMoneyRounded';
+import QuestionMarkRoundedIcon from '@mui/icons-material/QuestionMarkRounded';
+import HighlightOffRoundedIcon from '@mui/icons-material/HighlightOffRounded';
 
 //Context
 import { useProperties } from '../context/PropertiesContext'
@@ -64,7 +70,7 @@ interface Property {
     start: string
     end: string,
     type: string,
-    cost: string,
+    cost: number,
     pdfName: string,
     pdfUrl: string,
     status: number
@@ -132,10 +138,35 @@ const Properties: NextPage = () => {
     
   }
 
-  /* filter menu functions */
+  /* handle filter change */
+  const handleFilterChange = (e:React.ChangeEvent<HTMLInputElement>) => {
+    let temp = state.properties.filter((pr:Property) => pr.name.toLocaleLowerCase().includes(e.target.value.toLocaleLowerCase()))
+    setState({...state, propertiesList: temp, filter: e.target.value})
+  }
+
+  /* order menu functions */
   const handleClick = (event:any) => {
     setAnchorEl(event.currentTarget);
   };
+
+  const handleOrderChange = (num:number) => {
+    let temp: Property[] = [...state.properties]
+    if(num === 0) {
+      temp.sort((a,b) => { return a.name < b.name ? -1 : 1})
+    } else if(num === 1){
+      temp.sort((a,b) => { return a.tenant.name < b.tenant.name ? -1 : 1})
+    } else if(num === 2){
+      temp.sort((a,b) => { return a.contract.type < b.contract.type ? -1 : 1})
+    } else if(num === 3){
+      temp.sort((a,b) => { return a.contract.cost < b.contract.cost ? -1 : 1})
+    } else if(num === 1){
+      temp.sort((a,b) => { return a.status < b.status ? -1 : 1})
+    } 
+
+    //@ts-ignore
+    setState({...state, propertiesList: temp})
+  }
+
   const handleClose = () => {
     setAnchorEl(null);
   };
@@ -170,10 +201,22 @@ const Properties: NextPage = () => {
               <div className={styles.header__actions}>
                 <div className={styles.filter__container}>
                   <SearchRoundedIcon className={dash.table__icon}/>
-                  <input placeholder='Nombre propiedad' className={styles.search__input}/>
+                  <input placeholder='Nombre propiedad' value={state.filter} onChange={(e) => {handleFilterChange(e)}} className={styles.search__input}/>
                 </div>
 
-                {/*  */}
+                {/* Refresh */}
+                <Tooltip title="Refrescar" placement='top'>
+                  <IconButton
+                    onClick={getProperties}
+                    aria-controls={open ? 'account-menu' : undefined}
+                    aria-haspopup="true"
+                    aria-expanded={open ? 'true' : undefined}
+                  >
+                    <RefreshRoundedIcon className={dash.header__icon}/>
+                  </IconButton>
+                </Tooltip>
+
+                {/* Filtrar */}
                 <Tooltip title="Filtrar" placement='top'>
                   <IconButton
                     onClick={(e) => {handleClick(e)}}
@@ -229,13 +272,13 @@ const Properties: NextPage = () => {
                         {item.type ? getPropertyType(item.type) : ""}
                     </div>
                     <div className={styles.header__cell}>
-                        {item.contract ? formatMoney(item.contract.cost) : "-"}
+                        {item.contract.cost !== 0 ? formatMoney(item.contract.cost) : "-"}
                     </div>
                     <div className={styles.header__cell__lg}>
-                        {item.status === 0 ? (
-                          <Chip title="Libre" background="#D24B4B" color="#9F3838"/>
+                        {!item.status ? (
+                          <Chip title="Libre" background="#D24B4B" color="#782C2C"/>
                         ) : (
-                          <Chip title="En renta" background="#31B73F" color="#21812B"/>
+                          <Chip title="En renta" background="#31B73F" color="#18571F"/>
                         )}
                         <div className={styles.cell__btns}>
                             <Tooltip title="Editar propiedad" placement='top'>
@@ -301,12 +344,41 @@ const Properties: NextPage = () => {
         transformOrigin={{ horizontal: 'right', vertical: 'top' }}
         anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
       >
-        
-        <MenuItem onClick={handleClose}>
+        <MenuItem onClick={() => {handleOrderChange(-1)}}>
           <ListItemIcon>
-            <Settings fontSize="small" />
+            <HighlightOffRoundedIcon fontSize="small" />
           </ListItemIcon>
-          Settings
+          Quitar filtros
+        </MenuItem>
+        <MenuItem onClick={() => {handleOrderChange(0)}}>
+          <ListItemIcon>
+            <ApartmentRoundedIcon fontSize="small" />
+          </ListItemIcon>
+          Nombre
+        </MenuItem>
+        <MenuItem onClick={() => {handleOrderChange(1)}}>
+          <ListItemIcon>
+            <PersonRoundedIcon fontSize="small" />
+          </ListItemIcon>
+          Arrendatario
+        </MenuItem>
+        <MenuItem onClick={() => {handleOrderChange(2)}}>
+          <ListItemIcon>
+            <MapsHomeWorkRoundedIcon fontSize="small" />
+          </ListItemIcon>
+          Tipo
+        </MenuItem>
+        <MenuItem onClick={() => {handleOrderChange(3)}}>
+          <ListItemIcon>
+            <AttachMoneyRoundedIcon fontSize="small" />
+          </ListItemIcon>
+          Costo
+        </MenuItem>
+        <MenuItem onClick={() => {handleOrderChange(4)}}>
+          <ListItemIcon>
+            <QuestionMarkRoundedIcon fontSize="small" />
+          </ListItemIcon>
+          Estatus
         </MenuItem>
        
       </Menu>
