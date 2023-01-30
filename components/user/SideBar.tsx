@@ -20,6 +20,7 @@ import MapsHomeWorkRoundedIcon from '@mui/icons-material/MapsHomeWorkRounded';
 import PeopleRoundedIcon from '@mui/icons-material/PeopleRounded';
 import SettingsRoundedIcon from '@mui/icons-material/SettingsRounded';
 import LogoutRoundedIcon from '@mui/icons-material/LogoutRounded';
+import PaymentsRoundedIcon from '@mui/icons-material/PaymentsRounded';
 
 const SideBar = () => {
     //router
@@ -43,6 +44,10 @@ const SideBar = () => {
                 <Link className={styles.tab} href="/properties">
                     <MapsHomeWorkRoundedIcon className={styles.tab__icon}/>
                     <p className={styles.tab__label} style={{opacity: router.pathname === '/properties' ? 1 : 0.5}}>Propiedades</p>
+                </Link>
+                <Link className={styles.tab} href="/payments">
+                    <MapsHomeWorkRoundedIcon className={styles.tab__icon}/>
+                    <p className={styles.tab__label} style={{opacity: router.pathname === '/payments' ? 1 : 0.5}}>Pagos</p>
                 </Link>
                 <Link className={styles.tab} href="/users">
                     <PeopleRoundedIcon className={styles.tab__icon}/>
