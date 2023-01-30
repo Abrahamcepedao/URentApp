@@ -215,7 +215,7 @@ const AddProperty: NextPage = () => {
             //@ts-ignore
             if(validPdf(e.target.files[0])) {
                 //@ts-ignore
-                setContract({...contract, pdf: e.target.files[0], pdfName: e.target.files[0].name});
+                setContract({...contract, pdf: e.target.files[0], newPdfName: e.target.files[0].name});
             } else {
                 //prompt error here
                 alert("El archivo debe ser de tipo PDF")
@@ -332,7 +332,8 @@ const AddProperty: NextPage = () => {
     }
 
     const handleSaveClick = async() => {
-       if(checkChanges()){
+        setUtils({...utils, error: "", loading: true})
+        if(checkChanges()){
             //changes exist
             //update changes
             if(contract.newPdfName !== ""){
@@ -352,11 +353,20 @@ const AddProperty: NextPage = () => {
                         end: contract.end,
                         type: contract.type,
                         cost: contract.cost,
-                        pdfName: contract.newPdfName,
+                        pdfName: contract.pdfName,
+                        newPdfName: contract.newPdfName,
                         pdf: contract.pdf
                     }       
                 }
-                await updateProperty(temp, true)
+                const res = await updateProperty(temp, true)
+                if(res) {
+                    //alert success
+                    setUtils({...utils, error: "", loading: false})
+                    router.push('/properties')
+                } else {
+                    //alert error
+                    setUtils({...utils, error: "Ocurrión un error al subir la propiedad", loading: false})
+                }
             } else {
                 //update with same contract
                 let temp = {
@@ -378,11 +388,19 @@ const AddProperty: NextPage = () => {
                         pdfUrl: contract.pdfUrl
                     }       
                 }
-                await updateProperty(temp, false)
+                const res = await updateProperty(temp, false)
+                if(res) {
+                    //alert success
+                    setUtils({...utils, error: "", loading: false})
+                    router.push('/properties')
+                } else {
+                    //alert error
+                    setUtils({...utils, error: "Ocurrión un error al subir la propiedad", loading: false})
+                }
             }
        } else {
             //there are no changes
-            setUtils({...utils, error: "No se han hecho cambios"})
+            setUtils({...utils, error: "No se han hecho cambios", loading: false})
        }
     }
 
@@ -501,7 +519,7 @@ const AddProperty: NextPage = () => {
                                     <div className={styles.input__container}>
                                         <p className={styles.input__label}>PDF de contrato</p>
                                         {contract.pdfUrl !== "" && (
-                                            <Tooltip title="Descargar" placement='top'>
+                                            <Tooltip title={contract.pdfName} placement='top'>
                                                 <IconButton onClick={() => {openInNewTab(contract.pdfUrl)}}>
                                                     <DownloadRoundedIcon className={dash.table__icon}/>
                                                 </IconButton>
@@ -541,32 +559,10 @@ const AddProperty: NextPage = () => {
                         <div className={styles.actions__container} style={{marginTop: property.status ? "0px": "30px"}}>
                             <button className={styles.cancel__btn} onClick={handleCancelClick}>Terminar contrato</button>    
                             <button className={styles.save__btn} onClick={handleSaveClick}>Guardar cambios</button>
-                            
-                            
                         </div>
-
                     </div>
                 </div>
             </div>
-            <Dialog
-                fullScreen={fullScreen}
-                open={utils.open}
-                onClose={handleClose}
-                aria-labelledby="responsive-dialog-title"
-            >
-                <DialogTitle id="responsive-dialog-title">
-                {"¡Propiedad agregada con éxito!"}
-                </DialogTitle>
-                <DialogContent>
-                <DialogContentText>
-                    ¿Deseas agregar una nueva propiedad o regresar a la lista de propiedades?
-                </DialogContentText>
-                </DialogContent>
-                <DialogActions>
-                    <button className={styles.cancel__fill__btn} onClick={handleReturnClick}>Regresar</button>
-                    <button className={styles.save__fill__btn} onClick={handleClose}>Agregar</button>
-                </DialogActions>
-            </Dialog>
         </main>
         </div>
     )

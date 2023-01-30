@@ -238,12 +238,12 @@ const Properties: NextPage = () => {
                           <Chip title="En renta" background="#31B73F" color="#21812B"/>
                         )}
                         <div className={styles.cell__btns}>
-                            <Tooltip title="Editar usuario" placement='top'>
+                            <Tooltip title="Editar propiedad" placement='top'>
                                 <IconButton onClick={() => {handleEditClick(item)}}>
                                     <EditRoundedIcon className={dash.table__icon}/>
                                 </IconButton>
                             </Tooltip>
-                            <Tooltip title="Eliminar usuario" placement='top'>
+                            <Tooltip title="Eliminar propiedad" placement='top'>
                                 <IconButton>
                                     <DeleteRoundedIcon className={dash.table__icon}/>
                                 </IconButton>
