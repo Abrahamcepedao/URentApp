@@ -139,7 +139,7 @@ const addProperty = async(properties, property, uid) => {
 const updateNewContract = async(properties, property, uid) => {
   const file = property.contract.pdf
   console.log(file)
-  const storageRef = ref(storage, `files/${uid}/${property.type}/${property.contract.pdfName}`)
+  const storageRef = ref(storage, `files/${uid}/${property.type}/${property.contract.newPdfName}`)
   console.log(storageRef)
   const uploadTask = uploadBytesResumable(storageRef, file);
   uploadTask.on("state_changed",
@@ -172,12 +172,12 @@ const updateNewContract = async(properties, property, uid) => {
                       end: property.contract.end,
                       type: property.contract.type,
                       cost: property.contract.cost,
-                      pdfName: property.contract.pdfName,
+                      pdfName: property.contract.newPdfName,
                       pdfUrl: downloadURL
                   }
               }
               //delete property with same name
-              let data = properties.filter(el => el.name === property.name)
+              let data = properties.filter(el => el.name !== property.name)
               
               data.push(temp)
               let payload = {
@@ -185,6 +185,14 @@ const updateNewContract = async(properties, property, uid) => {
               }
               const docRef = doc(db, 'properties', uid)
               await setDoc(docRef, payload)
+
+              //delete other PDF
+              const deleteRef = ref(storage, `files/${uid}/${property.type}/${property.contract.pdfName}`)
+              await deleteObject(deleteRef).then(() => {
+                console.log("File deleted")
+              }).catch((err) => {
+                console.log(err.message)
+              })
               return true
           } catch (err) {
               console.log(err)
