@@ -106,7 +106,7 @@
 /* table */
 .payments__table {
     width: 100%;
-    max-width: 1000px;
+    max-width: 1300px;
     margin: auto;
     margin-top: 50px;
 }
@@ -116,15 +116,23 @@
     align-items: center;
     opacity: 0.5;
 }
+.table__row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
 
 .header__cell {
-    width: 200px;
+    width: 250px;
+    margin-right: 5px;
 }
 .header__cell__sm {
     width: 100px;
+    margin-right: 5px;
 }
 .header__cell__lg {
-    flex: 1;
+    //flex: 1;
+    width: 150px;
     display: flex;
     justify-content: space-between;
     align-items: center;
