@@ -4,6 +4,9 @@ import React, { useState, useEffect } from 'react'
 //next
 import type { NextPage } from 'next'
 import Head from 'next/head'
+import Link from 'next/link'
+
+//CSS
 import dash from '../styles/Dashboard.module.css'
 import styles from '../styles/Payments.module.css'
 
@@ -22,14 +25,20 @@ import EditRoundedIcon from '@mui/icons-material/EditRounded';
 import HighlightOffRoundedIcon from '@mui/icons-material/HighlightOffRounded';
 import FileUploadRoundedIcon from '@mui/icons-material/FileUploadRounded';
 import ErrorRoundedIcon from '@mui/icons-material/ErrorRounded';
+import FileDownloadRoundedIcon from '@mui/icons-material/FileDownloadRounded';
+import FilterListRoundedIcon from '@mui/icons-material/FilterListRounded';
 
-//constant
+//Constants
 import months from '../components/utils/constants/months'
 import methods from '../components/utils/constants/methods'
+
+//Utils
+import getMethod from '../components/utils/functions/getMethod'
 
 //Context
 import { useAuth } from '../context/AuthContext'
 import { useProperties } from '../context/PropertiesContext'
+import openInNewTab from '../components/utils/functions/openInNewTab'
 
 //interfaces
 interface Payment {
@@ -82,6 +91,7 @@ const Payments: NextPage = () => {
     //useState
     const [state, setState] = useState({
         payments: [],
+        paymentsList: [],
         addOpen: false,
         open: false,
         error: "",
@@ -94,7 +104,7 @@ const Payments: NextPage = () => {
         year: 0,
         property: "",
         amount: 0,
-        method: "",
+        method: "cash",
         file: "",
         fileName: "",
         comment: ""
@@ -116,7 +126,17 @@ const Payments: NextPage = () => {
     const setUp = () => {
         if(properties.length !== 0){
             let temp = properties.filter((pr:Property) => { return pr.status})
-            setState({...state, properties: temp})
+            let payments:Payment[] = []
+            temp.forEach((item:Property) => {
+                if(item.payments){
+                    item.payments.forEach((payment:Payment) => {
+                        payments.push({...payment, property: item.name})
+                    })
+                }
+            })
+
+            //@ts-ignore
+            setState({...state, properties: temp, payments: payments, paymentsList: payments})
 
             //formData
             let today = new Date()
@@ -137,10 +157,18 @@ const Payments: NextPage = () => {
         if(data !== false) {
             //set properties state
             let temp = data.filter((pr:Property) => pr.status)
-            setState({
-                ...state,
-                properties: temp
+            let payments:Payment[] = []
+            temp.forEach((item:Property) => {
+                if(item.payments){
+                    item.payments.forEach((payment:Payment) => {
+                        payments.push({...payment, property: item.name})
+                    })
+                }
             })
+
+            //@ts-ignore
+            setState({...state, properties: temp, payments: payments, paymentsList: payments})
+
             //formData
             let today = new Date()
             let date = today.toISOString().split('T')[0]
@@ -206,11 +234,13 @@ const Payments: NextPage = () => {
                     file: formData.file,
                     comment: formData.comment
                 }
+                console.log(temp)
                 const res = await addPayment(pr,temp)
                 if(res) {
                     //alert success
                     setState({...state, error: "",  open: true})
                     setFormData({...formData, file: "", fileName: "", comment: ""})
+                    await getProperties()
                 } else {
                     //alert error
                     setState({...state, error: "Ocurrió un error al registrar el pago"})
@@ -263,7 +293,7 @@ const Payments: NextPage = () => {
                                             name="type" 
                                             id="type"
                                             className={styles.input}
-                                            value={formData.month}
+                                            value={formData.property}
                                             onChange={(e) => {handlePropertyChange(e)}}
                                         >
                                            {state.properties.map((item:Property, i) => (
@@ -317,7 +347,7 @@ const Payments: NextPage = () => {
                                             onChange={(e) => {setFormData({...formData, method: e.target.value})}}
                                         >
                                            {methods.map((item, i) => (
-                                                <option key={i} value={item}>{item}</option>
+                                                <option key={i} value={item.val}>{item.txt}</option>
                                            ))}
                                         </select>
                                     </div>
@@ -371,6 +401,9 @@ const Payments: NextPage = () => {
                                 <div className={styles.header__cell__sm}>
                                     Monto
                                 </div>
+                                <div className={styles.header__cell__sm}>
+                                    Método
+                                </div>
                                 <div className={styles.header__cell}>
                                     Comentario
                                 </div>
@@ -380,7 +413,57 @@ const Payments: NextPage = () => {
                             </div>
 
                             {/* table rows */}
-                           
+                            {state.paymentsList.length !== 0 ? state.paymentsList.map((item:Payment, i) => (
+                                <div key={i} className={styles.table__row}>
+                                    <div className={styles.header__cell}>
+                                        {item.property.length > 25 ? item.property.substring(0,25) + "..." : item.property}
+                                    </div>
+                                    <div className={styles.header__cell__sm}>
+                                        {item.date}
+                                    </div>
+                                    <div className={styles.header__cell__sm}>
+                                        {item.year}
+                                    </div>
+                                    <div className={styles.header__cell__sm}>
+                                        {item.month}
+                                    </div>
+                                    <div className={styles.header__cell__sm}>
+                                        {item.amount}
+                                    </div>
+                                    <div className={styles.header__cell__sm}>
+                                        {getMethod(item.method)}
+                                    </div>
+                                    <div className={styles.header__cell}>
+                                        {item.comment.length > 25 ? item.comment.substring(0,25) + "..." : item.comment}
+                                    </div>
+
+                                    <div className={styles.header__cell__lg}>
+                                        <div className={styles.cell__btns}>
+                                            <Tooltip title={item.fileName} placement='top'>
+                                                <IconButton disabled={item.fileUrl === ""} onClick={() => {openInNewTab(item.fileUrl)}}>
+                                                    <FileDownloadRoundedIcon className={dash.table__icon}/>
+                                                </IconButton>
+                                            </Tooltip>
+                                            <Tooltip title="Editar pago" placement='top'>
+                                                <IconButton>
+                                                    <EditRoundedIcon className={dash.table__icon}/>
+                                                </IconButton>
+                                            </Tooltip>
+                                            <Tooltip title="Eliminar pago" placement='top'>
+                                                <IconButton>
+                                                    <DeleteRoundedIcon className={dash.table__icon}/>
+                                                </IconButton>
+                                            </Tooltip>
+                                        </div>
+                                    </div>
+                                </div>
+                            )) : (
+                                <div className={styles.table__row}>
+                                <div className={styles.header__cell}>
+                                    Todavía no hay propiedades
+                                </div>
+                                </div>
+                            )}
                         </div>
                     </div>
                 </div>

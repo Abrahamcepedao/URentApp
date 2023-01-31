@@ -1,10 +1,28 @@
 const methods = [
-    "Efectivo",
-    "Transferencia",
-    "Depósito bancario",
-    "Tarjeta (crédtio/débito)",
-    "Plataforma digital",
-    "Otro"
+    {
+        val: "cash",
+        txt: "Efectivo"
+    },
+    {
+        val: "trans",
+        txt: "Transferencia"
+    },
+    {
+        val: "dep",
+        txt: "Depósito bancario"
+    },
+    {
+        val: "card",
+        txt: "Tarjeta (crédtio/débito)"
+    },
+    {
+        val: "plat",
+        txt: "Plataforma digital"  
+    },
+    {
+        val: "other",
+        txt: "Otro"
+    }
 ]
 
 export default methods
