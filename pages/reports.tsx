@@ -83,7 +83,7 @@ const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
 });
 
 //Dashboard page
-const Payments: NextPage = () => {
+const Reports: NextPage = () => {
     //Context
     const { user } = useAuth()
     const { properties, fecthProperties, addPayment } = useProperties()
@@ -265,7 +265,7 @@ const Payments: NextPage = () => {
                     <div className={styles.inner__container}>
                         {/* header */}
                         <div className={styles.payments__header}>
-                            <p className={dash.subtitle}>Registrar pagos</p>
+                            <p className={dash.subtitle}>Registrar reportes</p>
                             {state.addOpen ? (
                                 <Tooltip title="Cerrar">
                                     <IconButton onClick={() => {setState({...state, addOpen: false})}}>
@@ -459,9 +459,9 @@ const Payments: NextPage = () => {
                                 </div>
                             )) : (
                                 <div className={styles.table__row}>
-                                    <div className={styles.header__cell}>
-                                        Todavía no hay propiedades
-                                    </div>
+                                <div className={styles.header__cell}>
+                                    Todavía no hay propiedades
+                                </div>
                                 </div>
                             )}
                         </div>
@@ -479,4 +479,4 @@ const Payments: NextPage = () => {
     )
 }
 
-export default Payments
+export default Reports

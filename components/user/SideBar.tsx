@@ -21,6 +21,7 @@ import PeopleRoundedIcon from '@mui/icons-material/PeopleRounded';
 import SettingsRoundedIcon from '@mui/icons-material/SettingsRounded';
 import LogoutRoundedIcon from '@mui/icons-material/LogoutRounded';
 import PaymentsRoundedIcon from '@mui/icons-material/PaymentsRounded';
+import StickyNote2RoundedIcon from '@mui/icons-material/StickyNote2Rounded';
 
 const SideBar = () => {
     //router
@@ -48,6 +49,10 @@ const SideBar = () => {
                 <Link className={styles.tab} href="/payments">
                     <PaymentsRoundedIcon className={styles.tab__icon}/>
                     <p className={styles.tab__label} style={{opacity: router.pathname === '/payments' ? 1 : 0.5}}>Pagos</p>
+                </Link>
+                <Link className={styles.tab} href="/reports">
+                    <StickyNote2RoundedIcon className={styles.tab__icon}/>
+                    <p className={styles.tab__label} style={{opacity: router.pathname === '/reports' ? 1 : 0.5}}>Reportes</p>
                 </Link>
                 <Link className={styles.tab} href="/users">
                     <PeopleRoundedIcon className={styles.tab__icon}/>
