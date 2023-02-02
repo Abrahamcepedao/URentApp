@@ -20,6 +20,13 @@ import { Tooltip, IconButton } from '@mui/material'
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import ListItemIcon from '@mui/material/ListItemIcon';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
+import useMediaQuery from '@mui/material/useMediaQuery';
+import { useTheme } from '@mui/material/styles';
 
 //Material UI - icons
 import SearchRoundedIcon from '@mui/icons-material/SearchRounded';
@@ -43,53 +50,27 @@ import formatMoney from '../components/utils/functions/formatMoney'
 import getPropertyType from '../components/utils/functions/getPropertyType'
 
 //interfaces
-interface Rent {
-  name: string,
-  razon: string,
-  phone: string,
-  mail: string,
-  date: string,
-  end: string,
-  type: string,
-  cost: number,
-  pdfName: string,
-  pdfUrl: string
-}
-
-interface Property {
-  name: string,
-  type: string,
-  status: number,
-  tenant: {
-    name: string,
-    razon: string,
-    phone: string,
-    mail: string,
-  },
-  contract: {
-    start: string
-    end: string,
-    type: string,
-    cost: number,
-    pdfName: string,
-    pdfUrl: string,
-    status: number
-  }
-}
+import Property from '../components/utils/interfaces/Property'
 
 //Dashboard page
 const Properties: NextPage = () => {
   //Context
-  const { properties, fecthProperties, isFirst, checkIfFirst, updateEditProperty } = useProperties()
+  const { properties, fecthProperties, isFirst, checkIfFirst, updateEditProperty, deleteProperty } = useProperties()
 
   //Router
   const router = useRouter()
+
+  //Material UI
+  const theme = useTheme();
+  const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
 
   //useState - properties
   const [state, setState] = useState({
     properties: [],
     propertiesList: [],
-    filter: ""
+    filter: "",
+    deleteOpen: false,
+    deleteProperty: ""
   })
 
   //useState - menu
@@ -158,8 +139,8 @@ const Properties: NextPage = () => {
     } else if(num === 2){
       temp.sort((a,b) => { return a.contract.type < b.contract.type ? -1 : 1})
     } else if(num === 3){
-      temp.sort((a,b) => { return a.contract.cost < b.contract.cost ? -1 : 1})
-    } else if(num === 1){
+      temp.sort((a,b) => { return a.contract.bruta < b.contract.bruta ? -1 : 1})
+    } else if(num === 4){
       temp.sort((a,b) => { return a.status < b.status ? -1 : 1})
     } 
 
@@ -175,6 +156,31 @@ const Properties: NextPage = () => {
   const handleEditClick = (property:Property) => {
     updateEditProperty(property)
     router.push(`/edit_property`)
+  }
+
+  /* handle delete property click */
+  const handleDeleteClick = (property:string) => {
+    console.log(property)
+    setState({...state, deleteProperty: property, deleteOpen: true})
+  }
+
+  /* handle cancel click */
+  const handleCancelClick = () => {
+    //@ts-ignore
+    setState({...state, deleteProperty: "", deleteOpen: false})
+  }
+
+  /* handle delete property */
+  const handleDeleteProperty = async() => {
+    const res = await deleteProperty(state.deleteProperty)
+    if(res !== false){
+      console.log(res)
+      setState({...state, properties: res, propertiesList: res, deleteOpen: false})
+    } else {
+      //alert error
+      console.log("error")
+      setState({...state, deleteOpen: false})
+    }
   }
 
   return (
@@ -248,11 +254,14 @@ const Properties: NextPage = () => {
                 <div className={styles.header__cell}>
                     Arrendatario
                 </div>
-                <div className={styles.header__cell}>
+                <div className={styles.header__cell__sm}>
                     Tipo
                 </div>
-                <div className={styles.header__cell}>
-                    Costo
+                <div className={styles.header__cell__sm}>
+                    R. Bruta
+                </div>
+                <div className={styles.header__cell__sm}>
+                    R. Neta
                 </div>
                 <div className={styles.header__cell__lg}>
                     Estatus
@@ -263,16 +272,19 @@ const Properties: NextPage = () => {
               {state.propertiesList.length !== 0 ? state.propertiesList.map((item:Property, i) => (
                 <div key={i} className={styles.table__row}>
                     <div className={styles.header__cell}>
-                        {item.name}
+                        {item.name.length > 25 ? item.name.substring(0,25)+"..." : item.name }
                     </div>
                     <div className={styles.header__cell}>
                         {item.tenant.name ? item.tenant.name : "-"}
                     </div>
-                    <div className={styles.header__cell}>
+                    <div className={styles.header__cell__sm}>
                         {item.type ? getPropertyType(item.type) : ""}
                     </div>
-                    <div className={styles.header__cell}>
-                        {item.contract.cost !== 0 ? formatMoney(item.contract.cost) : "-"}
+                    <div className={styles.header__cell__sm}>
+                        {item.contract.bruta !== 0 ? formatMoney(item.contract.bruta) : "-"}
+                    </div>
+                    <div className={styles.header__cell__sm}>
+                        {item.contract.neta !== 0 ? formatMoney(item.contract.neta) : "-"}
                     </div>
                     <div className={styles.header__cell__lg}>
                         {!item.status ? (
@@ -287,7 +299,7 @@ const Properties: NextPage = () => {
                                 </IconButton>
                             </Tooltip>
                             <Tooltip title="Eliminar propiedad" placement='top'>
-                                <IconButton>
+                                <IconButton onClick={() => {handleDeleteClick(item.name)}}>
                                     <DeleteRoundedIcon className={dash.table__icon}/>
                                 </IconButton>
                             </Tooltip>
@@ -307,6 +319,26 @@ const Properties: NextPage = () => {
           </div>
         </div>
       </main>
+      {/* Dialog */}
+      <Dialog
+          fullScreen={fullScreen}
+          open={state.deleteOpen}
+          onClose={handleClose}
+          aria-labelledby="responsive-dialog-title"
+      >
+          <DialogTitle id="responsive-dialog-title">
+          {`¿Esta seguro de querer eliminar la propiedad: ${state.deleteProperty}?`}
+          </DialogTitle>
+          <DialogContent>
+          <DialogContentText>
+              Esta acción no se puede deshacer
+          </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+              <button className={styles.cancel__fill__btn} onClick={handleCancelClick}>Cancelar</button>
+              <button className={styles.save__fill__btn} onClick={handleDeleteProperty}>Eliminar</button>
+          </DialogActions>
+      </Dialog>
 
       {/* Menu */}
       <Menu
@@ -372,7 +404,7 @@ const Properties: NextPage = () => {
           <ListItemIcon>
             <AttachMoneyRoundedIcon fontSize="small" />
           </ListItemIcon>
-          Costo
+          Renta 
         </MenuItem>
         <MenuItem onClick={() => {handleOrderChange(4)}}>
           <ListItemIcon>

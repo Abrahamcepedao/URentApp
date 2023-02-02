@@ -34,6 +34,7 @@ import methods from '../components/utils/constants/methods'
 
 //Utils
 import getMethod from '../components/utils/functions/getMethod'
+import formatMoney from '../components/utils/functions/formatMoney'
 
 //Context
 import { useAuth } from '../context/AuthContext'
@@ -41,38 +42,9 @@ import { useProperties } from '../context/PropertiesContext'
 import openInNewTab from '../components/utils/functions/openInNewTab'
 
 //interfaces
-interface Payment {
-    date: string,
-    month: string,
-    year: number,
-    amount: number,
-    method: number,
-    fileName: string,
-    fileUrl: string,
-    comment: string,
-    property: string
-}
-interface Property {
-  name: string,
-  type: string,
-  status: number,
-  tenant: {
-    name: string,
-    razon: string,
-    phone: string,
-    mail: string,
-  },
-  contract: {
-    start: string
-    end: string,
-    type: string,
-    cost: number,
-    pdfName: string,
-    pdfUrl: string,
-    status: number
-  },
-  payments: Payment[]
-}
+import Property from '../components/utils/interfaces/Property'
+import Payment from '../components/utils/interfaces/Payment'
+
 
 //Alert
 const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
@@ -103,7 +75,8 @@ const Payments: NextPage = () => {
         month: "",
         year: 0,
         property: "",
-        amount: 0,
+        bruta: 0,
+        neta: 0,
         method: "cash",
         file: "",
         fileName: "",
@@ -143,16 +116,16 @@ const Payments: NextPage = () => {
             let date = today.toISOString().split('T')[0]
             if(properties.length !== 0){
                 const pr:Property = properties[0]
-                setFormData({...formData, date: date, month: months[today.getMonth()].en, year: today.getFullYear(), property: pr.name, amount: pr.contract.cost})
+                setFormData({...formData, date: date, month: months[today.getMonth()].en, year: today.getFullYear(), property: pr.name, bruta: pr.contract.bruta, neta: pr.contract.neta})
             } else {
                 setFormData({...formData, date: date, month: months[today.getMonth()].en, year: today.getFullYear()})
             }
         } else {
-            getProperties()
+            getProperties(false)
         }
     }
 
-    const getProperties = async() => {
+    const getProperties = async(flag:boolean) => {
         let data = await fecthProperties()
         if(data !== false) {
             //set properties state
@@ -167,7 +140,8 @@ const Payments: NextPage = () => {
             })
 
             //@ts-ignore
-            setState({...state, properties: temp, payments: payments, paymentsList: payments})
+            setState({...state, properties: temp, payments: payments, paymentsList: payments, error: "", open: flag})
+            
 
             //formData
             let today = new Date()
@@ -175,9 +149,9 @@ const Payments: NextPage = () => {
             console.log(temp)
             if(temp.length !== 0){
                 const pr:Property = temp[0]
-                setFormData({...formData, date: date, month: months[today.getMonth()].en, year: today.getFullYear(), property: pr.name, amount: pr.contract.cost})
+                setFormData({...formData, date: date, month: months[today.getMonth()].en, year: today.getFullYear(), property: pr.name, bruta: pr.contract.bruta, neta: pr.contract.neta,file: "", fileName: "", comment: ""})
             } else {
-                setFormData({...formData, date: date, month: months[today.getMonth()].en, year: today.getFullYear()})
+                setFormData({...formData, date: date, month: months[today.getMonth()].en, year: today.getFullYear(),file: "", fileName: "", comment: ""})
             }
 
         } 
@@ -219,7 +193,8 @@ const Payments: NextPage = () => {
         return true
     }
 
-    const handleRegisterPayment = async() => {
+    const handleRegisterPayment = async(e:React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+        e.preventDefault()
         if(verifyData()){
             //save payment
             let pr:Property|undefined = state.properties.find((el:Property) => el.name === formData.property)
@@ -228,7 +203,8 @@ const Payments: NextPage = () => {
                     date: formData.date,
                     month: formData.month,
                     year: formData.year,
-                    amount: formData.amount,
+                    bruta: formData.bruta,
+                    neta: formData.neta,
                     method: formData.method,
                     fileName: formData.fileName,
                     file: formData.file,
@@ -238,9 +214,9 @@ const Payments: NextPage = () => {
                 const res = await addPayment(pr,temp)
                 if(res) {
                     //alert success
-                    setState({...state, error: "",  open: true})
-                    setFormData({...formData, file: "", fileName: "", comment: ""})
-                    await getProperties()
+                    //setState({...state, error: "",  open: true})
+                    //setFormData({...formData, file: "", fileName: "", comment: ""})
+                    getProperties(true)
                 } else {
                     //alert error
                     setState({...state, error: "Ocurrió un error al registrar el pago"})
@@ -267,7 +243,7 @@ const Payments: NextPage = () => {
                         <div className={styles.payments__header}>
                             <p className={dash.subtitle}>Registrar pagos</p>
                             {state.addOpen ? (
-                                <Tooltip title="Cerrar">
+                                <Tooltip title="Cerrar" placement='top'>
                                     <IconButton onClick={() => {setState({...state, addOpen: false})}}>
                                         <HighlightOffRoundedIcon className={dash.header__icon}/>
                                     </IconButton>
@@ -332,8 +308,12 @@ const Payments: NextPage = () => {
 
                                     {/* amount */}
                                     <div className={styles.input__container}>
-                                        <p className={styles.input__label}>Monto</p>
-                                        <input type="number" name='amount' value={formData.amount} onChange={(e) => {handleInputChange(e)}} className={styles.input}/>
+                                        <p className={styles.input__label}>Monto bruto</p>
+                                        <input type="number" name='bruta' value={formData.bruta} onChange={(e) => {handleInputChange(e)}} className={styles.input}/>
+                                    </div>
+                                    <div className={styles.input__container}>
+                                        <p className={styles.input__label}>Monto neto</p>
+                                        <input type="number" name='neta' value={formData.neta} onChange={(e) => {handleInputChange(e)}} className={styles.input}/>
                                     </div>
 
                                     {/* method */}
@@ -376,7 +356,7 @@ const Payments: NextPage = () => {
                                         <p className={styles.error__lbl}>{state.error}</p>
                                     </div>
                                 )}
-                                <button className={styles.save__btn} onClick={handleRegisterPayment}>
+                                <button className={styles.save__btn} onClick={(e) => {handleRegisterPayment(e)}}>
                                     Registrar pago
                                 </button>
                             </div>
@@ -399,7 +379,10 @@ const Payments: NextPage = () => {
                                     Mes
                                 </div>
                                 <div className={styles.header__cell__sm}>
-                                    Monto
+                                    P. Bruto
+                                </div>
+                                <div className={styles.header__cell__sm}>
+                                    P. Neto
                                 </div>
                                 <div className={styles.header__cell__sm}>
                                     Método
@@ -428,7 +411,10 @@ const Payments: NextPage = () => {
                                         {item.month}
                                     </div>
                                     <div className={styles.header__cell__sm}>
-                                        {item.amount}
+                                        {item.bruta !== 0 ? formatMoney(item.bruta) : "-"}
+                                    </div>
+                                    <div className={styles.header__cell__sm}>
+                                        {item.neta !== 0 ? formatMoney(item.neta) : "-"}
                                     </div>
                                     <div className={styles.header__cell__sm}>
                                         {getMethod(item.method)}
@@ -460,7 +446,7 @@ const Payments: NextPage = () => {
                             )) : (
                                 <div className={styles.table__row}>
                                     <div className={styles.header__cell}>
-                                        Todavía no hay propiedades
+                                        Todavía no hay pagos
                                     </div>
                                 </div>
                             )}
@@ -469,7 +455,7 @@ const Payments: NextPage = () => {
                 </div>
 
                 {/* snack bar */}
-                <Snackbar open={state.open} autoHideDuration={4000} onClose={handleClose}>
+                <Snackbar open={state.open} autoHideDuration={6000} onClose={handleClose}>
                     <Alert onClose={handleClose} severity="success" sx={{ width: '100%' }}>
                         ¡Se registró el pago exitosamente!
                     </Alert>
