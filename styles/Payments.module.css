@@ -169,3 +169,28 @@
 .error__icon, .success__icon {
     margin-right: 10px;
 }
+
+
+/* dialog button */
+.cancel__fill__btn, .save__fill__btn {
+    border-radius: 25px;
+    padding: 10px;
+    background: none;
+    margin: 0px;
+    width: 160px;
+    cursor: pointer;
+    transition: transform 450ms;
+}
+.cancel__fill__btn {
+    background: var(--cancel);
+    border: none;
+    transition: transform 450ms;
+}
+.save__fill__btn {
+    background: var(--success);
+    border: none;
+    transition: transform 450ms;
+}
+.cancel__fill__btn:hover, .save__fill__btn:hover {
+    transform: scale(1.08);
+}

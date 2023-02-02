@@ -515,6 +515,56 @@ const registerPayment = async(properties, property, uid, payment) => {
   return true
 }
 
+/* update payment */
+
+/* remove payment */
+const removePayment = async(properties, property, uid, payment) => {
+  try {
+    const docRef = doc(db, 'properties', uid)
+    let prop = properties.find(el => el.name === property)
+    
+    if(prop !== undefined){
+      let payments = prop.payments
+      if(payments){
+        let tempPayments = payments.filter(el => el.id !== payment)
+        let temp = {
+          ...prop,
+          payments: tempPayments
+        }
+
+        let data = properties.filter(el => el.name !== property)
+        data.push(temp)
+        let payload = {
+          data: data
+        }
+        
+        await setDoc(docRef, payload)
+
+        //delete file if exists
+        let tempPayment = prop.payments.find(el => el.id === payment)
+        if(tempPayment !== undefined){
+          if(tempPayment.fileName !== ""){
+            let name = tempPayment.property.replace(/\s+/g, '');
+            const deleteRef = ref(storage, `files/${uid}/payments/${name}/${tempPayment.year}/${tempPayment.month}/${tempPayment.fileName}`)
+            await deleteObject(deleteRef).then(() => {
+              console.log("File deleted")
+            }).catch((err) => {
+              console.log(err.message)
+              return false
+            })
+          }
+        }
+
+        return true
+      }
+      return false
+    }
+    return false
+  } catch(err) {
+    return false
+  }
+}
+
 
 export { 
   addFirst, 
@@ -524,5 +574,6 @@ export {
   updateNewContract, 
   updateSameContract, 
   registerPayment,
-  removeProperty
+  removeProperty,
+  removePayment
 }

@@ -22,6 +22,13 @@ import Snackbar from '@mui/material/Snackbar';
 import MuiAlert, { AlertProps } from '@mui/material/Alert';
 import Popover from '@mui/material/Popover';
 import Typography from '@mui/material/Typography';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
+import useMediaQuery from '@mui/material/useMediaQuery';
+import { useTheme } from '@mui/material/styles';
 
 //Material UI - icons
 import AddCircleRoundedIcon from '@mui/icons-material/AddCircleRounded';
@@ -33,12 +40,10 @@ import ErrorRoundedIcon from '@mui/icons-material/ErrorRounded';
 import FileDownloadRoundedIcon from '@mui/icons-material/FileDownloadRounded';
 import RefreshRoundedIcon from '@mui/icons-material/RefreshRounded';
 import FilterListRoundedIcon from '@mui/icons-material/FilterListRounded';
-
 import ApartmentRoundedIcon from '@mui/icons-material/ApartmentRounded';
 import PersonRoundedIcon from '@mui/icons-material/PersonRounded';
 import MapsHomeWorkRoundedIcon from '@mui/icons-material/MapsHomeWorkRounded';
 import AttachMoneyRoundedIcon from '@mui/icons-material/AttachMoneyRounded';
-import QuestionMarkRoundedIcon from '@mui/icons-material/QuestionMarkRounded';
 
 //Constants
 import months from '../components/utils/constants/months'
@@ -69,8 +74,11 @@ const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
 //Dashboard page
 const Payments: NextPage = () => {
     //Context
-    const { user } = useAuth()
-    const { properties, fecthProperties, addPayment } = useProperties()
+    const { properties, fecthProperties, addPayment, deletePayment } = useProperties()
+
+    //Material UI
+    const theme = useTheme();
+    const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
 
     //useState - state
     const [state, setState] = useState({
@@ -80,6 +88,9 @@ const Payments: NextPage = () => {
         open: false,
         error: "",
         properties: [],
+        deleteOpen: false,
+        deletePayment: 0,
+        deleteProperty: ""
     })
 
     //useState - formData
@@ -163,7 +174,7 @@ const Payments: NextPage = () => {
             })
 
             //@ts-ignore
-            setState({...state, properties: temp, payments: payments, paymentsList: payments})
+            setState({...state, properties: temp, payments: payments, paymentsList: payments, deletePayment: 0, deleteProperty: "", deleteOpen: false})
 
             //formData
             let today = new Date()
@@ -304,6 +315,40 @@ const Payments: NextPage = () => {
         setProperty("")
     };
 
+    /* handle edit property click */
+    const handleEditClick = (property:Property) => {
+        //updateEditProperty(property)
+        //router.push(`/edit_property`)
+    }
+
+
+    /* delete payment functions */
+
+    /* handle delete property click */
+    const handleDeleteClick = (payment:number, property:string) => {
+        console.log(payment)
+        setState({...state, deletePayment: payment, deleteProperty: property, deleteOpen: true})
+    }
+     /* handle cancel click */
+    const handleCancelClick = () => {
+        //@ts-ignore
+        setState({...state, deletePayment: 0, deleteProperty: "", deleteOpen: false})
+    }
+
+    /* handle delete property */
+    const handleDeletePayment = async() => {
+        const res = await deletePayment(state.deleteProperty, state.deletePayment)
+        if(res){
+            console.log(res)
+            //delete payment from state
+            let temp = state.payments.filter((el:Payment) => el.id !== state.deletePayment)
+            setState({...state, payments: temp, paymentsList: temp, deletePayment: 0, deleteProperty: "", deleteOpen: false})
+        } else {
+            //alert error
+            console.log("error")
+            setState({...state, deleteOpen: false, deletePayment: 0, deleteProperty: "",})
+        }
+    }
     
     return (
         <div>
@@ -552,7 +597,7 @@ const Payments: NextPage = () => {
                                                 </IconButton>
                                             </Tooltip>
                                             <Tooltip title="Eliminar pago" placement='top'>
-                                                <IconButton>
+                                                <IconButton onClick={() => {handleDeleteClick(item.id, item.property)}}>
                                                     <DeleteRoundedIcon className={dash.table__icon}/>
                                                 </IconButton>
                                             </Tooltip>
@@ -620,6 +665,27 @@ const Payments: NextPage = () => {
                 >
                     <Typography sx={{ p: 1 }}>{comment}</Typography>
                 </Popover>
+
+                {/* Dialog */}
+                <Dialog
+                    fullScreen={fullScreen}
+                    open={state.deleteOpen}
+                    onClose={handleCancelClick}
+                    aria-labelledby="responsive-dialog-title"
+                >
+                    <DialogTitle id="responsive-dialog-title">
+                    {`¿Esta seguro de querer eliminar el pago?`}
+                    </DialogTitle>
+                    <DialogContent>
+                    <DialogContentText>
+                        Esta acción no se puede deshacer
+                    </DialogContentText>
+                    </DialogContent>
+                    <DialogActions>
+                        <button className={styles.cancel__fill__btn} onClick={handleCancelClick}>Cancelar</button>
+                        <button className={styles.save__fill__btn} onClick={handleDeletePayment}>Eliminar</button>
+                    </DialogActions>
+                </Dialog>
 
                 {/* Menu */}
                 <Menu
