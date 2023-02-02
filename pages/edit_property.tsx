@@ -46,7 +46,7 @@ import { ThreeDots } from 'react-loader-spinner'
 import { contractStatusList, contractStatusBackground, contractStatusColor } from '../components/utils/constants/contract'
 
 //Dashboard page
-const AddProperty: NextPage = () => {
+const EditProperty: NextPage = () => {
     //router
     const router = useRouter()
 
@@ -336,14 +336,9 @@ const AddProperty: NextPage = () => {
     }
 
 
-
-    const handleAddProperty = () => {
-
-    }
-
     const handleSaveClick = async() => {
         setUtils({...utils, error: "", loading: true})
-        if(checkChanges()){
+        if(verifyData() && checkChanges()){
             //changes exist
             //update changes
             if(contract.newPdfName !== ""){
@@ -407,7 +402,7 @@ const AddProperty: NextPage = () => {
                     router.push('/properties')
                 } else {
                     //alert error
-                    setUtils({...utils, error: "Ocurrión un error al subir la propiedad", loading: false})
+                    setUtils({...utils, error: "Ocurrión un error al guardar los datos", loading: false})
                 }
             }
        } else {
@@ -587,4 +582,4 @@ const AddProperty: NextPage = () => {
     )
 }
 
-export default AddProperty
+export default EditProperty

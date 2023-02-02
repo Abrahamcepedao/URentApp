@@ -10,7 +10,8 @@ import {
     updateSameContract,
     registerPayment,
     removeProperty,
-    removePayment
+    removePayment,
+    updatePaymentFirebase
 } from '../database/functions/property'
 import { useAuth } from './AuthContext'
 
@@ -26,6 +27,7 @@ export const PropertiesContextProvider = ({children}: {children:React.ReactNode}
     const [properties,setProperties] = useState<any>([])
     const [isFirst, setIsFirst] = useState<boolean>(true)
     const [editProperty, setEditProperty] = useState(null)
+    const [editPayment, setEditPayment] = useState(null)
 
     //context
     const { user } = useAuth()
@@ -103,15 +105,6 @@ export const PropertiesContextProvider = ({children}: {children:React.ReactNode}
             return false
         }
     }
-    
-    /* add payment to property */
-    const addPayment = async(property:any, payment:any) => {
-        const res = await registerPayment(properties, property, user.uid, payment)
-        if(res !== false) {
-            return res
-        }
-        return false
-    }
 
     /* delete property */
     const deleteProperty = async(property:string) => {
@@ -123,6 +116,33 @@ export const PropertiesContextProvider = ({children}: {children:React.ReactNode}
         } 
         return false
     }
+    
+    /* add payment to property */
+    const addPayment = async(property:any, payment:any) => {
+        const res = await registerPayment(properties, property, user.uid, payment)
+        if(res !== false) {
+            return res
+        }
+        return false
+    }
+
+    
+    /* update edit payment */
+    const updateEditPayment = (payment:Payment) => {
+        //@ts-ignore
+        setEditPayment(payment)
+    }
+
+    /* update payment */
+    const updatePayment = async(payment:any, property:string, pastProperty:string) => {
+        console.log(payment, property, pastProperty)
+        const res = await updatePaymentFirebase(properties, user.uid, payment, property, pastProperty)
+        if(res !== false) {
+            return res
+        }
+        return false
+    }
+
 
     /* delete payment from property */
     const deletePayment = async(property:string, payment: number) => {
@@ -163,9 +183,12 @@ export const PropertiesContextProvider = ({children}: {children:React.ReactNode}
         editProperty,
         addNewProperty,
         updateProperty,
-        addPayment,
         deleteProperty,
-        deletePayment
+        addPayment,
+        updateEditPayment,
+        deletePayment,
+        editPayment,
+        updatePayment
     }}>
         {children}
     </PropertiesContext.Provider>

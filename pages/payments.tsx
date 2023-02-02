@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react'
 //next
 import type { NextPage } from 'next'
 import Head from 'next/head'
-import Link from 'next/link'
+import { useRouter } from 'next/router'
 
 //CSS
 import dash from '../styles/Dashboard.module.css'
@@ -74,7 +74,10 @@ const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
 //Dashboard page
 const Payments: NextPage = () => {
     //Context
-    const { properties, fecthProperties, addPayment, deletePayment } = useProperties()
+    const { properties, fecthProperties, addPayment, deletePayment, updateEditPayment } = useProperties()
+
+    //Router
+    const router = useRouter()
 
     //Material UI
     const theme = useTheme();
@@ -162,32 +165,7 @@ const Payments: NextPage = () => {
     }
 
     const setUp = () => {
-        if(properties.length !== 0){
-            let temp = properties.filter((pr:Property) => { return pr.status})
-            let payments:Payment[] = []
-            temp.forEach((item:Property) => {
-                if(item.payments){
-                    item.payments.forEach((payment:Payment) => {
-                        payments.push({...payment, property: item.name})
-                    })
-                }
-            })
-
-            //@ts-ignore
-            setState({...state, properties: temp, payments: payments, paymentsList: payments, deletePayment: 0, deleteProperty: "", deleteOpen: false})
-
-            //formData
-            let today = new Date()
-            let date = today.toISOString().split('T')[0]
-            if(properties.length !== 0){
-                const pr:Property = properties[0]
-                setFormData({...formData, date: date, month: months[today.getMonth()].en, year: today.getFullYear(), property: pr.name, bruta: pr.contract.bruta, neta: pr.contract.neta})
-            } else {
-                setFormData({...formData, date: date, month: months[today.getMonth()].en, year: today.getFullYear()})
-            }
-        } else {
-            getProperties(false)
-        }
+        getProperties(false)
     }
 
     const getProperties = async(flag:boolean) => {
@@ -203,9 +181,9 @@ const Payments: NextPage = () => {
                     })
                 }
             })
-
+            
             //@ts-ignore
-            setState({...state, properties: temp, payments: payments, paymentsList: payments, error: "", open: flag})
+            setState({...state, properties: temp, payments: payments, paymentsList: payments, error: "", open: flag, addOpen: false})
             
 
             //formData
@@ -224,7 +202,7 @@ const Payments: NextPage = () => {
 
     const handleInputChange = (e:React.ChangeEvent<HTMLInputElement>) => {
         setFormData({
-        ...formData,
+            ...formData,
             [e.target.name]: e.target.value
         })
 
@@ -235,7 +213,7 @@ const Payments: NextPage = () => {
         const pr:Property|undefined = state.properties.find((el:Property) => el.name === e.target.value)
         if(pr !== undefined){
             //@ts-ignore
-            setFormData({...formData, property: e.target.value, amount: Number(pr.contract.cost)})
+            setFormData({...formData, property: e.target.value, bruta: pr.contract.bruta, neta: pr.contract.neta})
         }
         
     }
@@ -251,7 +229,15 @@ const Payments: NextPage = () => {
     /* handle register payment click */
     const verifyData = () => {
         if(formData.year < 2000 || formData.year > 2100){
-            setState({...state, error: "Introduzca una fecha válida"})
+            setState({...state, error: "Introduzca una año válida"})
+            return false
+        }
+        if(formData.bruta < 1){
+            setState({...state, error: "Introduzca un monto bruto válido"})
+            return false
+        }
+        if(formData.neta < 1){
+            setState({...state, error: "Introduzca un monto neto válido"})
             return false
         }
         setState({...state, error: ""})
@@ -265,6 +251,7 @@ const Payments: NextPage = () => {
             let pr:Property|undefined = state.properties.find((el:Property) => el.name === formData.property)
             if(pr !== undefined) {
                 let temp = {
+                    property: formData.property,
                     date: formData.date,
                     month: formData.month,
                     year: formData.year,
@@ -315,10 +302,10 @@ const Payments: NextPage = () => {
         setProperty("")
     };
 
-    /* handle edit property click */
-    const handleEditClick = (property:Property) => {
-        //updateEditProperty(property)
-        //router.push(`/edit_property`)
+    /* handle edit payment click */
+    const handleEditClick = (payment:Payment) => {
+        updateEditPayment(payment)
+        router.push(`/edit_payment`)
     }
 
 
@@ -592,7 +579,7 @@ const Payments: NextPage = () => {
                                                 </IconButton>
                                             </Tooltip>
                                             <Tooltip title="Editar pago" placement='top'>
-                                                <IconButton>
+                                                <IconButton onClick={() => {handleEditClick(item)}}>
                                                     <EditRoundedIcon className={dash.table__icon}/>
                                                 </IconButton>
                                             </Tooltip>
