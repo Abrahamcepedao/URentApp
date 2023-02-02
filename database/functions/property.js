@@ -51,7 +51,8 @@ const addFirst = async(property,uid) => {
                           start: property.contract.start,
                           end: property.contract.end,
                           type: property.contract.type,
-                          cost: property.contract.cost,
+                          bruta: property.contract.bruta,
+                          neta: property.contract.neta,
                           pdfName: property.contract.pdfName,
                           pdfUrl: downloadURL
                       }
@@ -87,7 +88,8 @@ const addFirst = async(property,uid) => {
                   start: "",
                   end: "",
                   type: "",
-                  cost: 0,
+                  bruta: 0,
+                  neta: 0,
                   pdfName: "",
                   pdfUrl: ""
               }
@@ -146,7 +148,8 @@ const addProperty = async(properties, property, uid) => {
                           start: property.contract.start,
                           end: property.contract.end,
                           type: property.contract.type,
-                          cost: property.contract.cost,
+                          bruta: property.contract.bruta,
+                          neta: property.contract.neta,
                           pdfName: property.contract.pdfName,
                           pdfUrl: downloadURL
                       }
@@ -183,7 +186,8 @@ const addProperty = async(properties, property, uid) => {
                   start: "",
                   end: "",
                   type: "",
-                  cost: 0,
+                  bruta: 0,
+                  neta: 0,
                   pdfName: "",
                   pdfUrl: ""
               }
@@ -243,7 +247,8 @@ const updateNewContract = async(properties, property, uid) => {
                       start: property.contract.start,
                       end: property.contract.end,
                       type: property.contract.type,
-                      cost: property.contract.cost,
+                      bruta: property.contract.bruta,
+                      neta: property.contract.neta,
                       pdfName: property.contract.newPdfName,
                       pdfUrl: downloadURL
                   }
@@ -277,6 +282,7 @@ const updateNewContract = async(properties, property, uid) => {
   return true
 }
 
+/* update property with same contract */
 const updateSameContract = async(properties, property, uid) => {
     try {
       const temp = {
@@ -293,7 +299,8 @@ const updateSameContract = async(properties, property, uid) => {
               start: property.contract.start,
               end: property.contract.end,
               type: property.contract.type,
-              cost: property.contract.cost,
+              bruta: property.contract.bruta,
+              neta: property.contract.neta,
               pdfName: property.contract.pdfName,
               pdfUrl: property.contract.pdfUrl
           }
@@ -331,6 +338,36 @@ const getProperties = async(uid) => {
     
 }
 
+/* delete property from list */
+const removeProperty = async(properties,property,uid) => {
+  try {
+      const docRef = doc(db, 'properties', uid)
+      let prop = properties.find(el => el.name === property)
+      
+      let data = properties.filter(el => el.name !== property)
+      let payload = {
+        data: data
+      }
+      await setDoc(docRef, payload)
+      if(prop !== undefined){
+        if(prop.status){
+          //delete contract from storage
+          const deleteRef = ref(storage, `files/${uid}/${prop.type}/${prop.contract.newPdfName}`)
+          await deleteObject(deleteRef).then(() => {
+              console.log("File deleted")
+            }).catch((err) => {
+              console.log(err.message)
+              return false
+            })
+        }
+      }
+      return true
+  } catch(err) {
+      console.log(err)
+      return false
+  }
+}
+
 /* register new payment */
 const registerPayment = async(properties, property, uid, payment) => {
   if(payment.fileName !== "" || payment.file) {
@@ -360,10 +397,12 @@ const registerPayment = async(properties, property, uid, payment) => {
                   }
 
                   payments.push({
+                    id: Date.now(),
                     date: payment.date,
                     month: payment.month,
                     year: payment.year,
-                    amount: payment.amount,
+                    bruta: payment.bruta,
+                    neta: payment.neta,
                     method: payment.method,
                     fileName: payment.fileName,
                     fileUrl: downloadURL,
@@ -384,7 +423,8 @@ const registerPayment = async(properties, property, uid, payment) => {
                         start: property.contract.start,
                         end: property.contract.end,
                         type: property.contract.type,
-                        cost: property.contract.cost,
+                        bruta: property.contract.bruta,
+                        neta: property.contract.neta,
                         pdfName: property.contract.pdfName,
                         pdfUrl: property.contract.pdfUrl
                     },
@@ -421,10 +461,12 @@ const registerPayment = async(properties, property, uid, payment) => {
         }
 
         payments.push({
+          id: Date.now(),
           date: payment.date,
           month: payment.month,
           year: payment.year,
-          amount: payment.amount,
+          bruta: payment.bruta,
+          neta: payment.neta,
           method: payment.method,
           fileName: "",
           fileUrl: "",
@@ -445,7 +487,8 @@ const registerPayment = async(properties, property, uid, payment) => {
               start: property.contract.start,
               end: property.contract.end,
               type: property.contract.type,
-              cost: property.contract.cost,
+              bruta: property.contract.bruta,
+              neta: property.contract.neta,
               pdfName: property.contract.pdfName,
               pdfUrl: property.contract.pdfUrl
           },
@@ -473,4 +516,13 @@ const registerPayment = async(properties, property, uid, payment) => {
 }
 
 
-export { addFirst, isFirstFirebase, getProperties, addProperty, updateNewContract, updateSameContract, registerPayment }
+export { 
+  addFirst, 
+  isFirstFirebase, 
+  getProperties, 
+  addProperty, 
+  updateNewContract, 
+  updateSameContract, 
+  registerPayment,
+  removeProperty
+}

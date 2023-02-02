@@ -8,9 +8,13 @@ import {
     addProperty, 
     updateNewContract, 
     updateSameContract,
-    registerPayment
+    registerPayment,
+    removeProperty
 } from '../database/functions/property'
 import { useAuth } from './AuthContext'
+
+//Interfaces
+import Property from '../components/utils/interfaces/Property'
 
 const PropertiesContext = createContext<any>({})
 
@@ -106,6 +110,16 @@ export const PropertiesContextProvider = ({children}: {children:React.ReactNode}
         }
         return false
     }
+
+    const deleteProperty = async(property:string) => {
+        const res = await removeProperty(properties, property, user.uid)
+        if(res !== false){
+            let data = properties.filter((el:Property) => el.name !== property)
+            setProperties(data)
+            return data
+        } 
+        return false
+    }
     
 
     return <PropertiesContext.Provider value={{
@@ -118,7 +132,8 @@ export const PropertiesContextProvider = ({children}: {children:React.ReactNode}
         editProperty,
         addNewProperty,
         updateProperty,
-        addPayment
+        addPayment,
+        deleteProperty
     }}>
         {children}
     </PropertiesContext.Provider>

@@ -73,7 +73,8 @@ const AddProperty: NextPage = () => {
 
     //useState - contract
     const [contract, setContract] = useState({
-        cost: 0,
+        bruta: 0,
+        neta: 0,
         type: "month",
         start: "",
         end: "",
@@ -117,7 +118,8 @@ const AddProperty: NextPage = () => {
             mail: "",
         })
         setContract({
-            cost: 0,
+            bruta: 0,
+            neta: 0,
             type: "month",
             start: "",
             end: "",
@@ -221,7 +223,11 @@ const AddProperty: NextPage = () => {
                 setUtils({...utils, error: "Agrega el mail del arrendatario"})
                 return false
             }
-            if(contract.cost === 0) {
+            if(contract.bruta === 0) {
+                setUtils({...utils, error: "Agrega el costo del contrato"})
+                return false
+            }
+            if(contract.neta === 0) {
                 setUtils({...utils, error: "Agrega el costo del contrato"})
                 return false
             }
@@ -256,7 +262,8 @@ const AddProperty: NextPage = () => {
                 start: contract.start,
                 end: contract.end,
                 type: contract.type,
-                cost: contract.cost,
+                bruta: contract.bruta,
+                neta: contract.neta,
                 pdfName: contract.pdfName,
                 pdf: contract.pdf
             }       
@@ -286,7 +293,8 @@ const AddProperty: NextPage = () => {
                 start: contract.start,
                 end: contract.end,
                 type: contract.type,
-                cost: contract.cost,
+                bruta: contract.bruta,
+                neta: contract.neta,
                 pdfName: contract.pdfName,
                 pdf: contract.pdf
             }       
@@ -393,8 +401,12 @@ const AddProperty: NextPage = () => {
 
                                     {/* contract */}
                                     <div className={styles.input__container}>
-                                        <p className={styles.input__label}>Costo</p>
-                                        <input type="number" className={styles.input} value={contract.cost} onChange={(e) => {setContract({...contract, cost: parseFloat(e.target.value)})}}/>
+                                        <p className={styles.input__label}>Renta bruta</p>
+                                        <input type="number" className={styles.input} value={contract.bruta} onChange={(e) => {setContract({...contract, bruta: parseFloat(e.target.value)})}}/>
+                                    </div>
+                                    <div className={styles.input__container}>
+                                        <p className={styles.input__label}>Renta neta</p>
+                                        <input type="number" className={styles.input} value={contract.neta} onChange={(e) => {setContract({...contract, neta: parseFloat(e.target.value)})}}/>
                                     </div>
                                     <div className={styles.input__container}>
                                         <p className={styles.input__label}>Tipo de renta</p>

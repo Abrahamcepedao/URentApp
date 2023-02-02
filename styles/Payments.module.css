@@ -21,14 +21,14 @@
     justify-content: space-between;
     align-items: center;
     width: 100%;
-    max-width: 1000px;
+    max-width: 1300px;
     margin: auto;
 }
 
 /* add payment */
 .add__container {
     width: 100%;
-    max-width: 1000px;
+    max-width: 1300px;
     margin: auto;
     margin-top: 30px;
     text-align: center;
@@ -115,6 +115,7 @@
     justify-content: space-between;
     align-items: center;
     opacity: 0.5;
+    margin-bottom: 15px;
 }
 .table__row {
     display: flex;
