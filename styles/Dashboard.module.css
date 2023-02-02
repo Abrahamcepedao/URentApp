@@ -32,3 +32,20 @@
 .table__icon:hover, .header__icon {
     transform: scale(1.08)
 } 
+
+/* container */
+.container {
+    height: 100%;
+    width: 100%;
+    color: var(--light__text);
+}
+.inner__container {
+    overflow-y: scroll;
+    max-height: 100%;
+}
+
+.upper__container {
+    display: grid;
+    grid-template-columns: auto auto;
+    column-gap: 30px;
+}
