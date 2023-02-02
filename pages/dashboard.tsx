@@ -9,7 +9,7 @@ import styles from '../styles/Dashboard.module.css'
 
 //Components
 import SideBar from '../components/user/SideBar'
-
+import BilledRents from '../components/user/dashboard/BilledRents'
 
 //Material UI - icons
 
@@ -28,6 +28,17 @@ const Dashboard: NextPage = () => {
       <main className={styles.main}>
         {/* @ts-ignore */}
         <SideBar/>
+        <div className={styles.container}>
+          <div className={styles.innner__container}>
+
+            {/* upper container */}
+            <div className={styles.upper__container}>
+              <BilledRents/>
+              <BilledRents/>
+            </div>
+          </div>
+            
+        </div>
       </main>
     </div>
   )
