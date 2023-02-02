@@ -9,12 +9,14 @@ import {
     updateNewContract, 
     updateSameContract,
     registerPayment,
-    removeProperty
+    removeProperty,
+    removePayment
 } from '../database/functions/property'
 import { useAuth } from './AuthContext'
 
 //Interfaces
 import Property from '../components/utils/interfaces/Property'
+import Payment from '../components/utils/interfaces/Payment'
 
 const PropertiesContext = createContext<any>({})
 
@@ -111,6 +113,7 @@ export const PropertiesContextProvider = ({children}: {children:React.ReactNode}
         return false
     }
 
+    /* delete property */
     const deleteProperty = async(property:string) => {
         const res = await removeProperty(properties, property, user.uid)
         if(res !== false){
@@ -118,6 +121,34 @@ export const PropertiesContextProvider = ({children}: {children:React.ReactNode}
             setProperties(data)
             return data
         } 
+        return false
+    }
+
+    /* delete payment from property */
+    const deletePayment = async(property:string, payment: number) => {
+        
+        const res = await removePayment(properties, property, user.uid, payment)
+        if(res !== false){
+            //let data = properties.filter((el:Property) => el.name !== property)
+            let prop = properties.find((el:Property) => el.name === property)
+            
+            if(prop != undefined){
+                let payments = prop.payments
+                if(payments){
+                    let tempPayments = payments.filter((el:Payment) => el.id !== payment)
+                    let temp = {
+                        ...prop,
+                        payments: tempPayments
+                    }
+
+                    let data = properties.filter((el:Property) => el.name !== property)
+                    data.push(temp)
+                    
+                    setProperties(data)
+                    return true
+                } 
+            }
+        }
         return false
     }
     
@@ -133,7 +164,8 @@ export const PropertiesContextProvider = ({children}: {children:React.ReactNode}
         addNewProperty,
         updateProperty,
         addPayment,
-        deleteProperty
+        deleteProperty,
+        deletePayment
     }}>
         {children}
     </PropertiesContext.Provider>
