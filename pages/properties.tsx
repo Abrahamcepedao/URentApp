@@ -214,9 +214,6 @@ const Properties: NextPage = () => {
                 <Tooltip title="Refrescar" placement='top'>
                   <IconButton
                     onClick={getProperties}
-                    aria-controls={open ? 'account-menu' : undefined}
-                    aria-haspopup="true"
-                    aria-expanded={open ? 'true' : undefined}
                   >
                     <RefreshRoundedIcon className={dash.header__icon}/>
                   </IconButton>
