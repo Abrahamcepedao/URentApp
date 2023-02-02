@@ -15,8 +15,13 @@ import SideBar from '../components/user/SideBar'
 
 //Material UI
 import { Tooltip, IconButton, Collapse } from '@mui/material'
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
+import ListItemIcon from '@mui/material/ListItemIcon';
 import Snackbar from '@mui/material/Snackbar';
 import MuiAlert, { AlertProps } from '@mui/material/Alert';
+import Popover from '@mui/material/Popover';
+import Typography from '@mui/material/Typography';
 
 //Material UI - icons
 import AddCircleRoundedIcon from '@mui/icons-material/AddCircleRounded';
@@ -26,7 +31,14 @@ import HighlightOffRoundedIcon from '@mui/icons-material/HighlightOffRounded';
 import FileUploadRoundedIcon from '@mui/icons-material/FileUploadRounded';
 import ErrorRoundedIcon from '@mui/icons-material/ErrorRounded';
 import FileDownloadRoundedIcon from '@mui/icons-material/FileDownloadRounded';
+import RefreshRoundedIcon from '@mui/icons-material/RefreshRounded';
 import FilterListRoundedIcon from '@mui/icons-material/FilterListRounded';
+
+import ApartmentRoundedIcon from '@mui/icons-material/ApartmentRounded';
+import PersonRoundedIcon from '@mui/icons-material/PersonRounded';
+import MapsHomeWorkRoundedIcon from '@mui/icons-material/MapsHomeWorkRounded';
+import AttachMoneyRoundedIcon from '@mui/icons-material/AttachMoneyRounded';
+import QuestionMarkRoundedIcon from '@mui/icons-material/QuestionMarkRounded';
 
 //Constants
 import months from '../components/utils/constants/months'
@@ -60,7 +72,7 @@ const Payments: NextPage = () => {
     const { user } = useAuth()
     const { properties, fecthProperties, addPayment } = useProperties()
 
-    //useState
+    //useState - state
     const [state, setState] = useState({
         payments: [],
         paymentsList: [],
@@ -70,6 +82,7 @@ const Payments: NextPage = () => {
         properties: [],
     })
 
+    //useState - formData
     const [formData, setFormData] = useState({
         date: "",
         month: "",
@@ -83,6 +96,20 @@ const Payments: NextPage = () => {
         comment: ""
     })
 
+    //useState - comment popover anchor
+    const [commentAnchor, setCommentAnchor] = useState<HTMLElement | null>(null);
+    const [comment, setComment] = useState<string>("");
+    const commentOpen = Boolean(commentAnchor);
+
+    //useState - popover anchor
+    const [propertyAnchor, setPropertyAnchor] = useState<HTMLElement | null>(null);
+    const [property, setProperty] = useState<string>("");
+    const propertyOpen = Boolean(propertyAnchor);
+
+    //useState - menu
+    const [menuAnchor, setMenuAnchor] = useState(null);
+    const menuOpen = Boolean(menuAnchor);
+    
     useEffect(() => {
         setUp()
     },[])
@@ -95,6 +122,33 @@ const Payments: NextPage = () => {
 
         setState({...state, open: false})
     };
+
+    /* order menu functions */
+    const handleClick = (event:any) => {
+        setMenuAnchor(event.currentTarget);
+    };
+
+    const handleMenuClose = () => {
+        setMenuAnchor(null);
+    };
+
+    const handleOrderChange = (num:number) => {
+        let temp: Payment[] = [...state.payments]
+        if(num === 0) {
+            temp.sort((a,b) => { return a.property < b.property ? -1 : 1})
+        } else if(num === 1){
+            temp.sort((a,b) => { return a.date < b.date ? -1 : 1})
+        } else if(num === 2){
+            temp.sort((a,b) => { return a.bruta < b.bruta ? -1 : 1})
+        } else if(num === 3){
+            temp.sort((a,b) => { return a.method < b.method ? -1 : 1})
+        } else {
+        
+        } 
+
+        //@ts-ignore
+        setState({...state, paymentsList: temp})
+    }
 
     const setUp = () => {
         if(properties.length !== 0){
@@ -214,8 +268,6 @@ const Payments: NextPage = () => {
                 const res = await addPayment(pr,temp)
                 if(res) {
                     //alert success
-                    //setState({...state, error: "",  open: true})
-                    //setFormData({...formData, file: "", fileName: "", comment: ""})
                     getProperties(true)
                 } else {
                     //alert error
@@ -224,6 +276,33 @@ const Payments: NextPage = () => {
             }
         }
     }
+
+    /* comment - popover functions */
+    const handlePopoverOpen = (event: React.MouseEvent<HTMLElement>, val:string) => {
+        if(val.length > 25){
+            setCommentAnchor(event.currentTarget);
+            setComment(val)
+        }
+    };
+
+    const handlePopoverClose = () => {
+        setCommentAnchor(null);
+        setComment("")
+    };
+
+    /* property - popover functions */
+    const handlePropertyPopoverOpen = (event: React.MouseEvent<HTMLElement>, val:string) => {
+        console.log(val)
+        if(val.length > 20){
+            setPropertyAnchor(event.currentTarget);
+            setProperty(val)
+        }
+    };
+
+    const handlePropertyPopoverClose = () => {
+        setPropertyAnchor(null);
+        setProperty("")
+    };
 
     
     return (
@@ -242,19 +321,42 @@ const Payments: NextPage = () => {
                         {/* header */}
                         <div className={styles.payments__header}>
                             <p className={dash.subtitle}>Registrar pagos</p>
-                            {state.addOpen ? (
-                                <Tooltip title="Cerrar" placement='top'>
-                                    <IconButton onClick={() => {setState({...state, addOpen: false})}}>
-                                        <HighlightOffRoundedIcon className={dash.header__icon}/>
+
+                            <div className={styles.header__actions}>
+                                {/* Refresh */}
+                                <Tooltip title="Refrescar" placement='top'>
+                                    <IconButton
+                                        onClick={() => {getProperties(false)}}
+                                    >
+                                        <RefreshRoundedIcon className={dash.header__icon}/>
                                     </IconButton>
                                 </Tooltip>
-                            ) : (
-                                <Tooltip title="Registrar pago" placement='top'>
-                                <IconButton onClick={() => {setState({...state, addOpen: true})}}>
-                                    <AddCircleRoundedIcon className={dash.header__icon}/>
-                                </IconButton>
-                            </Tooltip>
-                            )}
+
+                                {/* Filtrar */}
+                                <Tooltip title="Filtrar" placement='top'>
+                                    <IconButton
+                                        onClick={(e) => {handleClick(e)}}
+                                        aria-controls={menuOpen ? 'account-menu' : undefined}
+                                        aria-haspopup="true"
+                                        aria-expanded={menuOpen ? 'true' : undefined}
+                                    >
+                                        <FilterListRoundedIcon className={dash.header__icon}/>
+                                    </IconButton>
+                                </Tooltip>
+                                {state.addOpen ? (
+                                    <Tooltip title="Cerrar" placement='top'>
+                                        <IconButton onClick={() => {setState({...state, addOpen: false})}}>
+                                            <HighlightOffRoundedIcon className={dash.header__icon}/>
+                                        </IconButton>
+                                    </Tooltip>
+                                ) : (
+                                    <Tooltip title="Registrar pago" placement='top'>
+                                        <IconButton onClick={() => {setState({...state, addOpen: true})}}>
+                                            <AddCircleRoundedIcon className={dash.header__icon}/>
+                                        </IconButton>
+                                    </Tooltip>
+                                )}
+                            </div>
                             
                         </div>
 
@@ -379,10 +481,10 @@ const Payments: NextPage = () => {
                                     Mes
                                 </div>
                                 <div className={styles.header__cell__sm}>
-                                    P. Bruto
+                                    M. Bruto
                                 </div>
                                 <div className={styles.header__cell__sm}>
-                                    P. Neto
+                                    M. Neto
                                 </div>
                                 <div className={styles.header__cell__sm}>
                                     Método
@@ -399,7 +501,14 @@ const Payments: NextPage = () => {
                             {state.paymentsList.length !== 0 ? state.paymentsList.map((item:Payment, i) => (
                                 <div key={i} className={styles.table__row}>
                                     <div className={styles.header__cell}>
-                                        {item.property.length > 25 ? item.property.substring(0,25) + "..." : item.property}
+                                        <Typography
+                                            aria-owns={propertyAnchor ? 'mouse-over-property' : undefined}
+                                            aria-haspopup="true"
+                                            onMouseEnter={(e) => {handlePropertyPopoverOpen(e, item.property)}}
+                                            onMouseLeave={handlePropertyPopoverClose}
+                                        >
+                                            {item.property.length > 20 ? item.property.substring(0,20) + "..." : item.property}
+                                        </Typography>
                                     </div>
                                     <div className={styles.header__cell__sm}>
                                         {item.date}
@@ -420,14 +529,21 @@ const Payments: NextPage = () => {
                                         {getMethod(item.method)}
                                     </div>
                                     <div className={styles.header__cell}>
-                                        {item.comment.length > 25 ? item.comment.substring(0,25) + "..." : item.comment}
+                                        <Typography
+                                            aria-owns={commentAnchor ? 'mouse-over-comment' : undefined}
+                                            aria-haspopup="true"
+                                            onMouseEnter={(e) => {handlePopoverOpen(e, item.comment)}}
+                                            onMouseLeave={handlePopoverClose}
+                                        >
+                                            {item.comment.length > 25 ? item.comment.substring(0,25) + "..." : item.comment}
+                                        </Typography>
                                     </div>
 
                                     <div className={styles.header__cell__lg}>
                                         <div className={styles.cell__btns}>
                                             <Tooltip title={item.fileName} placement='top'>
                                                 <IconButton disabled={item.fileUrl === ""} onClick={() => {openInNewTab(item.fileUrl)}}>
-                                                    <FileDownloadRoundedIcon className={dash.table__icon}/>
+                                                    <FileDownloadRoundedIcon className={dash.table__icon} style={{opacity: item.fileUrl !== "" ? 1 : 0.5}}/>
                                                 </IconButton>
                                             </Tooltip>
                                             <Tooltip title="Editar pago" placement='top'>
@@ -460,6 +576,119 @@ const Payments: NextPage = () => {
                         ¡Se registró el pago exitosamente!
                     </Alert>
                 </Snackbar>
+
+                {/* property anchor */}
+                <Popover
+                    id="mouse-over-property"
+                    sx={{
+                        pointerEvents: 'none',
+                    }}
+                    open={propertyOpen}
+                    anchorEl={propertyAnchor}
+                    anchorOrigin={{
+                        vertical: 'bottom',
+                        horizontal: 'left',
+                    }}
+                    transformOrigin={{
+                        vertical: 'top',
+                        horizontal: 'left',
+                    }}
+                    onClose={handlePropertyPopoverClose}
+                    disableRestoreFocus
+                >
+                    <Typography sx={{ p: 1 }}>{property}</Typography>
+                </Popover>
+
+                {/* comment anchor */}
+                <Popover
+                    id="mouse-over-comment"
+                    sx={{
+                        pointerEvents: 'none',
+                    }}
+                    open={commentOpen}
+                    anchorEl={commentAnchor}
+                    anchorOrigin={{
+                        vertical: 'bottom',
+                        horizontal: 'right',
+                    }}
+                    transformOrigin={{
+                        vertical: 'top',
+                        horizontal: 'right',
+                    }}
+                    onClose={handlePopoverClose}
+                    disableRestoreFocus
+                >
+                    <Typography sx={{ p: 1 }}>{comment}</Typography>
+                </Popover>
+
+                {/* Menu */}
+                <Menu
+                    anchorEl={menuAnchor}
+                    id="account-menu"
+                    open={menuOpen}
+                    onClose={handleMenuClose}
+                    onClick={handleMenuClose}
+                    PaperProps={{
+                    elevation: 0,
+                    sx: {
+                        overflow: 'visible',
+                        filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.32))',
+                        mt: 1.5,
+                        '& .MuiAvatar-root': {
+                        width: 32,
+                        height: 32,
+                        ml: -0.5,
+                        mr: 1,
+                        },
+                        '&:before': {
+                        content: '""',
+                        display: 'block',
+                        position: 'absolute',
+                        top: 0,
+                        right: 14,
+                        width: 10,
+                        height: 10,
+                        bgcolor: 'background.paper',
+                        transform: 'translateY(-50%) rotate(45deg)',
+                        zIndex: 0,
+                        },
+                    },
+                    }}
+                    transformOrigin={{ horizontal: 'right', vertical: 'top' }}
+                    anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+                >
+                    <MenuItem onClick={() => {handleOrderChange(-1)}}>
+                        <ListItemIcon>
+                            <HighlightOffRoundedIcon fontSize="small" />
+                        </ListItemIcon>
+                        Quitar filtros
+                    </MenuItem>
+                    <MenuItem onClick={() => {handleOrderChange(0)}}>
+                        <ListItemIcon>
+                            <ApartmentRoundedIcon fontSize="small" />
+                        </ListItemIcon>
+                        Propiedad
+                    </MenuItem>
+                    <MenuItem onClick={() => {handleOrderChange(1)}}>
+                        <ListItemIcon>
+                            <PersonRoundedIcon fontSize="small" />
+                        </ListItemIcon>
+                        Fecha
+                    </MenuItem>
+                    <MenuItem onClick={() => {handleOrderChange(2)}}>
+                        <ListItemIcon>
+                            <MapsHomeWorkRoundedIcon fontSize="small" />
+                        </ListItemIcon>
+                        Monto
+                    </MenuItem>
+                    <MenuItem onClick={() => {handleOrderChange(3)}}>
+                        <ListItemIcon>
+                            <AttachMoneyRoundedIcon fontSize="small" />
+                        </ListItemIcon>
+                        Método 
+                    </MenuItem>
+                
+                </Menu>
             </main>
         </div>
     )
