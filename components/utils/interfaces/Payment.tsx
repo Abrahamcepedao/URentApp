@@ -8,6 +8,7 @@ interface Payment {
     method: number,
     fileName: string,
     fileUrl: string,
+    fileRef: string,
     comment: string,
     property: string
 }
