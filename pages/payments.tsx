@@ -31,6 +31,7 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 import { useTheme } from '@mui/material/styles';
 
 //Material UI - icons
+import SearchRoundedIcon from '@mui/icons-material/SearchRounded';
 import AddCircleRoundedIcon from '@mui/icons-material/AddCircleRounded';
 import DeleteRoundedIcon from '@mui/icons-material/DeleteRounded';
 import EditRoundedIcon from '@mui/icons-material/EditRounded';
@@ -93,7 +94,9 @@ const Payments: NextPage = () => {
         properties: [],
         deleteOpen: false,
         deletePayment: 0,
-        deleteProperty: ""
+        deleteProperty: "",
+        filter: "",
+        sort: 0,
     })
 
     //useState - formData
@@ -146,9 +149,19 @@ const Payments: NextPage = () => {
         setMenuAnchor(null);
     };
 
+    /* handle filter change */
+    const handleFilterChange = (e:React.ChangeEvent<HTMLInputElement>) => {
+        let temp = state.payments.filter((pr:Payment) => pr.property.toLocaleLowerCase().includes(e.target.value.toLocaleLowerCase()))
+        setState({...state, paymentsList: temp, filter: e.target.value})
+    }
+
+    /* handle order change */
     const handleOrderChange = (num:number) => {
-        let temp: Payment[] = [...state.payments]
-        if(num === 0) {
+        let temp: Payment[] = [...state.paymentsList]
+        console.log(num, state.sort)
+        if(num === state.sort){
+            temp.reverse()
+        } else if(num === 0) {
             temp.sort((a,b) => { return a.property < b.property ? -1 : 1})
         } else if(num === 1){
             temp.sort((a,b) => { return a.date < b.date ? -1 : 1})
@@ -159,9 +172,8 @@ const Payments: NextPage = () => {
         } else {
         
         } 
-
         //@ts-ignore
-        setState({...state, paymentsList: temp})
+        setState({...state, paymentsList: temp, sort: num})
     }
 
     const setUp = () => {
@@ -355,6 +367,10 @@ const Payments: NextPage = () => {
                             <p className={dash.subtitle}>Registrar pagos</p>
 
                             <div className={styles.header__actions}>
+                                <div className={styles.filter__container}>
+                                    <SearchRoundedIcon className={dash.table__icon}/>
+                                    <input placeholder='Nombre propiedad' value={state.filter} onChange={(e) => {handleFilterChange(e)}} className={styles.search__input}/>
+                                </div>
                                 {/* Refresh */}
                                 <Tooltip title="Refrescar" placement='top'>
                                     <IconButton
