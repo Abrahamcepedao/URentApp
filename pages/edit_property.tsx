@@ -73,6 +73,7 @@ const EditProperty: NextPage = () => {
         bruta: 0,
         neta: 0,
         type: "month",
+        day: 1,
         start: "",
         end: "",
         pdf: "",
@@ -112,6 +113,7 @@ const EditProperty: NextPage = () => {
                     ...contract,
                     bruta: editProperty.contract.bruta,
                     neta: editProperty.contract.neta,
+                    day: editProperty.contract.day,
                     type: editProperty.contract.type,
                     start: editProperty.contract.start,
                     end: editProperty.contract.end,
@@ -150,6 +152,7 @@ const EditProperty: NextPage = () => {
             neta: 0,
             type: "month",
             start: "",
+            day: 1,
             end: "",
             pdf: "",
             pdfName: "",
@@ -250,7 +253,9 @@ const EditProperty: NextPage = () => {
             if(editProperty.tenant.phone !== property.phone){
                 return true
             }
-
+            if(editProperty.contract.day !== contract.day){
+                return true
+            }
             if(editProperty.contract.start !== contract.start){
                 return true
             }
@@ -281,6 +286,20 @@ const EditProperty: NextPage = () => {
         })
     }
 
+
+    /* handle pay day change */
+    const handleDayChange = (e:React.ChangeEvent<HTMLInputElement>) => {
+        let val:number = parseInt(e.target.value)
+        if(val >= 1 && val <= 31){
+            //udpdate dat
+            setContract({...contract, day: val})
+        }
+
+        if(e.target.value === ""){
+            setContract({...contract, day: parseInt(e.target.value)})
+        }
+    }
+    
     /* handle cancel click */
     const handleCancelClick = () => {
         //router.push('/properties')
@@ -313,6 +332,10 @@ const EditProperty: NextPage = () => {
             }
             if(contract.bruta === 0) {
                 setUtils({...utils, error: "Agrega la renta bruta del contrato"})
+                return false
+            }
+            if(contract.day > 0 && contract.day < 32) {
+                setUtils({...utils, error: "Agrega el día de pago del contrato"})
                 return false
             }
             if(contract.neta === 0) {
@@ -358,6 +381,7 @@ const EditProperty: NextPage = () => {
                         end: contract.end,
                         type: contract.type,
                         bruta: contract.bruta,
+                        day: contract.day,
                         neta: contract.neta,
                         pdfName: contract.pdfName,
                         newPdfName: contract.newPdfName,
@@ -390,6 +414,7 @@ const EditProperty: NextPage = () => {
                         end: contract.end,
                         type: contract.type,
                         bruta: contract.bruta,
+                        day: contract.day,
                         neta: contract.neta,
                         pdfName: contract.pdfName,
                         pdfUrl: contract.pdfUrl
@@ -496,6 +521,10 @@ const EditProperty: NextPage = () => {
                                     <div className={styles.input__container}>
                                         <p className={styles.input__label}>Renta neta</p>
                                         <input type="number" className={styles.input} value={contract.neta} onChange={(e) => {setContract({...contract, neta: parseFloat(e.target.value)})}}/>
+                                    </div>
+                                    <div className={styles.input__container}>
+                                        <p className={styles.input__label}>Día de pago</p>
+                                        <input type="number" className={styles.input} value={contract.day} onChange={(e) => {handleDayChange(e)}}/>
                                     </div>
 
                                     <div className={styles.input__container}>

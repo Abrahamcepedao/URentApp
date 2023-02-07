@@ -51,6 +51,7 @@ const addFirst = async(property,uid) => {
                           start: property.contract.start,
                           end: property.contract.end,
                           type: property.contract.type,
+                          day: property.contract.day,
                           bruta: property.contract.bruta,
                           neta: property.contract.neta,
                           pdfName: property.contract.pdfName,
@@ -88,6 +89,7 @@ const addFirst = async(property,uid) => {
                   start: "",
                   end: "",
                   type: "",
+                  day: 1,
                   bruta: 0,
                   neta: 0,
                   pdfName: "",
@@ -147,6 +149,7 @@ const addProperty = async(properties, property, uid) => {
                       contract: {
                           start: property.contract.start,
                           end: property.contract.end,
+                          day: property.contract.day,
                           type: property.contract.type,
                           bruta: property.contract.bruta,
                           neta: property.contract.neta,
@@ -186,6 +189,7 @@ const addProperty = async(properties, property, uid) => {
                   start: "",
                   end: "",
                   type: "",
+                  day: 1,
                   bruta: 0,
                   neta: 0,
                   pdfName: "",
@@ -247,6 +251,7 @@ const updateNewContract = async(properties, property, uid) => {
                       start: property.contract.start,
                       end: property.contract.end,
                       type: property.contract.type,
+                      day: property.contract.day,
                       bruta: property.contract.bruta,
                       neta: property.contract.neta,
                       pdfName: property.contract.newPdfName,
@@ -300,6 +305,7 @@ const updateSameContract = async(properties, property, uid) => {
               end: property.contract.end,
               type: property.contract.type,
               bruta: property.contract.bruta,
+              day: property.contract.day,
               neta: property.contract.neta,
               pdfName: property.contract.pdfName,
               pdfUrl: property.contract.pdfUrl
@@ -425,6 +431,7 @@ const registerPayment = async(properties, property, uid, payment) => {
                         end: property.contract.end,
                         type: property.contract.type,
                         bruta: property.contract.bruta,
+                        day: property.contract.day,
                         neta: property.contract.neta,
                         pdfName: property.contract.pdfName,
                         pdfUrl: property.contract.pdfUrl
@@ -491,6 +498,7 @@ const registerPayment = async(properties, property, uid, payment) => {
               end: property.contract.end,
               type: property.contract.type,
               bruta: property.contract.bruta,
+              day: property.contract.day,
               neta: property.contract.neta,
               pdfName: property.contract.pdfName,
               pdfUrl: property.contract.pdfUrl
@@ -558,18 +566,18 @@ const updatePaymentFirebase = async(properties, uid, payment, property, pastProp
                 let payments = prop.payments.filter(el => el.id !== payment.id)
                 let tempPayment = prop.payments.find(el => el.id === payment.id)
                 payments.push({
-                  id: Date.now(),
-                  property: payment.property, 
-                  date: payment.date,
-                  month: payment.month,
-                  year: payment.year,
-                  bruta: payment.bruta,
-                  neta: payment.neta,
-                  method: payment.method,
-                  fileName: payment.newFileName,
-                  fileUrl: downloadURL,
-                  fileRef: `files/${uid}/payments/${name}/${payment.year}/${payment.month}/${payment.newFileName}`,
-                  comment: payment.comment
+                    id: Date.now(),
+                    property: payment.property, 
+                    date: payment.date,
+                    month: payment.month,
+                    year: payment.year,
+                    bruta: payment.bruta,
+                    neta: payment.neta,
+                    method: payment.method,
+                    fileName: payment.newFileName,
+                    fileUrl: downloadURL,
+                    fileRef: `files/${uid}/payments/${name}/${payment.year}/${payment.month}/${payment.newFileName}`,
+                    comment: payment.comment
                 })
 
                 const temp = {
