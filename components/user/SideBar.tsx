@@ -1,4 +1,7 @@
+//Next.js
 import { useRouter } from 'next/router'
+
+//Context
 import { useAuth } from '../../context/AuthContext'
 
 //next
