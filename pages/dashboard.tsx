@@ -11,11 +11,31 @@ import styles from '../styles/Dashboard.module.css'
 import SideBar from '../components/user/SideBar'
 import BilledRents from '../components/user/dashboard/BilledRents'
 
+//Context
+import { useProperties } from '../context/PropertiesContext'
+
 //Material UI - icons
 
 //Dashboard page
 const Dashboard: NextPage = () => {
-  
+  //Context
+  const { properties, fecthProperties } = useProperties()
+
+  //useEffect
+  useEffect(() => {
+    setup()
+  },[])
+
+  const setup = async() => {
+    if(properties){
+      if(properties.length === 0) {
+        await fecthProperties()
+      }
+    } else {
+      await fecthProperties()
+    }
+  }
+
 
   return (
     <div>

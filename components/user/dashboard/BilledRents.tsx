@@ -7,10 +7,17 @@ import dash from '../../../styles/Dashboard.module.css'
 
 //Nivo
 import TwoColorPie from '../../charts/TwoColorPie'
-//constant
+
+//constants
 import months from '../../utils/constants/months'
 
+//Context
+import { useProperties } from '../../../context/PropertiesContext'
+
 const BilledRents = () => {
+    //Context
+    const { properties, fecthProperties } = useProperties()
+
     //useState - state
     const [state, setState] = useState({
         month: "",
@@ -18,16 +25,17 @@ const BilledRents = () => {
             {
                 "id": "Cobradas",
                 "label": "Cobradas",
-                "value": 141,
+                "value": 12,
                 "color": "#E3C37E"
             },
             {
                 "id": "SinCobrar",
                 "label": "Sin cobrar",
-                "value": 462,
+                "value": 4,
                 "color": "#F9E0AB"
             }
-        ]
+        ],
+        properties: []
     })
 
     //useEffect
@@ -35,9 +43,18 @@ const BilledRents = () => {
         setup()
     })
 
-    const setup = () => {
+    const setup = async() => {
         let today = new Date()
         setState({...state, month: months[today.getMonth()].es})
+
+        console.log(properties)
+        if(properties.length === 0) {
+            let data = await fecthProperties()
+
+        } else {
+            
+        }
+        
 
     }
 
