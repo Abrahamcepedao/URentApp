@@ -8,3 +8,48 @@
     padding: 20px;
     color: var(--light__text);
 }
+
+/* data container */
+.infoContainer {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+.dataContainer {
+
+}
+
+/* tabs */
+.tabsContainer {
+    display: grid;
+    grid-template-columns: auto auto auto;
+    column-gap: 10px;
+}
+.paidTab, .onTimeTab, .notPaidTab {
+     display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4px 8px;
+    border-radius: 25px;
+    cursor: pointer;
+    transition: transform 450ms;
+}
+.paidTab {
+    color: var(--success);
+    border: 1px solid var(--success);
+}
+.paidTab:hover, .onTimeTab:hover, .notPaidTab:hover {
+    transform: scale(1.08);
+}
+.onTimeTab {
+    color: var(--medium);
+    border: 1px solid var(--medium);
+}
+.notPaidTab {
+    color: var(--cancel);
+    border: 1px solid var(--cancel);
+}
+.tabText {
+    margin: 0px;
+    font-size: 12px;
+}

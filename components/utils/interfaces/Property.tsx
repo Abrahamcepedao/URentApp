@@ -14,6 +14,7 @@ interface Property {
     start: string
     end: string,
     type: string,
+    day: number,
     bruta: number,
     neta: number,
     pdfName: string,

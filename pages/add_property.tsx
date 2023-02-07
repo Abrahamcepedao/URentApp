@@ -5,7 +5,6 @@ import React, { useState, useEffect } from 'react'
 import type { NextPage } from 'next'
 import { useRouter } from 'next/router'
 import Head from 'next/head'
-import Link from 'next/link'
 
 //CSS
 import dash from '../styles/Dashboard.module.css'
@@ -17,8 +16,7 @@ import { GreenSwitch } from '../components/utils/Switch'
 import Chip from '../components/user/Chip'
 
 //Material UI
-import { Tooltip, IconButton, Collapse } from '@mui/material'
-import Button from '@mui/material/Button';
+import { Collapse } from '@mui/material'
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
@@ -30,7 +28,6 @@ import { useTheme } from '@mui/material/styles';
 //Material UI - icons
 import FileUploadRoundedIcon from '@mui/icons-material/FileUploadRounded';
 import ErrorRoundedIcon from '@mui/icons-material/ErrorRounded';
-import CheckCircleRoundedIcon from '@mui/icons-material/CheckCircleRounded';
 
 //Utils
 import { contractStatus } from '../components/utils/functions/contractStatus'
@@ -76,6 +73,7 @@ const AddProperty: NextPage = () => {
         bruta: 0,
         neta: 0,
         type: "month",
+        day: 1,
         start: "",
         end: "",
         pdf: "",
@@ -121,6 +119,7 @@ const AddProperty: NextPage = () => {
             bruta: 0,
             neta: 0,
             type: "month",
+            day: 1,
             start: "",
             end: "",
             pdf: "",
@@ -133,6 +132,7 @@ const AddProperty: NextPage = () => {
         router.push('/properties')
     }
     
+    /* handle contract date chnange */
     const handleDateChange = (e:React.ChangeEvent<HTMLInputElement>, n:number) => {
         if(n === 0){
             //check start date is before end date
@@ -168,6 +168,19 @@ const AddProperty: NextPage = () => {
                 //set start date
                 setContract({...contract, end: e.target.value, status: status})
             }
+        }
+    }
+
+    /* handle pay day change */
+    const handleDayChange = (e:React.ChangeEvent<HTMLInputElement>) => {
+        let val:number = parseInt(e.target.value)
+        if(val >= 1 && val <= 31){
+            //udpdate dat
+            setContract({...contract, day: val})
+        }
+
+        if(e.target.value === ""){
+            setContract({...contract, day: parseInt(e.target.value)})
         }
     }
 
@@ -231,6 +244,10 @@ const AddProperty: NextPage = () => {
                 setUtils({...utils, error: "Agrega el costo del contrato"})
                 return false
             }
+            if(contract.day === 0) {
+                setUtils({...utils, error: "Agrega el día de pago del contrato"})
+                return false
+            }
             if(contract.start === "") {
                 setUtils({...utils, error: "Agrega la fecha inicial del contrato"})
                 return false
@@ -262,6 +279,7 @@ const AddProperty: NextPage = () => {
                 start: contract.start,
                 end: contract.end,
                 type: contract.type,
+                day: contract.day,
                 bruta: contract.bruta,
                 neta: contract.neta,
                 pdfName: contract.pdfName,
@@ -293,6 +311,7 @@ const AddProperty: NextPage = () => {
                 start: contract.start,
                 end: contract.end,
                 type: contract.type,
+                day: contract.day,
                 bruta: contract.bruta,
                 neta: contract.neta,
                 pdfName: contract.pdfName,
@@ -407,6 +426,10 @@ const AddProperty: NextPage = () => {
                                     <div className={styles.input__container}>
                                         <p className={styles.input__label}>Renta neta</p>
                                         <input type="number" className={styles.input} value={contract.neta} onChange={(e) => {setContract({...contract, neta: parseFloat(e.target.value)})}}/>
+                                    </div>
+                                    <div className={styles.input__container}>
+                                        <p className={styles.input__label}>Día de pago</p>
+                                        <input type="number" className={styles.input} value={contract.day} onChange={(e) => {handleDayChange(e)}}/>
                                     </div>
                                     <div className={styles.input__container}>
                                         <p className={styles.input__label}>Tipo de renta</p>
