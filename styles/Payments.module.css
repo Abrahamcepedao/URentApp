@@ -103,6 +103,30 @@
     color: var(--light__text);
 }
 
+/* filter container */
+.header__actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.filter__container {
+  width: 100%;
+  padding: 4px 10px;
+  border-radius: 25px;
+  border: 1px solid var(--logo__primary);
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+}
+.search__input {
+  width: 100%;
+  background: none;
+  border: none;
+  outline: none !important;
+  color: var(--light__text);
+  margin-left: 10px;
+}
+
 /* table */
 .payments__table {
     width: 100%;

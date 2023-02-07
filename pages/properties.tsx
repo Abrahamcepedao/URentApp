@@ -25,6 +25,8 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
+import Popover from '@mui/material/Popover';
+import Typography from '@mui/material/Typography';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { useTheme } from '@mui/material/styles';
 
@@ -41,6 +43,7 @@ import MapsHomeWorkRoundedIcon from '@mui/icons-material/MapsHomeWorkRounded';
 import AttachMoneyRoundedIcon from '@mui/icons-material/AttachMoneyRounded';
 import QuestionMarkRoundedIcon from '@mui/icons-material/QuestionMarkRounded';
 import HighlightOffRoundedIcon from '@mui/icons-material/HighlightOffRounded';
+import CalendarMonthRoundedIcon from '@mui/icons-material/CalendarMonthRounded';
 
 //Context
 import { useProperties } from '../context/PropertiesContext'
@@ -77,12 +80,32 @@ const Properties: NextPage = () => {
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
 
+  //useState - popover anchor
+    const [propertyAnchor, setPropertyAnchor] = useState<HTMLElement | null>(null);
+    const [property, setProperty] = useState<string>("");
+    const propertyOpen = Boolean(propertyAnchor);
 
   useEffect(() => {
       handleFecthProperties()
 
   },[])
 
+  /* property - popover functions */
+    const handlePropertyPopoverOpen = (event: React.MouseEvent<HTMLElement>, val:string) => {
+        console.log(val)
+        if(val.length > 25){
+            setPropertyAnchor(event.currentTarget);
+            setProperty(val)
+        }
+    };
+
+    const handlePropertyPopoverClose = () => {
+        setPropertyAnchor(null);
+        setProperty("")
+    };
+
+
+  /* get properties from firebase */
   const getProperties = async() => {
     let data = await fecthProperties()
     if(data !== false) {
@@ -141,8 +164,10 @@ const Properties: NextPage = () => {
     } else if(num === 3){
       temp.sort((a,b) => { return a.contract.bruta < b.contract.bruta ? -1 : 1})
     } else if(num === 4){
+      temp.sort((a,b) => { return a.contract.end < b.contract.end ? -1 : 1})
+    } else if(num === 5) {
       temp.sort((a,b) => { return a.status < b.status ? -1 : 1})
-    } 
+    }
 
     //@ts-ignore
     setState({...state, propertiesList: temp})
@@ -260,6 +285,9 @@ const Properties: NextPage = () => {
                 <div className={styles.header__cell__sm}>
                     R. Neta
                 </div>
+                <div className={styles.header__cell__sm}>
+                    Fin contrato
+                </div>
                 <div className={styles.header__cell__lg}>
                     Estatus
                 </div>
@@ -269,7 +297,14 @@ const Properties: NextPage = () => {
               {state.propertiesList.length !== 0 ? state.propertiesList.map((item:Property, i) => (
                 <div key={i} className={styles.table__row}>
                     <div className={styles.header__cell}>
-                        {item.name.length > 25 ? item.name.substring(0,25)+"..." : item.name }
+                        <Typography
+                              aria-owns={propertyAnchor ? 'mouse-over-property' : undefined}
+                              aria-haspopup="true"
+                              onMouseEnter={(e) => {handlePropertyPopoverOpen(e, item.name)}}
+                              onMouseLeave={handlePropertyPopoverClose}
+                          >
+                              {item.name.length > 25 ? item.name.substring(0,25) + "..." : item.name}
+                          </Typography>
                     </div>
                     <div className={styles.header__cell}>
                         {item.tenant.name ? item.tenant.name : "-"}
@@ -282,6 +317,9 @@ const Properties: NextPage = () => {
                     </div>
                     <div className={styles.header__cell__sm}>
                         {item.contract.neta !== 0 ? formatMoney(item.contract.neta) : "-"}
+                    </div>
+                    <div className={styles.header__cell__sm}>
+                        {item.contract.end}
                     </div>
                     <div className={styles.header__cell__lg}>
                         {!item.status ? (
@@ -316,6 +354,29 @@ const Properties: NextPage = () => {
           </div>
         </div>
       </main>
+
+      {/* property anchor */}
+      <Popover
+          id="mouse-over-property"
+          sx={{
+              pointerEvents: 'none',
+          }}
+          open={propertyOpen}
+          anchorEl={propertyAnchor}
+          anchorOrigin={{
+              vertical: 'bottom',
+              horizontal: 'left',
+          }}
+          transformOrigin={{
+              vertical: 'top',
+              horizontal: 'left',
+          }}
+          onClose={handlePropertyPopoverClose}
+          disableRestoreFocus
+      >
+          <Typography sx={{ p: 1 }}>{property}</Typography>
+      </Popover>
+      
       {/* Dialog */}
       <Dialog
           fullScreen={fullScreen}
@@ -404,6 +465,12 @@ const Properties: NextPage = () => {
           Renta 
         </MenuItem>
         <MenuItem onClick={() => {handleOrderChange(4)}}>
+          <ListItemIcon>
+            <CalendarMonthRoundedIcon fontSize="small" />
+          </ListItemIcon>
+          Fin de contrato
+        </MenuItem>
+        <MenuItem onClick={() => {handleOrderChange(5)}}>
           <ListItemIcon>
             <QuestionMarkRoundedIcon fontSize="small" />
           </ListItemIcon>
