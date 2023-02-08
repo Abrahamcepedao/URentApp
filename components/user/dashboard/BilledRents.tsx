@@ -1,6 +1,9 @@
 //React
 import React, { useState, useEffect } from 'react'
 
+//Next
+import { useRouter } from 'next/router'
+
 //CSS
 import styles from '../../../styles/components/dashboard/BilledRents.module.css'
 import dash from '../../../styles/Dashboard.module.css'
@@ -8,10 +11,14 @@ import dash from '../../../styles/Dashboard.module.css'
 //Nivo
 import TwoColorPie from '../../charts/TwoColorPie'
 
+//Material UI
+import { IconButton, Tooltip } from '@mui/material';
+
 //Material UI - icons
 import PaidRoundedIcon from '@mui/icons-material/PaidRounded';
 import AccessTimeFilledRoundedIcon from '@mui/icons-material/AccessTimeFilledRounded';
 import ErrorRoundedIcon from '@mui/icons-material/ErrorRounded';
+import InfoRoundedIcon from '@mui/icons-material/InfoRounded';
 
 //constants
 import months from '../../utils/constants/months'
@@ -21,37 +28,15 @@ import { useProperties } from '../../../context/PropertiesContext'
 
 //Interfaces
 import Property from '../../utils/interfaces/Property'
-import Payment from '../../utils/interfaces/Payment';
+import StatusProperty from '../../utils/interfaces/StatusProperty';
 
-interface StatusProperty {
-    name: string,
-    type: string,
-    status: number,
-    paidStatus: string,
-    tenant: {
-        name: string,
-        razon: string,
-        phone: string,
-        mail: string,
-    },
-    contract: {
-        start: string
-        end: string,
-        type: string,
-        day: number,
-        bruta: number,
-        neta: number,
-        pdfName: string,
-        pdfUrl: string,
-        status: number
-    },
-    payments: Payment[]
-
-}
 
 const BilledRents = () => {
     //Context
-    const { properties, fecthProperties } = useProperties()
+    const { properties, fecthProperties, updateEditProperty } = useProperties()
+
+    //router
+    const router = useRouter()
 
     //useState - state
     const [state, setState] = useState({
@@ -87,56 +72,78 @@ const BilledRents = () => {
     //useEffect
     useEffect(() => {
         setup()
-    },[properties])
+    },[])
 
-    const setup = async() => {
+    const setStatus = (data:Property[]) => {
         let today = new Date()
         let day = today.getDate()
         let year = today.getFullYear()
         let month = today.getMonth()
-        setState({...state, month: months[month].es})
+        let temp:StatusProperty[] = []
+        let paid:number = 0
+        let onTime:number = 0
+        let notPaid:number = 0
 
-        console.log(properties)
-        if(properties.length === 0) {
-            let data = await fecthProperties()
-
-        } else {
-            let temp:StatusProperty[] = []
-            
-            properties.forEach((item:Property) => {
-                if(item.status) {
-                    let status:string = "notPaid"
-                    if(item.payments) {
-                        let pay = item.payments.find(el => el.year === year && el.month === months[month].es)
-                        console.log(pay)
-                        if(pay === undefined){
-                            //check if is on time
-                            if(day <= item.contract.day){
-                                //is on time
-                                status = "onTime"
-                            }
+        data.forEach((item:Property) => {
+            if(item.status) {
+                let status:string = "notPaid"
+                if(item.payments) {
+                    let pay = item.payments.find(el => el.year === year && el.month === months[month].en)
+                    console.log(pay)
+                    if(pay === undefined){
+                        //check if is on time
+                        if(day <= item.contract.day){
+                            //is on time
+                            status = "onTime"
+                            onTime++;
                         } else {
-                            //there has been a payment
-                            status = "paid"
+                            notPaid++;
                         }
+                    } else {
+                        //there has been a payment
+                        paid++;
+                        status = "paid"
                     }
-                    
-                    temp.push({
-                        ...item,
-                        paidStatus: status
-                    })
+                } else {
+                    notPaid++;
                 }
-            })
+                
+                temp.push({
+                    ...item,
+                    paidStatus: status
+                })
+            }
+        })
 
-            let temp2 = temp.filter((el:StatusProperty) => el.paidStatus === "notPaid")
-            setState({...state, properties})
-        }
+        console.log(paid, onTime, notPaid)
+        console.log(temp)
+        let temp2 = temp.filter((el:StatusProperty) => el.paidStatus === "notPaid")
+        console.log(temp2)
         
-
+        //@ts-ignore
+        setState({...state, properties: temp, propertiesList: temp2, paid, onTime, notPaid, month: months[month].es})
     }
 
+    const setup = async() => {
+        if(properties.length === 0) {
+            let data = await fecthProperties()
+            setStatus(data)
+        } else {
+            setStatus(properties)
+        }
+    }
+
+    /* handle tab click */
     const handleTabClick = (num:number) => {
-        setState({...state, selected: num})
+        let status:string[] = ["paid", "onTime", "notPaid"]
+        let temp = state.properties.filter((el:StatusProperty) => el.paidStatus === status[num])
+        setState({...state, selected: num, propertiesList: temp})
+    }
+
+    /* handle property click */
+    const handlePropertyClick = (property:StatusProperty) => {
+        updateEditProperty(property)
+        router.push(`/edit_property`)
     }
 
     return (
@@ -145,6 +152,7 @@ const BilledRents = () => {
             <div className={styles.infoContainer}>
                 <TwoColorPie data={state.pieData}/>
                 <div className={styles.dataContainer}>
+                    {/* tabs */}
                     <div className={styles.tabsContainer}>
                         <div className={styles.paidTab} 
                             onClick={() => {handleTabClick(0)}}
@@ -173,6 +181,23 @@ const BilledRents = () => {
                             </div>
                             <p className={styles.tabText}>Sin cobrar</p>
                         </div>
+                    </div>
+
+                    {/* table */}
+                    <div className={styles.table}>
+                        {state.propertiesList.length !== 0 ? state.propertiesList.map((item:StatusProperty, i:number) => (
+                            <div key={i} className={styles.propertyRow}>
+                                <p>{item.name}</p>
+                                <Tooltip title="Ver propiedad" placement='top'>
+                                    <IconButton onClick={() => {handlePropertyClick(item)}}>
+                                        <InfoRoundedIcon className={styles.propertyIcon}/>
+                                    </IconButton>
+                                </Tooltip>
+                            </div>
+                        )) : (
+                            <div>
+                            </div>
+                        )}
                     </div>
                 </div>
                 
