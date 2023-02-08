@@ -25,6 +25,7 @@
     display: grid;
     grid-template-columns: auto auto auto;
     column-gap: 10px;
+    margin-bottom: 20px;
 }
 .paidTab, .onTimeTab, .notPaidTab {
     display: flex;
@@ -69,4 +70,19 @@
 .tabText {
     margin: 0px;
     font-size: 14px;
+}
+
+/* table */
+.table {
+    max-height: 200px;
+    overflow-y: scroll;
+
+}
+.propertyRow {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.propertyIcon {
+    color: white;
 }

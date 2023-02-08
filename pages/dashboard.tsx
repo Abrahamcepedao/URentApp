@@ -54,7 +54,7 @@ const Dashboard: NextPage = () => {
             {/* upper container */}
             <div className={styles.upper__container}>
               <BilledRents/>
-              <BilledRents/>
+              {/* <BilledRents/> */}
             </div>
           </div>
             
