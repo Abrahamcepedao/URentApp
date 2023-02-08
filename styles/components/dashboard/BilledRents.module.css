@@ -14,9 +14,10 @@
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
+    padding-top: 20px;
 }
 .dataContainer {
-
+    flex: 1;
 }
 
 /* tabs */
@@ -26,11 +27,12 @@
     column-gap: 10px;
 }
 .paidTab, .onTimeTab, .notPaidTab {
-     display: flex;
+    display: flex;
     align-items: center;
     justify-content: center;
+    flex-direction: column;
     padding: 4px 8px;
-    border-radius: 25px;
+    border-radius: 5px;
     cursor: pointer;
     transition: transform 450ms;
 }
@@ -49,7 +51,22 @@
     color: var(--cancel);
     border: 1px solid var(--cancel);
 }
+
+.tabInner {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.tabNumber {
+    font-size: 25px;
+    font-weight: bold;
+    margin-left: 5px;
+}
+.tabIcon {
+    width: 30px !important;
+    height: 30px !important;
+}
 .tabText {
     margin: 0px;
-    font-size: 12px;
+    font-size: 14px;
 }

@@ -21,9 +21,9 @@ a {
   --dark__text: #957F35;
   --light__text: #E6E3D9;
   --dark__back: #1F2122;
-  --cancel: #ca0b2c;
-  --medium: #e08516;
-  --success: #109B1E;
+  --cancel: #FF6342;
+  --medium: #e99517;
+  --success: #01AA55;
 }
 @media (prefers-color-scheme: dark) {
   html {

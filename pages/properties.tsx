@@ -73,7 +73,8 @@ const Properties: NextPage = () => {
     propertiesList: [],
     filter: "",
     deleteOpen: false,
-    deleteProperty: ""
+    deleteProperty: "",
+    sort: 0,
   })
 
   //useState - menu
@@ -155,7 +156,9 @@ const Properties: NextPage = () => {
 
   const handleOrderChange = (num:number) => {
     let temp: Property[] = [...state.properties]
-    if(num === 0) {
+    if(num === state.sort){
+      temp.reverse()
+    } else if(num === 0) {
       temp.sort((a,b) => { return a.name < b.name ? -1 : 1})
     } else if(num === 1){
       temp.sort((a,b) => { return a.tenant.name < b.tenant.name ? -1 : 1})
