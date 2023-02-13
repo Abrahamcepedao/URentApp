@@ -14,10 +14,9 @@ const contractStatus = (end) => {
         return 3
     } else if (diffDays < 360){
         return 4
-    } else {
-        return 5
     } 
-    return -1
+    
+    return 5
 }
 
 export { contractStatus }

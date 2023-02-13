@@ -11,6 +11,7 @@ import styles from '../styles/Dashboard.module.css'
 import SideBar from '../components/user/SideBar'
 import BilledRents from '../components/user/dashboard/BilledRents'
 import PropertiesStatus from '../components/user/dashboard/PropertiesStatus'
+import ContractsStatus from '../components/user/dashboard/ContractsStatus'
 
 //Context
 import { useProperties } from '../context/PropertiesContext'
@@ -56,7 +57,7 @@ const Dashboard: NextPage = () => {
             <div className={styles.upper__container}>
               <BilledRents/>
               <PropertiesStatus/>
-              {/* <BilledRents/> */}
+              <ContractsStatus/>
             </div>
           </div>
             

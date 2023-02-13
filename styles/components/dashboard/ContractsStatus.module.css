@@ -1,0 +1,58 @@
+/* container */
+.container {
+    height: 100%;
+    width: 100%;
+    border-radius: 10px;
+    background: var(--dark__back);
+    box-shadow: -8px 8px 20px 4px rgba(0, 0, 0, 0.6), inset -1px 1px 4px 2px rgba(108, 105, 105, 0.1);
+    padding: 20px;
+    color: var(--light__text);
+}
+
+/* tabs */
+.tabsContainer {
+    display: grid;
+    grid-template-columns: auto auto;
+    grid-gap: 10px;
+    padding-top: 20px;
+    width: 250px;
+    margin: auto;
+}
+.tab {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    padding: 4px 8px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: transform 450ms;
+    width: 120px;
+    height: 120px;
+    text-align: center;
+}
+.tabNumber {
+    font-size: 40px;
+    font-weight: bold;
+    margin: 0px;
+}
+.tabText {
+    margin: 0px;
+    font-size: 14px;
+    font-weight: bolder;
+}
+
+/* table */
+.table {
+    max-height: 200px;
+    overflow-y: scroll;
+
+}
+.propertyRow {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.propertyIcon {
+    color: white;
+}

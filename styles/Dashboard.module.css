@@ -47,5 +47,5 @@
 .upper__container {
     display: grid;
     grid-template-columns: auto auto;
-    column-gap: 30px;
+    grid-gap: 30px;
 }
