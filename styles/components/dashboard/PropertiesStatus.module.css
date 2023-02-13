@@ -1,0 +1,65 @@
+/* container */
+.container {
+    height: 100%;
+    width: 100%;
+    border-radius: 10px;
+    background: var(--dark__back);
+    box-shadow: -8px 8px 20px 4px rgba(0, 0, 0, 0.6), inset -1px 1px 4px 2px rgba(108, 105, 105, 0.1);
+    padding: 20px;
+    color: var(--light__text);
+}
+
+/* data container */
+.infoContainer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 20px;
+}
+.dataContainer {
+    flex: 1;
+}
+
+/* tabs */
+.tabsContainer {
+    display: grid;
+    grid-template-columns: auto;
+    row-gap: 20px;
+}
+.paidTab, .notPaidTab {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    padding: 4px 8px;
+    border-radius: 5px;
+    cursor: pointer;
+    color: white;
+}
+.paidTab {
+    border: 1px solid var(--success);
+    background: var(--success)
+}
+.notPaidTab {
+    background: var(--cancel);
+    border: 1px solid var(--cancel);
+}
+
+.tabInner {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.tabNumber {
+    font-size: 25px;
+    font-weight: bold;
+    margin-left: 5px;
+}
+.tabIcon {
+    width: 30px !important;
+    height: 30px !important;
+}
+.tabText {
+    margin: 0px;
+    font-size: 14px;
+}
