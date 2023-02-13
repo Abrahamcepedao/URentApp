@@ -42,7 +42,7 @@
     border: 1px solid var(--success);
 }
 .paidTab:hover, .onTimeTab:hover, .notPaidTab:hover {
-    transform: scale(1.08);
+    transform: scale(1.06);
 }
 .onTimeTab {
     color: var(--medium);
