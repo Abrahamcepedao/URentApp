@@ -119,9 +119,30 @@ const BilledRents = () => {
         console.log(temp)
         let temp2 = temp.filter((el:StatusProperty) => el.paidStatus === "notPaid")
         console.log(temp2)
+
+        let pieData = [
+            {
+                "id": "Cobradas",
+                "label": "Cobradas",
+                "value": paid,
+                "color": "#01AA55"
+            },
+            {
+                "id": "EnTiempo",
+                "label": "Entiempo",
+                "value": onTime,
+                "color": "#e99517"
+            },
+            {
+                "id": "SinCobrar",
+                "label": "Sin cobrar",
+                "value": notPaid,
+                "color": "#FF6342"
+            },
+        ]
         
         //@ts-ignore
-        setState({...state, properties: temp, propertiesList: temp2, paid, onTime, notPaid, month: months[month].es})
+        setState({...state, properties: temp, propertiesList: temp2, paid, onTime, notPaid, month: months[month].es, pieData})
     }
 
     const setup = async() => {
@@ -150,7 +171,9 @@ const BilledRents = () => {
         <div className={styles.container}>
             <h2 className={dash.subtitle}>Rentas cobradas en {state.month}</h2>
             <div className={styles.infoContainer}>
-                <TwoColorPie data={state.pieData}/>
+                {state.pieData.length !== 0 && (
+                    <TwoColorPie data={state.pieData}/>
+                )}
                 <div className={styles.dataContainer}>
                     {/* tabs */}
                     <div className={styles.tabsContainer}>
