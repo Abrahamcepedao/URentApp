@@ -43,7 +43,27 @@ const MonthlyRent = () => {
         occupied: 12,
         free: 4,
         status: [0,0,0,0,0,0],
-        properties: []
+        properties: [],
+        data: [
+            {
+                "id": 'Renta Neta',
+                "color": "hsl(149, 94%, 34%)",
+                "data": [
+                    { x: '2022-01-01', y: 78000 },
+                    { x: '2022-02-01', y: 82000 },
+                    { x: '2022-03-01', y: 66000 },
+                    { x: '2022-04-01', y: 32000 },
+                    { x: '2022-05-01', y: 90000 },
+                    { x: '2022-06-01', y: 100000 },
+                    { x: '2022-07-01', y: 85000 },
+                    { x: '2022-08-01', y: 96000 },
+                    { x: '2022-09-01', y: 90000 },
+                    { x: '2022-10-01', y: 100000 },
+                    { x: '2022-11-01', y: 85000 },
+                    { x: '2022-12-01', y: 96000 },
+                ],
+            },
+        ],
     })
 
     //useEffect
@@ -85,9 +105,9 @@ const MonthlyRent = () => {
 
     return (
         <div className={styles.container}>
-            <h2 className={dash.subtitle}>Vencimiento de contratos</h2>
+            <h2 className={dash.subtitle}>Ingresos netos mensuales</h2>
                 {/* chart */}
-                <LineChart data={[]}/>
+                <LineChart data={state.data}/>
         </div>
     )
 }

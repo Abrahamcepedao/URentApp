@@ -1,7 +1,10 @@
 // install (please make sure versions match peerDependencies)
 // yarn add @nivo/core @nivo/pie
-import { Line } from '@nivo/line'
+import { ResponsiveLine } from '@nivo/line'
 import { animated } from '@react-spring/web'
+
+//function
+import formatMoney from '../utils/functions/formatMoney'
 
 const CustomSymbol = ({ size, color, borderWidth, borderColor }) => (
     <g>
@@ -17,41 +20,51 @@ const CustomSymbol = ({ size, color, borderWidth, borderColor }) => (
 )
 
 const LineChart = ({ data /* see data tab */ }) => (
-    <Line
-        width={900}
-        height={400}
-        margin={{top: 20, right: 20, bottom: 60, left: 80 }}
-        //data={data}
+    <ResponsiveLine
+        width={850}
+        height={300}
+        margin={{top: 20, right: 20, bottom: 60, left: 60 }}
+        colors={{datum: 'color'}}
+        data={data}
         animate={true}
         enableSlices={'x'}
-        data={[
-            {
-                id: 'fake corp. A',
-                data: [
-                    { x: '2018-01-01', y: 7 },
-                    { x: '2018-01-02', y: 5 },
-                    { x: '2018-01-03', y: 11 },
-                    { x: '2018-01-04', y: 9 },
-                    { x: '2018-01-05', y: 12 },
-                    { x: '2018-01-06', y: 16 },
-                    { x: '2018-01-07', y: 13 },
-                    { x: '2018-01-08', y: 13 },
-                ],
-            },
-            {
-                id: 'fake corp. B',
-                data: [
-                    { x: '2018-01-04', y: 14 },
-                    { x: '2018-01-05', y: 14 },
-                    { x: '2018-01-06', y: 15 },
-                    { x: '2018-01-07', y: 11 },
-                    { x: '2018-01-08', y: 10 },
-                    { x: '2018-01-09', y: 12 },
-                    { x: '2018-01-10', y: 9 },
-                    { x: '2018-01-11', y: 7 },
-                ],
-            },
-        ]}
+        enableArea={true}
+        areaOpacity={0.15}
+        enableGridX={false}
+        enableGridY={false}
+        pointLabel={false}
+        theme={{
+            "textColor": "#fff",
+            "axis": {
+                "domain": {
+                    "line": {
+                        "stroke": "#fff"
+                    }
+                }
+            }
+        }}
+        sliceTooltip={({slice}) => {
+            return (
+                <div
+                    style={{
+                        background: 'white',
+                        padding: '9px 12px',
+                        border: '1px solid #ccc',
+                    }}
+                >
+                    <div
+                            style={{
+                                padding: '3px 0',
+                                color: '#1F2122'
+                            }}
+                        >
+                            Renta neta: <strong>{formatMoney(slice.points[0].data.y)}</strong>
+                        </div>
+                </div>
+            )
+        }}
+        
+        
         xScale={{
             type: 'time',
             format: '%Y-%m-%d',
@@ -64,13 +77,12 @@ const LineChart = ({ data /* see data tab */ }) => (
             stacked: false
         }}
         axisLeft={{
-            legend: 'linear scale',
             legendOffset: 12,
+            color: '#fff',
         }}
         axisBottom={{
-            format: '%b %d',
-            tickValues: 'every 2 days',
-            legend: 'time scale',
+            format: '%b %y',
+            tickValues: 'every month',
             legendOffset: -12,
         }}
         curve={'linear'}
