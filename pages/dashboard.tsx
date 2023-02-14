@@ -52,12 +52,16 @@ const Dashboard: NextPage = () => {
         {/* @ts-ignore */}
         <SideBar/>
         <div className={styles.container}>
-          <div className={styles.innner__container}>
+          <div className={styles.inner__container}>
 
             {/* upper container */}
             <div className={styles.upper__container}>
               <BilledRents/>
               <PropertiesStatus/>
+            </div>
+
+            {/* lower container */}
+            <div className={styles.lower__container}>
               <ContractsStatus/>
               <MonthlyRent/>
             </div>
