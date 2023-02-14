@@ -15,6 +15,7 @@
     margin: 0px;
     font-size: 25px;
     font-weight: bold;
+    color: var(--logo__primary);
 }
 
 /* icons */
@@ -62,4 +63,11 @@
     grid-template-columns: auto auto;
     grid-gap: 30px;
     height: 100%;
+}
+
+/* lower right container */
+.lower__right__container {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
 }

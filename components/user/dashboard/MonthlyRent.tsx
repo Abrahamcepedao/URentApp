@@ -52,7 +52,7 @@ const MonthlyRent = () => {
                     { x: '2022-01-01', y: 78000 },
                     { x: '2022-02-01', y: 82000 },
                     { x: '2022-03-01', y: 66000 },
-                    { x: '2022-04-01', y: 32000 },
+                    { x: '2022-04-01', y: 82000 },
                     { x: '2022-05-01', y: 90000 },
                     { x: '2022-06-01', y: 100000 },
                     { x: '2022-07-01', y: 85000 },
@@ -107,7 +107,9 @@ const MonthlyRent = () => {
         <div className={styles.container}>
             <h2 className={dash.subtitle}>Ingresos netos mensuales</h2>
                 {/* chart */}
-                <LineChart data={state.data}/>
+                <div className={styles.chart__container}>
+                    <LineChart data={state.data}/>
+                </div>
         </div>
     )
 }

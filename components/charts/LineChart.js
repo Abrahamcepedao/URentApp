@@ -21,9 +21,9 @@ const CustomSymbol = ({ size, color, borderWidth, borderColor }) => (
 
 const LineChart = ({ data /* see data tab */ }) => (
     <ResponsiveLine
-        width={850}
+        
         height={300}
-        margin={{top: 20, right: 20, bottom: 60, left: 60 }}
+        margin={{top: 20, right: 20, bottom: 60, left: 80 }}
         colors={{datum: 'color'}}
         data={data}
         animate={true}
@@ -34,11 +34,12 @@ const LineChart = ({ data /* see data tab */ }) => (
         enableGridY={false}
         pointLabel={false}
         theme={{
-            "textColor": "#fff",
+            "textColor": "rgba(255,255,255,0.5)",
             "axis": {
                 "domain": {
                     "line": {
-                        "stroke": "#fff"
+                        "stroke": "#fff",
+                        opacity: "0.5"
                     }
                 }
             }
@@ -79,6 +80,10 @@ const LineChart = ({ data /* see data tab */ }) => (
         axisLeft={{
             legendOffset: 12,
             color: '#fff',
+            format: value =>
+                `${Number(value).toLocaleString('ru-RU', {
+                    minimumFractionDigits: 0,
+                })} $`,
         }}
         axisBottom={{
             format: '%b %y',
