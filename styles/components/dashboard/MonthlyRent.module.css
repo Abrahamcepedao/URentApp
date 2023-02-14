@@ -9,3 +9,8 @@
     padding: 20px;
     color: var(--light__text);
 }
+.chart__container {
+    margin: auto;
+    width: 90%;
+    height: 260px;
+}

@@ -13,6 +13,7 @@ import BilledRents from '../components/user/dashboard/BilledRents'
 import PropertiesStatus from '../components/user/dashboard/PropertiesStatus'
 import ContractsStatus from '../components/user/dashboard/ContractsStatus'
 import MonthlyRent from '../components/user/dashboard/MonthlyRent'
+import RentFacts from '../components/user/dashboard/RentFacts'
 
 //Context
 import { useProperties } from '../context/PropertiesContext'
@@ -63,7 +64,10 @@ const Dashboard: NextPage = () => {
             {/* lower container */}
             <div className={styles.lower__container}>
               <ContractsStatus/>
-              <MonthlyRent/>
+              <div className={styles.lower__right__container}>
+                <RentFacts/>
+                <MonthlyRent/>
+              </div>
             </div>
           </div>
             

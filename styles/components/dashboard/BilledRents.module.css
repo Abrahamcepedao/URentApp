@@ -76,7 +76,8 @@
 .table {
     max-height: 200px;
     overflow-y: scroll;
-
+    color: var(--light__text);
+    opacity: 0.9;
 }
 .propertyRow {
     display: flex;
@@ -84,5 +85,5 @@
     align-items: center;
 }
 .propertyIcon {
-    color: white;
+    color: var(--light__text);
 }

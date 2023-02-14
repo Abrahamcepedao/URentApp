@@ -34,15 +34,16 @@
     padding: 4px 8px;
     border-radius: 5px;
     cursor: pointer;
-    color: white;
 }
 .paidTab {
     border: 1px solid var(--success);
-    background: var(--success)
+    background: var(--success);
+    color: #07592d;
 }
 .notPaidTab {
     background: var(--cancel);
     border: 1px solid var(--cancel);
+    color: #a5280e;
 }
 
 .tabInner {

@@ -179,7 +179,7 @@ const BilledRents = () => {
                     <div className={styles.tabsContainer}>
                         <div className={styles.paidTab} 
                             onClick={() => {handleTabClick(0)}}
-                            style={{background: state.selected === 0 ? 'var(--success)' : 'none', color: state.selected === 0 ? 'white' : 'var(--success)'}}>
+                            style={{background: state.selected === 0 ? 'var(--success)' : 'none', color: state.selected === 0 ? '#07592d' : 'var(--success)'}}>
                             <div className={styles.tabInner}>
                                 <PaidRoundedIcon className={styles.tabIcon}/> 
                                 <span className={styles.tabNumber}>{state.paid}</span>
@@ -188,7 +188,7 @@ const BilledRents = () => {
                         </div>
                         <div className={styles.onTimeTab} 
                             onClick={() => {handleTabClick(1)}}
-                            style={{background: state.selected === 1 ? 'var(--medium)' : 'none', color: state.selected === 1 ? 'white' : 'var(--medium)'}}>
+                            style={{background: state.selected === 1 ? 'var(--medium)' : 'none', color: state.selected === 1 ? '#845207' : 'var(--medium)'}}>
                             <div className={styles.tabInner}>
                                 <AccessTimeFilledRoundedIcon className={styles.tabIcon}/> 
                                 <span className={styles.tabNumber}>{state.onTime}</span>
@@ -197,7 +197,7 @@ const BilledRents = () => {
                         </div>
                         <div className={styles.notPaidTab} 
                             onClick={() => {handleTabClick(2)}}
-                            style={{background: state.selected === 2 ? 'var(--cancel)' : 'none', color: state.selected === 2 ? 'white' : 'var(--cancel)'}}>
+                            style={{background: state.selected === 2 ? 'var(--cancel)' : 'none', color: state.selected === 2 ? '#a5280e' : 'var(--cancel)'}}>
                             <div className={styles.tabInner}>
                                 <ErrorRoundedIcon className={styles.tabIcon}/> 
                                 <span className={styles.tabNumber}>{state.notPaid}</span>
