@@ -81,9 +81,9 @@ const LineChart = ({ data /* see data tab */ }) => (
             legendOffset: 12,
             color: '#fff',
             format: value =>
-                `${Number(value).toLocaleString('ru-RU', {
+                `$ ${Number(value).toLocaleString('ru-RU', {
                     minimumFractionDigits: 0,
-                })} $`,
+                })}`,
         }}
         axisBottom={{
             format: '%b %y',
