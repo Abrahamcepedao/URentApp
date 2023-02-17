@@ -66,7 +66,8 @@ const Login: NextPage = () => {
       e.preventDefault()
 
       try {
-          const temp = await getUserByMail(formData.mail)
+          handleLogin()
+          /* const temp = await getUserByMail(formData.mail)
           console.log(temp)
           if(temp !== null) {
             //@ts-ignore
@@ -88,8 +89,8 @@ const Login: NextPage = () => {
               
             } else {
               handleLogin()
-            }
-          }
+            } 
+          }*/
           
       } catch(err) {
           console.log(err)

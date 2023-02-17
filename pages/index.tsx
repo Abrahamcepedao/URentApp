@@ -48,7 +48,7 @@ const Home: NextPage = () => {
   const router = useRouter()
 
   //Context
-  const { user, signup } = useAuth()
+  const { user, signup, logout } = useAuth()
   
   //useState
   const [formData, setFormData] = useState<formData>({
@@ -58,6 +58,10 @@ const Home: NextPage = () => {
     phone: "",
     password: "",
     confirmPassword: ""
+  })
+
+  useEffect(() => {
+    logout()
   })
 
   const [values, setValues] = useState({

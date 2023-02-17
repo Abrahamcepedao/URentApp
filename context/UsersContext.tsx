@@ -13,8 +13,11 @@ export const UsersContextProvider = ({children}: {children:React.ReactNode}) => 
     const { user } = useAuth()
 
     useEffect(() => {
-        if(users.length === 0){
-            fecthUsers(user.orgName)
+        if(users.length === 0 && user){
+            console.log(user)
+            if(user.orgName){
+                fecthUsers(user.orgName)
+            }
         }
     })
 
