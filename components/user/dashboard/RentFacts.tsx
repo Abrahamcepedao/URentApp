@@ -83,17 +83,17 @@ const RentFacts = () => {
 
     return (
         <div className={styles.container}>
-            <div className={styles.fact__container}>
+            <div className={styles.fact__container__month}>
                 <p className={styles.fact__number}>{formatMoney(state.monthRev)}</p>
                 <p className={styles.fact__label}>Ingresos en {state.month}</p>
             </div>
 
-            <div className={styles.fact__container}>
+            <div className={styles.fact__container__year}>
                 <p className={styles.fact__number}>{formatMoney(state.yearRev)}</p>
                 <p className={styles.fact__label}>Ingresos en {state.year}</p>
             </div>
 
-            <div className={styles.fact__container}>
+            <div className={styles.fact__container__all}>
                 <p className={styles.fact__number}>{formatMoney(state.allRev)}</p>
                 <p className={styles.fact__label}>Ingresos Totales</p>
             </div>

@@ -7,20 +7,31 @@
     grid-template-columns: auto auto auto;
     column-gap: 30px;
 }
-.fact__container {
+.fact__container__year, .fact__container__month, .fact__container__all {
     border-radius: 10px;
     background: var(--dark__back);
     box-shadow: -8px 8px 20px 4px rgba(0, 0, 0, 0.6), inset -1px 1px 4px 2px rgba(108, 105, 105, 0.1);
     padding: 20px;
 }
+.fact__container__month {
+    background-image: linear-gradient(146deg, rgba(221,186,86,1) 0%, rgba(255,171,0,1) 100%);
+    color: #a06e10;
+}
+.fact__container__year {
+    background-image: linear-gradient(146deg, rgba(61,208,82,1) 0%, rgba(72,179,38,1) 100%);
+    color: #1f6d0e;
+}
+.fact__container__all {
+    background-image: linear-gradient(146deg, rgba(235,52,74,1) 0%, rgba(179,21,62,1) 100%);
+    color: #7a0d25;
+}
 .fact__number {
     font-size: 30px;
-    color: var(--logo__primary);
+    font-weight: bold;
     margin: 0px;
 }
 .fact__label {
     font-size: 20px;
-    color: var(--logo__primary);
     margin: 0px;
-    opacity: 0.5;
+    opacity: 0.75;
 }
