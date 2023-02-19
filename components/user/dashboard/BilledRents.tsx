@@ -172,7 +172,9 @@ const BilledRents = () => {
             <h2 className={dash.subtitle}>Rentas cobradas en {state.month}</h2>
             <div className={styles.infoContainer}>
                 {state.pieData.length !== 0 && (
-                    <TwoColorPie data={state.pieData}/>
+                    <div className={styles.pieContainer}>
+                        <TwoColorPie data={state.pieData}/>
+                    </div>
                 )}
                 <div className={styles.dataContainer}>
                     {/* tabs */}
