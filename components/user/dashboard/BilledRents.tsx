@@ -115,10 +115,7 @@ const BilledRents = () => {
             }
         })
 
-        console.log(paid, onTime, notPaid)
-        console.log(temp)
         let temp2 = temp.filter((el:StatusProperty) => el.paidStatus === "notPaid")
-        console.log(temp2)
 
         let pieData = [
             {

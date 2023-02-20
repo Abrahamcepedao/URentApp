@@ -11,41 +11,56 @@
 /* tabs */
 .tabsContainer {
     display: grid;
-    grid-template-columns: auto auto;
-    grid-gap: 10px;
+    grid-template-columns: auto auto auto;
+    grid-gap: 15px;
     padding-top: 20px;
-    width: 250px;
     margin: auto;
+    margin-bottom: 20px;
 }
 .tab {
     display: flex;
     align-items: center;
-    justify-content: center;
-    flex-direction: column;
+    justify-content: space-between;
     padding: 4px 8px;
     border-radius: 5px;
     cursor: pointer;
     transition: transform 450ms;
-    width: 120px;
-    height: 120px;
+    //width: 120px;
     text-align: center;
+    border: 1px solid var(--dark__back);
+}
+.numContainer {
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    background: var(--dark__back);
+    border: 1px solid var(--dark__back);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    position: relative;
+    top: -16px;
+    right: -16px;
 }
 .tabNumber {
-    font-size: 40px;
+    font-size: 15px;
     font-weight: bold;
     margin: 0px;
+    margin-bottom: 0px;
 }
 .tabText {
     margin: 0px;
     font-size: 14px;
     font-weight: bolder;
+    flex: 1;
+    text-align: left;
 }
 
 /* table */
 .table {
-    max-height: 200px;
+    max-height: 250px;
     overflow-y: scroll;
-
 }
 .propertyRow {
     display: flex;

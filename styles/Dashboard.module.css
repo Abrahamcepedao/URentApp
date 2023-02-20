@@ -1,7 +1,7 @@
 /* main - container */
 .main {
     //background-image: linear-gradient(126.16deg, #1F2122 15.77%, #121314 86.34%);
-    background: #0D0F16;
+    background: var(--background);
     width: 100%;
     height: 100vh;
     max-height: 100vh;
@@ -50,7 +50,6 @@
     overflow-y: scroll;
     overflow-x: hidden;
     padding: 30px;
-
 }
 
 /* upper container */
@@ -80,10 +79,35 @@
 
 
 /* <------responsive design--------> */
+/* 1350 */
+@media (max-width: 1350px){
+    .inner__container {
+        padding: 20px;
+    }
+    .upper__container {
+        grid-gap: 20px;
+        margin-bottom: 20px;
+    }
+    .lower__container {
+        grid-gap: 20px;
+    }
+}
+
+/* 900 */
+@media (max-width: 900px){
+    .lower__container {
+        grid-template-columns: auto;
+    }
+}
 
 /* 650 */
 @media (max-width: 650px){
+    .inner__container {
+        padding: 15px;
+    }
     .upper__container {
         grid-template-columns: auto;
+        grid-gap: 15px;
+        margin-bottom: 15px;
     }
 }
