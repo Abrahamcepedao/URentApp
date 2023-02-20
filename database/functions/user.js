@@ -41,7 +41,7 @@ const getUser = async (uid) => {
         const docRef = doc(db, 'users', uid)
         const res = await getDoc(docRef)
         
-
+        console.log(res.data())
         return res.data()
     } catch (error) {
         console.log(error)

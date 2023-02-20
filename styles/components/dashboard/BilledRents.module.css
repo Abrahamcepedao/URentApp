@@ -89,6 +89,9 @@
     justify-content: space-between;
     align-items: center;
 }
+.rowLabel {
+    margin: 0px;
+}
 .propertyIcon {
     color: var(--light__text);
 }
@@ -110,5 +113,22 @@
     .pieContainer {
         width: 200px;
         height: 200px;
+    }
+}
+
+/* 950 */
+@media (max-width: 950px){
+    .infoContainer {
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+}
+
+/* 650 */
+@media (max-width: 650px){
+    .pieContainer {
+        width: 150px;
+        height: 150px;
     }
 }

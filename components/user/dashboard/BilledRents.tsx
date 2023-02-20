@@ -212,7 +212,7 @@ const BilledRents = () => {
                     <div className={styles.table}>
                         {state.propertiesList.length !== 0 ? state.propertiesList.map((item:StatusProperty, i:number) => (
                             <div key={i} className={styles.propertyRow}>
-                                <p>{item.name}</p>
+                                <p className={styles.rowLabel}>{item.name}</p>
                                 <Tooltip title="Ver propiedad" placement='top'>
                                     <IconButton onClick={() => {handlePropertyClick(item)}}>
                                         <InfoRoundedIcon className={styles.propertyIcon}/>
