@@ -55,6 +55,26 @@
         grid-template-columns: auto auto auto;
     }
     .fact__container__all {
-        grid-column: 1;
+        grid-column: span 1;
+    }
+}
+
+/* 768 */
+@media (max-width: 768px){
+    .container {
+        grid-template-columns: auto auto;
+    }
+    .fact__container__all {
+        grid-column: 1 / span 2;
+    }
+}
+
+/* 500 */
+@media (max-width: 500px){
+    .container {
+        grid-template-columns: auto;
+    }
+    .fact__container__all {
+        grid-column: span 1;
     }
 }

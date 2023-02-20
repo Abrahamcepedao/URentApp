@@ -93,6 +93,13 @@
     }
 }
 
+/* 1080 */
+@media (max-width: 1080px){
+    .lower__container {
+        padding-bottom: 60px;
+    }
+}
+
 /* 900 */
 @media (max-width: 900px){
     .lower__container {
