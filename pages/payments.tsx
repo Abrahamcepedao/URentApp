@@ -55,7 +55,6 @@ import getMethod from '../components/utils/functions/getMethod'
 import formatMoney from '../components/utils/functions/formatMoney'
 
 //Context
-import { useAuth } from '../context/AuthContext'
 import { useProperties } from '../context/PropertiesContext'
 import openInNewTab from '../components/utils/functions/openInNewTab'
 

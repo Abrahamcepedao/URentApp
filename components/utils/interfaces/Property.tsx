@@ -1,4 +1,5 @@
 import Payment from './Payment'
+import Report from './Report'
 
 interface Property {
   name: string,
@@ -21,7 +22,8 @@ interface Property {
     pdfUrl: string,
     status: number
   },
-  payments: Payment[]
+  payments: Payment[],
+  reports: Report[]
 }
 
 export default Property
