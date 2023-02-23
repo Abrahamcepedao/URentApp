@@ -27,7 +27,6 @@ import AddCircleRoundedIcon from '@mui/icons-material/AddCircleRounded';
 import DeleteRoundedIcon from '@mui/icons-material/DeleteRounded';
 import EditRoundedIcon from '@mui/icons-material/EditRounded';
 import HighlightOffRoundedIcon from '@mui/icons-material/HighlightOffRounded';
-import FileUploadRoundedIcon from '@mui/icons-material/FileUploadRounded';
 import ErrorRoundedIcon from '@mui/icons-material/ErrorRounded';
 import FileDownloadRoundedIcon from '@mui/icons-material/FileDownloadRounded';
 import FilterListRoundedIcon from '@mui/icons-material/FilterListRounded';
@@ -35,6 +34,7 @@ import RefreshRoundedIcon from '@mui/icons-material/RefreshRounded';
 import ApartmentRoundedIcon from '@mui/icons-material/ApartmentRounded';
 import PersonRoundedIcon from '@mui/icons-material/PersonRounded';
 import MapsHomeWorkRoundedIcon from '@mui/icons-material/MapsHomeWorkRounded';
+import AttachFileRoundedIcon from '@mui/icons-material/AttachFileRounded';
 
 //Constants
 import months from '../components/utils/constants/months'
@@ -325,7 +325,7 @@ const Reports: NextPage = () => {
                                         </IconButton>
                                     </Tooltip>
                                 ) : (
-                                    <Tooltip title="Registrar pago" placement='top'>
+                                    <Tooltip title="Registrar reporte" placement='top'>
                                         <IconButton onClick={() => {setState({...state, addOpen: true})}}>
                                             <AddCircleRoundedIcon className={dash.header__icon}/>
                                         </IconButton>
@@ -334,7 +334,7 @@ const Reports: NextPage = () => {
                             </div>
                         </div>
 
-                        {/* add user collapse */}
+                        {/* add report collapse */}
                         <Collapse in={state.addOpen}>
                             <div className={styles.add__container}>
                                 <div className={styles.inputs__container}>
@@ -382,10 +382,9 @@ const Reports: NextPage = () => {
                                     {/* add ticket */}
                                     <div className={styles.input__container}>
                                         <p className={styles.input__label}>Comprobante (op.)</p>
-                                        <div>
+                                        <div className={styles.file__input__container}>
                                             <label htmlFor='file' className={styles.button}>
-                                                <p>Agregar archivo</p>
-                                                <FileUploadRoundedIcon className={dash.table__icon}/>
+                                                <AttachFileRoundedIcon className={dash.table__icon}/>
                                             </label>
                                             <input name='file' id='file' type="file" onChange={(e) => {handleFileChange(e)}} className={styles.file__input}/>
                                             <p>{formData.fileName.length > 20 ? formData.fileName.substring(0,20) + "..." : formData.fileName}</p>
@@ -398,7 +397,7 @@ const Reports: NextPage = () => {
                                         <p className={styles.error__lbl}>{state.error}</p>
                                     </div>
                                 )}
-                                <button className={styles.save__btn} onClick={handleRegisterReport}>
+                                <button className={dash.gradient__btn} onClick={handleRegisterReport}>
                                     Registrar reporte
                                 </button>
                             </div>

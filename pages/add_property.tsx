@@ -28,6 +28,7 @@ import { useTheme } from '@mui/material/styles';
 //Material UI - icons
 import FileUploadRoundedIcon from '@mui/icons-material/FileUploadRounded';
 import ErrorRoundedIcon from '@mui/icons-material/ErrorRounded';
+import AttachFileRoundedIcon from '@mui/icons-material/AttachFileRounded';
 
 //Utils
 import { contractStatus } from '../components/utils/functions/contractStatus'
@@ -461,13 +462,13 @@ const AddProperty: NextPage = () => {
                                             <Chip title={contractStatusList[contract.status]} background={contractStatusBackground[contract.status]} color={contractStatusColor[contract.status]}/>
                                         )}
                                     </div>
+
                                     {/* add contract */}
                                     <div className={styles.input__container}>
                                         <p className={styles.input__label}>PDF de contrato</p>
-                                        <div>
+                                        <div className={styles.file__input__container}>
                                             <label htmlFor='file' className={styles.button}>
-                                                <p>Agregar archivo</p>
-                                                <FileUploadRoundedIcon className={dash.table__icon}/>
+                                                <AttachFileRoundedIcon/>
                                             </label>
                                             <input name='file' id='file' type="file" onChange={(e) => {handlePDFChange(e)}} className={styles.file__input}/>
                                             <p>{contract.pdfName.length > 20 ? contract.pdfName.substring(0,20) + "..." : contract.pdfName}</p>

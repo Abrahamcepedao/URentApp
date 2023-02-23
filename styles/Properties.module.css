@@ -33,7 +33,7 @@
   width: 100%;
   padding: 4px 10px;
   border-radius: 25px;
-  border: 1px solid var(--logo__primary);
+  border: 1px solid var(--light__text);
   display: flex;
   justify-content: flex-start;
   align-items: center;
@@ -54,6 +54,7 @@
     margin: auto;
     margin-top: 50px;
     overflow-x: scroll;
+    padding-bottom: 15px;
 }
 .table__header {
     display: flex;
@@ -124,5 +125,15 @@
     }
     .inner__container {
         min-height: calc(100vh - 120px);
+    }
+}
+
+/* 600px */
+@media (max-width: 650px) {
+    .properties__header {
+        display: block;
+    }
+    .header__actions {
+        margin-top: 20px;
     }
 }

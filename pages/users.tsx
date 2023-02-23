@@ -176,7 +176,7 @@ const Users: NextPage = () => {
                                     <input placeholder='Contraseña' type="password" name='password' value={formData.password} onChange={(e) => {handleInputChange(e)}} className={styles.input}/>
                                 </div>
                             </div>
-                            <button className={styles.gradient__btn} onClick={(e) => {handleCreateUser(e)}}>
+                            <button className={dash.gradient__btn} onClick={(e) => {handleCreateUser(e)}}>
                                 Crear usuario
                             </button>
                         </div>

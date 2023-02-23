@@ -64,6 +64,11 @@
 }
 
 /* file input */
+.file__input__container {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+}
 .file__input {
     position: absolute;
     z-index: -1;
@@ -78,16 +83,18 @@
 .button {
     display: inline-block;
     background: #E3C37E;
-    border-radius: 25px;
+    border-radius: 50%;
     color: #957F35;
     text-align: center;
-    padding: 8px;
+    padding: 6px;
     transition: all 0.5s;
     cursor: pointer;
     display: flex;
     justify-content: center;
     align-items: center;
-    //margin: 5px;
+    width: 40px;
+    height: 40px;
+    margin-right: 10px;
 }
 .button p {
     margin: 0px;
