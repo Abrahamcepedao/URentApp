@@ -23,7 +23,7 @@ const LineChart = ({ data /* see data tab */ }) => (
     <ResponsiveLine
         
         height={300}
-        margin={{top: 20, right: 20, bottom: 60, left: 80 }}
+        margin={{top: 20, right: 20, bottom: 80, left: 80 }}
         colors={{datum: 'color'}}
         data={data}
         animate={true}
@@ -48,15 +48,15 @@ const LineChart = ({ data /* see data tab */ }) => (
             return (
                 <div
                     style={{
-                        background: 'white',
+                        background: '#0D0F16',
                         padding: '9px 12px',
-                        border: '1px solid #ccc',
+                        borderRadius: '10px'
                     }}
                 >
                     <div
                             style={{
-                                padding: '3px 0',
-                                color: '#1F2122'
+                                padding: '3px 0px',
+                                color: '#fff'
                             }}
                         >
                             Renta neta: <strong>{formatMoney(slice.points[0].data.y)}</strong>
@@ -89,9 +89,10 @@ const LineChart = ({ data /* see data tab */ }) => (
             format: '%b %y',
             tickValues: 'every month',
             legendOffset: -12,
+            tickRotation: -70
         }}
         curve={'linear'}
-        enablePointLabel={true}
+        enablePointLabel={false}
         pointSymbol={CustomSymbol}
         pointSize={16}
         pointBorderWidth={1}

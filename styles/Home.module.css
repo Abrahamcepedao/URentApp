@@ -4,6 +4,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  background: var(--dark__back)
 }
 
 /* image background */
@@ -143,4 +144,16 @@
 .loader {
   width: 100px;
   margin: auto;
+}
+
+
+/* <------responsive design--------> */
+/* 1080 */
+@media (max-width: 1080px){
+  .background {
+    display: none;
+  } 
+  .info__container {
+    flex: 1;
+  }
 }

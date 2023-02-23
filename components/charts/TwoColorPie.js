@@ -1,16 +1,16 @@
 // install (please make sure versions match peerDependencies)
 // yarn add @nivo/core @nivo/pie
-import { Pie } from '@nivo/pie'
+import { ResponsivePie } from '@nivo/pie'
 import { animated } from '@react-spring/web'
 
 const TwoColorPie = ({ data /* see data tab */ }) => (
-    <Pie
+    <ResponsivePie
         data={data}
-        margin={{ top: 40, right: 40, bottom: 40, left: 40 }}
+        margin={{ top: 20, right: 20, bottom: 20, left: 20 }}
         innerRadius={0.75}
         padAngle={0.7}
-        width={300}
-        height={300}
+        //width={300}
+        //height={300}
         cornerRadius={3}
         activeOuterRadiusOffset={8}
         borderWidth={1}

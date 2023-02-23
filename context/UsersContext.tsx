@@ -9,14 +9,16 @@ const UsersContext = createContext<any>({})
 export const useUsers = () => useContext(UsersContext)
 
 export const UsersContextProvider = ({children}: {children:React.ReactNode}) => {
-    const [users,setUsers] = useState<any>([])
+    const [users, setUsers] = useState<any>([])
     const { user } = useAuth()
 
     useEffect(() => {
-        if(users.length === 0 && user){
-            console.log(user)
-            if(user.orgName){
-                fecthUsers(user.orgName)
+        if(users !== undefined){
+            if(users.length === 0 && user){
+                console.log(user)
+                if(user.orgName){
+                    fecthUsers(user.orgName)
+                }
             }
         }
     })

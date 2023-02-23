@@ -4,7 +4,6 @@ import React, { useState, useEffect } from 'react'
 //next
 import type { NextPage } from 'next'
 import Head from 'next/head'
-import Link from 'next/link'
 import styles from '../styles/Dashboard.module.css'
 
 //Components
@@ -14,11 +13,8 @@ import PropertiesStatus from '../components/user/dashboard/PropertiesStatus'
 import ContractsStatus from '../components/user/dashboard/ContractsStatus'
 import MonthlyRent from '../components/user/dashboard/MonthlyRent'
 import RentFacts from '../components/user/dashboard/RentFacts'
-
 //Context
 import { useProperties } from '../context/PropertiesContext'
-
-//Material UI - icons
 
 //Dashboard page
 const Dashboard: NextPage = () => {

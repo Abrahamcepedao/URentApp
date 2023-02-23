@@ -36,7 +36,6 @@ import AddCircleRoundedIcon from '@mui/icons-material/AddCircleRounded';
 import DeleteRoundedIcon from '@mui/icons-material/DeleteRounded';
 import EditRoundedIcon from '@mui/icons-material/EditRounded';
 import HighlightOffRoundedIcon from '@mui/icons-material/HighlightOffRounded';
-import FileUploadRoundedIcon from '@mui/icons-material/FileUploadRounded';
 import ErrorRoundedIcon from '@mui/icons-material/ErrorRounded';
 import FileDownloadRoundedIcon from '@mui/icons-material/FileDownloadRounded';
 import RefreshRoundedIcon from '@mui/icons-material/RefreshRounded';
@@ -45,6 +44,7 @@ import ApartmentRoundedIcon from '@mui/icons-material/ApartmentRounded';
 import PersonRoundedIcon from '@mui/icons-material/PersonRounded';
 import MapsHomeWorkRoundedIcon from '@mui/icons-material/MapsHomeWorkRounded';
 import AttachMoneyRoundedIcon from '@mui/icons-material/AttachMoneyRounded';
+import AttachFileRoundedIcon from '@mui/icons-material/AttachFileRounded';
 
 //Constants
 import months from '../components/utils/constants/months'
@@ -55,7 +55,6 @@ import getMethod from '../components/utils/functions/getMethod'
 import formatMoney from '../components/utils/functions/formatMoney'
 
 //Context
-import { useAuth } from '../context/AuthContext'
 import { useProperties } from '../context/PropertiesContext'
 import openInNewTab from '../components/utils/functions/openInNewTab'
 
@@ -490,10 +489,9 @@ const Payments: NextPage = () => {
                                     {/* add ticket */}
                                     <div className={styles.input__container}>
                                         <p className={styles.input__label}>Comprobante (op.)</p>
-                                        <div>
+                                        <div className={styles.file__input__container}>
                                             <label htmlFor='file' className={styles.button}>
-                                                <p>Agregar archivo</p>
-                                                <FileUploadRoundedIcon className={dash.table__icon}/>
+                                                <AttachFileRoundedIcon className={dash.table__icon}/>
                                             </label>
                                             <input name='file' id='file' type="file" onChange={(e) => {handleFileChange(e)}} className={styles.file__input}/>
                                             <p>{formData.fileName.length > 20 ? formData.fileName.substring(0,20) + "..." : formData.fileName}</p>
@@ -506,7 +504,7 @@ const Payments: NextPage = () => {
                                         <p className={styles.error__lbl}>{state.error}</p>
                                     </div>
                                 )}
-                                <button className={styles.save__btn} onClick={(e) => {handleRegisterPayment(e)}}>
+                                <button className={dash.gradient__btn} onClick={(e) => {handleRegisterPayment(e)}}>
                                     Registrar pago
                                 </button>
                             </div>

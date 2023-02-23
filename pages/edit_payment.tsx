@@ -5,7 +5,6 @@ import React, { useState, useEffect } from 'react'
 import type { NextPage } from 'next'
 import { useRouter } from 'next/router'
 import Head from 'next/head'
-import Link from 'next/link'
 
 //CSS
 import dash from '../styles/Dashboard.module.css'
@@ -13,25 +12,14 @@ import styles from '../styles/AddProperty.module.css'
 
 //Components
 import SideBar from '../components/user/SideBar'
-import { GreenSwitch } from '../components/utils/Switch'
-import Chip from '../components/user/Chip'
 
 //Material UI
-import { Tooltip, IconButton, Collapse } from '@mui/material'
-import Button from '@mui/material/Button';
-import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogContentText from '@mui/material/DialogContentText';
-import DialogTitle from '@mui/material/DialogTitle';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { useTheme } from '@mui/material/styles';
 
 //Material UI - icons
-import FileUploadRoundedIcon from '@mui/icons-material/FileUploadRounded';
 import ErrorRoundedIcon from '@mui/icons-material/ErrorRounded';
-import CheckCircleRoundedIcon from '@mui/icons-material/CheckCircleRounded';
-import DownloadRoundedIcon from '@mui/icons-material/DownloadRounded';
+import AttachFileRoundedIcon from '@mui/icons-material/AttachFileRounded';
 
 //Context
 import { useProperties } from '../context/PropertiesContext'
@@ -346,10 +334,9 @@ const EditPayment: NextPage = () => {
                                     {/* add ticket */}
                                     <div className={styles.input__container}>
                                         <p className={styles.input__label}>Comprobante (op.)</p>
-                                        <div>
+                                        <div className={styles.file__input__container}>
                                             <label htmlFor='file' className={styles.button}>
-                                                <p>Agregar archivo</p>
-                                                <FileUploadRoundedIcon className={dash.table__icon}/>
+                                                <AttachFileRoundedIcon className={dash.table__icon}/>
                                             </label>
                                             <input name='file' id='file' type="file" onChange={(e) => {handleFileChange(e)}} className={styles.file__input}/>
                                             <p>{formData.newFileName.length > 20 ? formData.newFileName.substring(0,20) + "..." : formData.newFileName}</p>

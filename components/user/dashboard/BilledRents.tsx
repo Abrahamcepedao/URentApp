@@ -115,10 +115,7 @@ const BilledRents = () => {
             }
         })
 
-        console.log(paid, onTime, notPaid)
-        console.log(temp)
         let temp2 = temp.filter((el:StatusProperty) => el.paidStatus === "notPaid")
-        console.log(temp2)
 
         let pieData = [
             {
@@ -172,7 +169,9 @@ const BilledRents = () => {
             <h2 className={dash.subtitle}>Rentas cobradas en {state.month}</h2>
             <div className={styles.infoContainer}>
                 {state.pieData.length !== 0 && (
-                    <TwoColorPie data={state.pieData}/>
+                    <div className={styles.pieContainer}>
+                        <TwoColorPie data={state.pieData}/>
+                    </div>
                 )}
                 <div className={styles.dataContainer}>
                     {/* tabs */}
@@ -210,7 +209,7 @@ const BilledRents = () => {
                     <div className={styles.table}>
                         {state.propertiesList.length !== 0 ? state.propertiesList.map((item:StatusProperty, i:number) => (
                             <div key={i} className={styles.propertyRow}>
-                                <p>{item.name}</p>
+                                <p className={styles.rowLabel}>{item.name}</p>
                                 <Tooltip title="Ver propiedad" placement='top'>
                                     <IconButton onClick={() => {handlePropertyClick(item)}}>
                                         <InfoRoundedIcon className={styles.propertyIcon}/>

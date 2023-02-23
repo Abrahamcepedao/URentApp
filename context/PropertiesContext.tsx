@@ -8,16 +8,26 @@ import {
     addProperty, 
     updateNewContract, 
     updateSameContract,
-    registerPayment,
     removeProperty,
-    removePayment,
-    updatePaymentFirebase
 } from '../database/functions/property'
+import {
+    registerPayment,
+    removePayment, 
+    updatePaymentFirebase
+} from '../database/functions/payments'
+
+import {
+    registerReport,
+    removeReport,
+    updateReportFirebase
+} from '../database/functions/reports'
+
 import { useAuth } from './AuthContext'
 
 //Interfaces
 import Property from '../components/utils/interfaces/Property'
 import Payment from '../components/utils/interfaces/Payment'
+import Report from '../components/utils/interfaces/Report'
 
 const PropertiesContext = createContext<any>({})
 
@@ -28,6 +38,7 @@ export const PropertiesContextProvider = ({children}: {children:React.ReactNode}
     const [isFirst, setIsFirst] = useState<boolean>(true)
     const [editProperty, setEditProperty] = useState(null)
     const [editPayment, setEditPayment] = useState(null)
+    const [editReport, setEditReport] = useState(null)
 
     //context
     const { user } = useAuth()
@@ -134,7 +145,7 @@ export const PropertiesContextProvider = ({children}: {children:React.ReactNode}
     }
 
     /* update payment */
-    const updatePayment = async(payment:any, property:string, pastProperty:string) => {
+    const updatePayment = async(payment:Payment, property:string, pastProperty:string) => {
         console.log(payment, property, pastProperty)
         const res = await updatePaymentFirebase(properties, user.uid, payment, property, pastProperty)
         if(res !== false) {
@@ -173,6 +184,61 @@ export const PropertiesContextProvider = ({children}: {children:React.ReactNode}
     }
     
 
+    /* add payment to property */
+    const addReport = async(property:any, report:any) => {
+        const res = await registerReport(properties, property, user.uid, report)
+        if(res !== false) {
+            return res
+        }
+        return false
+    }
+
+    /* update edit report */
+    const updateEditReport = (payment:Payment) => {
+        //@ts-ignore
+        setEditReport(payment)
+    }
+
+    /* update report */
+    const updateReport = async(payment:any, property:string, pastProperty:string) => {
+        console.log(payment, property, pastProperty)
+        const res = await updateReportFirebase(properties, user.uid, payment, property, pastProperty)
+        if(res !== false) {
+            return res
+        }
+        return false
+    }
+
+
+    /* delete report from property */
+    const deleteReport = async(property:string, report: number) => {
+        
+        const res = await removePayment(properties, property, user.uid, report)
+        if(res !== false){
+            //let data = properties.filter((el:Property) => el.name !== property)
+            let prop = properties.find((el:Property) => el.name === property)
+            
+            if(prop != undefined){
+                let reports = prop.reports
+                if(reports){
+                    let tempReports = reports.filter((el:Report) => el.id !== report)
+                    let temp = {
+                        ...prop,
+                        reports: tempReports
+                    }
+
+                    let data = properties.filter((el:Property) => el.name !== property)
+                    data.push(temp)
+                    
+                    setProperties(data)
+                    return true
+                } 
+            }
+        }
+        return false
+    }
+    
+
     return <PropertiesContext.Provider value={{
         properties, 
         isFirst, 
@@ -188,7 +254,11 @@ export const PropertiesContextProvider = ({children}: {children:React.ReactNode}
         updateEditPayment,
         deletePayment,
         editPayment,
-        updatePayment
+        updatePayment,
+        addReport,
+        updateEditReport,
+        updateReport,
+        deleteReport
     }}>
         {children}
     </PropertiesContext.Provider>

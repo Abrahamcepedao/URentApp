@@ -17,23 +17,27 @@ import SideBar from '../components/user/SideBar'
 import { Tooltip, IconButton, Collapse } from '@mui/material'
 import Snackbar from '@mui/material/Snackbar';
 import MuiAlert, { AlertProps } from '@mui/material/Alert';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
+import ListItemIcon from '@mui/material/ListItemIcon';
 
 //Material UI - icons
+import SearchRoundedIcon from '@mui/icons-material/SearchRounded';
 import AddCircleRoundedIcon from '@mui/icons-material/AddCircleRounded';
 import DeleteRoundedIcon from '@mui/icons-material/DeleteRounded';
 import EditRoundedIcon from '@mui/icons-material/EditRounded';
 import HighlightOffRoundedIcon from '@mui/icons-material/HighlightOffRounded';
-import FileUploadRoundedIcon from '@mui/icons-material/FileUploadRounded';
 import ErrorRoundedIcon from '@mui/icons-material/ErrorRounded';
 import FileDownloadRoundedIcon from '@mui/icons-material/FileDownloadRounded';
 import FilterListRoundedIcon from '@mui/icons-material/FilterListRounded';
+import RefreshRoundedIcon from '@mui/icons-material/RefreshRounded';
+import ApartmentRoundedIcon from '@mui/icons-material/ApartmentRounded';
+import PersonRoundedIcon from '@mui/icons-material/PersonRounded';
+import MapsHomeWorkRoundedIcon from '@mui/icons-material/MapsHomeWorkRounded';
+import AttachFileRoundedIcon from '@mui/icons-material/AttachFileRounded';
 
 //Constants
 import months from '../components/utils/constants/months'
-import methods from '../components/utils/constants/methods'
-
-//Utils
-import getMethod from '../components/utils/functions/getMethod'
 
 //Context
 import { useAuth } from '../context/AuthContext'
@@ -41,38 +45,8 @@ import { useProperties } from '../context/PropertiesContext'
 import openInNewTab from '../components/utils/functions/openInNewTab'
 
 //interfaces
-interface Payment {
-    date: string,
-    month: string,
-    year: number,
-    amount: number,
-    method: number,
-    fileName: string,
-    fileUrl: string,
-    comment: string,
-    property: string
-}
-interface Property {
-  name: string,
-  type: string,
-  status: number,
-  tenant: {
-    name: string,
-    razon: string,
-    phone: string,
-    mail: string,
-  },
-  contract: {
-    start: string
-    end: string,
-    type: string,
-    cost: number,
-    pdfName: string,
-    pdfUrl: string,
-    status: number
-  },
-  payments: Payment[]
-}
+import Property from '../components/utils/interfaces/Property'
+import Report from '../components/utils/interfaces/Report'
 
 //Alert
 const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
@@ -88,14 +62,20 @@ const Reports: NextPage = () => {
     const { user } = useAuth()
     const { properties, fecthProperties, addPayment } = useProperties()
 
+    //useState - menu
+    const [menuAnchor, setMenuAnchor] = useState(null);
+    const menuOpen = Boolean(menuAnchor);
+
     //useState
     const [state, setState] = useState({
-        payments: [],
-        paymentsList: [],
+        reports: [],
+        reportsList: [],
         addOpen: false,
         open: false,
         error: "",
         properties: [],
+        filter: "",
+        sort: 0
     })
 
     const [formData, setFormData] = useState({
@@ -104,10 +84,10 @@ const Reports: NextPage = () => {
         year: 0,
         property: "",
         amount: 0,
-        method: "cash",
         file: "",
         fileName: "",
-        comment: ""
+        comment: "",
+        concept: ""
     })
 
     useEffect(() => {
@@ -123,27 +103,44 @@ const Reports: NextPage = () => {
         setState({...state, open: false})
     };
 
+
+    /* order menu functions */
+    const handleClick = (event:any) => {
+        setMenuAnchor(event.currentTarget);
+    };
+
+    const handleMenuClose = () => {
+        setMenuAnchor(null);
+    };
+
+
+    /* handle filter change */
+    const handleFilterChange = (e:React.ChangeEvent<HTMLInputElement>) => {
+        let temp = state.reports.filter((pr:Report) => pr.property.toLocaleLowerCase().includes(e.target.value.toLocaleLowerCase()))
+        setState({...state, reportsList: temp, filter: e.target.value})
+    }
+
     const setUp = () => {
         if(properties.length !== 0){
             let temp = properties.filter((pr:Property) => { return pr.status})
-            let payments:Payment[] = []
+            let reports:Report[] = []
             temp.forEach((item:Property) => {
-                if(item.payments){
-                    item.payments.forEach((payment:Payment) => {
-                        payments.push({...payment, property: item.name})
+                if(item.reports){
+                    item.reports.forEach((report:Report) => {
+                        reports.push({...report, property: item.name})
                     })
                 }
             })
 
             //@ts-ignore
-            setState({...state, properties: temp, payments: payments, paymentsList: payments})
+            setState({...state, properties: temp, reports: reports, reportsList: reports})
 
             //formData
             let today = new Date()
             let date = today.toISOString().split('T')[0]
             if(properties.length !== 0){
                 const pr:Property = properties[0]
-                setFormData({...formData, date: date, month: months[today.getMonth()].en, year: today.getFullYear(), property: pr.name, amount: pr.contract.cost})
+                setFormData({...formData, date: date, property: pr.name, month: months[today.getMonth()].en, year: today.getFullYear()})
             } else {
                 setFormData({...formData, date: date, month: months[today.getMonth()].en, year: today.getFullYear()})
             }
@@ -152,22 +149,41 @@ const Reports: NextPage = () => {
         }
     }
 
+
+    /* handle order change */
+    const handleOrderChange = (num:number) => {
+        let temp:Report[] = [...state.reportsList]
+        console.log(num, state.sort)
+        if(num === state.sort){
+            temp.reverse()
+        } else if(num === 0) {
+            temp.sort((a,b) => { return a.property < b.property ? -1 : 1})
+        } else if(num === 1){
+            temp.sort((a,b) => { return a.date < b.date ? -1 : 1})
+        } else if(num === 2){
+            temp.sort((a,b) => { return a.concept < b.concept ? -1 : 1})
+        }
+        //@ts-ignore
+        setState({...state, paymentsList: temp, sort: num})
+    }
+
+    /* get proopertiess */
     const getProperties = async() => {
         let data = await fecthProperties()
         if(data !== false) {
             //set properties state
             let temp = data.filter((pr:Property) => pr.status)
-            let payments:Payment[] = []
+            let reports:Report[] = []
             temp.forEach((item:Property) => {
-                if(item.payments){
-                    item.payments.forEach((payment:Payment) => {
-                        payments.push({...payment, property: item.name})
+                if(item.reports){
+                    item.reports.forEach((report:Report) => {
+                        reports.push({...report, property: item.name})
                     })
                 }
             })
 
             //@ts-ignore
-            setState({...state, properties: temp, payments: payments, paymentsList: payments})
+            setState({...state, properties: temp, reports: reports, reportsList: reports})
 
             //formData
             let today = new Date()
@@ -175,9 +191,9 @@ const Reports: NextPage = () => {
             console.log(temp)
             if(temp.length !== 0){
                 const pr:Property = temp[0]
-                setFormData({...formData, date: date, month: months[today.getMonth()].en, year: today.getFullYear(), property: pr.name, amount: pr.contract.cost})
+                setFormData({...formData, date: date, property: pr.name})
             } else {
-                setFormData({...formData, date: date, month: months[today.getMonth()].en, year: today.getFullYear()})
+                setFormData({...formData, date: date})
             }
 
         } 
@@ -191,6 +207,17 @@ const Reports: NextPage = () => {
 
     }
 
+    /* handle date change */
+    const handleDateChange = (e:React.ChangeEvent<HTMLInputElement>) => {
+        let date = new Date(e.target.value)
+        console.log(date.getMonth(), date.getFullYear())
+        setFormData({
+            ...formData,
+            [e.target.name]: e.target.value,
+            month: months[date.getMonth()].en,
+            year: date.getFullYear()
+        })
+    }
 
     const handlePropertyChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         const pr:Property|undefined = state.properties.find((el:Property) => el.name === e.target.value)
@@ -211,25 +238,24 @@ const Reports: NextPage = () => {
 
     /* handle register payment click */
     const verifyData = () => {
-        if(formData.year < 2000 || formData.year > 2100){
-            setState({...state, error: "Introduzca una fecha válida"})
+        if(formData.concept === ""){
             return false
         }
+        //check data
         setState({...state, error: ""})
         return true
     }
 
-    const handleRegisterPayment = async() => {
+    const handleRegisterReport = async() => {
         if(verifyData()){
-            //save payment
+            console.log(formData)
+            /* //save payment
             let pr:Property|undefined = state.properties.find((el:Property) => el.name === formData.property)
             if(pr !== undefined) {
                 let temp = {
                     date: formData.date,
-                    month: formData.month,
-                    year: formData.year,
                     amount: formData.amount,
-                    method: formData.method,
+                    concept: formData.concept,
                     fileName: formData.fileName,
                     file: formData.file,
                     comment: formData.comment
@@ -243,9 +269,9 @@ const Reports: NextPage = () => {
                     await getProperties()
                 } else {
                     //alert error
-                    setState({...state, error: "Ocurrió un error al registrar el pago"})
+                    setState({...state, error: "Ocurrió un error al registrar el reporte"})
                 }
-            }
+            } */
         }
     }
 
@@ -266,23 +292,49 @@ const Reports: NextPage = () => {
                         {/* header */}
                         <div className={styles.payments__header}>
                             <p className={dash.subtitle}>Registrar reportes</p>
-                            {state.addOpen ? (
-                                <Tooltip title="Cerrar">
-                                    <IconButton onClick={() => {setState({...state, addOpen: false})}}>
-                                        <HighlightOffRoundedIcon className={dash.header__icon}/>
+                            
+                            <div className={styles.header__actions}>
+                                <div className={styles.filter__container}>
+                                    <SearchRoundedIcon className={dash.table__icon}/>
+                                    <input placeholder='Nombre propiedad' value={state.filter} onChange={(e) => {handleFilterChange(e)}} className={styles.search__input}/>
+                                </div>
+                                {/* Refresh */}
+                                <Tooltip title="Refrescar" placement='top'>
+                                    <IconButton
+                                        onClick={() => {getProperties()}}
+                                    >
+                                        <RefreshRoundedIcon className={dash.header__icon}/>
                                     </IconButton>
                                 </Tooltip>
-                            ) : (
-                                <Tooltip title="Registrar pago" placement='top'>
-                                <IconButton onClick={() => {setState({...state, addOpen: true})}}>
-                                    <AddCircleRoundedIcon className={dash.header__icon}/>
-                                </IconButton>
-                            </Tooltip>
-                            )}
-                            
+
+                                {/* Filtrar */}
+                                <Tooltip title="Filtrar" placement='top'>
+                                    <IconButton
+                                        onClick={(e) => {handleClick(e)}}
+                                        aria-controls={menuOpen ? 'account-menu' : undefined}
+                                        aria-haspopup="true"
+                                        aria-expanded={menuOpen ? 'true' : undefined}
+                                    >
+                                        <FilterListRoundedIcon className={dash.header__icon}/>
+                                    </IconButton>
+                                </Tooltip>
+                                {state.addOpen ? (
+                                    <Tooltip title="Cerrar" placement='top'>
+                                        <IconButton onClick={() => {setState({...state, addOpen: false})}}>
+                                            <HighlightOffRoundedIcon className={dash.header__icon}/>
+                                        </IconButton>
+                                    </Tooltip>
+                                ) : (
+                                    <Tooltip title="Registrar reporte" placement='top'>
+                                        <IconButton onClick={() => {setState({...state, addOpen: true})}}>
+                                            <AddCircleRoundedIcon className={dash.header__icon}/>
+                                        </IconButton>
+                                    </Tooltip>
+                                )}
+                            </div>
                         </div>
 
-                        {/* add user collapse */}
+                        {/* add report collapse */}
                         <Collapse in={state.addOpen}>
                             <div className={styles.add__container}>
                                 <div className={styles.inputs__container}>
@@ -305,29 +357,14 @@ const Reports: NextPage = () => {
                                     {/* date */}
                                     <div className={styles.input__container}>
                                         <p className={styles.input__label}>Fecha</p>
-                                        <input  type="date" name='date' value={formData.date} onChange={(e) => {handleInputChange(e)}} className={styles.input}/>
+                                        <input  type="date" name='date' value={formData.date} onChange={(e) => {handleDateChange(e)}} className={styles.input}/>
                                     </div>
 
-                                    {/* month */}
-                                    <div className={styles.input__container}>
-                                        <p className={styles.input__label}>Mes</p>
-                                        <select 
-                                            name="type" 
-                                            id="type"
-                                            className={styles.input}
-                                            value={formData.month}
-                                            onChange={(e) => {setFormData({...formData, month: e.target.value})}}
-                                        >
-                                           {months.map((item, i) => (
-                                                <option key={i} value={item.en}>{item.es}</option>
-                                           ))}
-                                        </select>
-                                    </div>
 
-                                    {/* year */}
+                                    {/* concept */}
                                     <div className={styles.input__container}>
-                                        <p className={styles.input__label}>Año</p>
-                                        <input name='year' value={formData.year} onChange={(e) => {handleInputChange(e)}} className={styles.input}/>
+                                        <p className={styles.input__label}>Concepto</p>
+                                        <input type="text" name='concept' value={formData.concept} onChange={(e) => {handleInputChange(e)}} className={styles.input}/>
                                     </div>
 
                                     {/* amount */}
@@ -336,34 +373,18 @@ const Reports: NextPage = () => {
                                         <input type="number" name='amount' value={formData.amount} onChange={(e) => {handleInputChange(e)}} className={styles.input}/>
                                     </div>
 
-                                    {/* method */}
-                                    <div className={styles.input__container}>
-                                        <p className={styles.input__label}>Método</p>
-                                        <select 
-                                            name="type" 
-                                            id="type"
-                                            className={styles.input}
-                                            value={formData.method}
-                                            onChange={(e) => {setFormData({...formData, method: e.target.value})}}
-                                        >
-                                           {methods.map((item, i) => (
-                                                <option key={i} value={item.val}>{item.txt}</option>
-                                           ))}
-                                        </select>
-                                    </div>
-
                                     <div className={styles.input__container}>
                                         <p className={styles.input__label}>Comentario (op.)</p>
                                         <input name='comment' value={formData.comment} onChange={(e) => {handleInputChange(e)}} className={styles.input}/>
                                     </div>
+                                    
 
                                     {/* add ticket */}
                                     <div className={styles.input__container}>
                                         <p className={styles.input__label}>Comprobante (op.)</p>
-                                        <div>
+                                        <div className={styles.file__input__container}>
                                             <label htmlFor='file' className={styles.button}>
-                                                <p>Agregar archivo</p>
-                                                <FileUploadRoundedIcon className={dash.table__icon}/>
+                                                <AttachFileRoundedIcon className={dash.table__icon}/>
                                             </label>
                                             <input name='file' id='file' type="file" onChange={(e) => {handleFileChange(e)}} className={styles.file__input}/>
                                             <p>{formData.fileName.length > 20 ? formData.fileName.substring(0,20) + "..." : formData.fileName}</p>
@@ -376,8 +397,8 @@ const Reports: NextPage = () => {
                                         <p className={styles.error__lbl}>{state.error}</p>
                                     </div>
                                 )}
-                                <button className={styles.save__btn} onClick={handleRegisterPayment}>
-                                    Registrar pago
+                                <button className={dash.gradient__btn} onClick={handleRegisterReport}>
+                                    Registrar reporte
                                 </button>
                             </div>
                         </Collapse>
@@ -393,16 +414,10 @@ const Reports: NextPage = () => {
                                     Fecha
                                 </div>
                                 <div className={styles.header__cell__sm}>
-                                    Año
-                                </div>
-                                <div className={styles.header__cell__sm}>
-                                    Mes
+                                    Concepto
                                 </div>
                                 <div className={styles.header__cell__sm}>
                                     Monto
-                                </div>
-                                <div className={styles.header__cell__sm}>
-                                    Método
                                 </div>
                                 <div className={styles.header__cell}>
                                     Comentario
@@ -413,7 +428,7 @@ const Reports: NextPage = () => {
                             </div>
 
                             {/* table rows */}
-                            {state.paymentsList.length !== 0 ? state.paymentsList.map((item:Payment, i) => (
+                            {state.reportsList.length !== 0 ? state.reportsList.map((item:Report, i) => (
                                 <div key={i} className={styles.table__row}>
                                     <div className={styles.header__cell}>
                                         {item.property.length > 25 ? item.property.substring(0,25) + "..." : item.property}
@@ -422,16 +437,10 @@ const Reports: NextPage = () => {
                                         {item.date}
                                     </div>
                                     <div className={styles.header__cell__sm}>
-                                        {item.year}
-                                    </div>
-                                    <div className={styles.header__cell__sm}>
-                                        {item.month}
+                                        {item.concept}
                                     </div>
                                     <div className={styles.header__cell__sm}>
                                         {item.amount}
-                                    </div>
-                                    <div className={styles.header__cell__sm}>
-                                        {getMethod(item.method)}
                                     </div>
                                     <div className={styles.header__cell}>
                                         {item.comment.length > 25 ? item.comment.substring(0,25) + "..." : item.comment}
@@ -460,7 +469,7 @@ const Reports: NextPage = () => {
                             )) : (
                                 <div className={styles.table__row}>
                                 <div className={styles.header__cell}>
-                                    Todavía no hay propiedades
+                                    Todavía no hay reportes
                                 </div>
                                 </div>
                             )}
@@ -471,9 +480,71 @@ const Reports: NextPage = () => {
                 {/* snack bar */}
                 <Snackbar open={state.open} autoHideDuration={4000} onClose={handleClose}>
                     <Alert onClose={handleClose} severity="success" sx={{ width: '100%' }}>
-                        ¡Se registró el pago exitosamente!
+                        ¡Se registró el reporte exitosamente!
                     </Alert>
                 </Snackbar>
+
+                {/* Menu */}
+                <Menu
+                    anchorEl={menuAnchor}
+                    id="account-menu"
+                    open={menuOpen}
+                    onClose={handleMenuClose}
+                    onClick={handleMenuClose}
+                    PaperProps={{
+                    elevation: 0,
+                    sx: {
+                        overflow: 'visible',
+                        filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.32))',
+                        mt: 1.5,
+                        '& .MuiAvatar-root': {
+                        width: 32,
+                        height: 32,
+                        ml: -0.5,
+                        mr: 1,
+                        },
+                        '&:before': {
+                        content: '""',
+                        display: 'block',
+                        position: 'absolute',
+                        top: 0,
+                        right: 14,
+                        width: 10,
+                        height: 10,
+                        bgcolor: 'background.paper',
+                        transform: 'translateY(-50%) rotate(45deg)',
+                        zIndex: 0,
+                        },
+                    },
+                    }}
+                    transformOrigin={{ horizontal: 'right', vertical: 'top' }}
+                    anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+                >
+                    <MenuItem onClick={() => {handleOrderChange(-1)}}>
+                        <ListItemIcon>
+                            <HighlightOffRoundedIcon fontSize="small" />
+                        </ListItemIcon>
+                        Quitar filtros
+                    </MenuItem>
+                    <MenuItem onClick={() => {handleOrderChange(0)}}>
+                        <ListItemIcon>
+                            <ApartmentRoundedIcon fontSize="small" />
+                        </ListItemIcon>
+                        Propiedad
+                    </MenuItem>
+                    <MenuItem onClick={() => {handleOrderChange(1)}}>
+                        <ListItemIcon>
+                            <PersonRoundedIcon fontSize="small" />
+                        </ListItemIcon>
+                        Fecha
+                    </MenuItem>
+                    <MenuItem onClick={() => {handleOrderChange(2)}}>
+                        <ListItemIcon>
+                            <MapsHomeWorkRoundedIcon fontSize="small" />
+                        </ListItemIcon>
+                        Concepto
+                    </MenuItem>
+                </Menu>
             </main>
         </div>
     )
