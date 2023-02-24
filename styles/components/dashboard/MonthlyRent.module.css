@@ -13,3 +13,11 @@
     width: 98%;
     height: 260px;
 }
+
+/* <------responsive design--------> */
+/* 1350px */
+@media (max-width: 1350px){
+    .chart__container {
+        height: 220px;
+    }
+}

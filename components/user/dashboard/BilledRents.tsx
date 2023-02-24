@@ -180,8 +180,8 @@ const BilledRents = () => {
                             onClick={() => {handleTabClick(0)}}
                             style={{background: state.selected === 0 ? 'var(--success)' : 'none', color: state.selected === 0 ? '#07592d' : 'var(--success)'}}>
                             <div className={styles.tabInner}>
-                                <PaidRoundedIcon className={styles.tabIcon}/> 
                                 <span className={styles.tabNumber}>{state.paid}</span>
+                                <PaidRoundedIcon className={styles.tabIcon}/> 
                             </div>
                             <p className={styles.tabText}>Cobradas</p>
                         </div>
@@ -189,8 +189,8 @@ const BilledRents = () => {
                             onClick={() => {handleTabClick(1)}}
                             style={{background: state.selected === 1 ? 'var(--medium)' : 'none', color: state.selected === 1 ? '#845207' : 'var(--medium)'}}>
                             <div className={styles.tabInner}>
-                                <AccessTimeFilledRoundedIcon className={styles.tabIcon}/> 
                                 <span className={styles.tabNumber}>{state.onTime}</span>
+                                <AccessTimeFilledRoundedIcon className={styles.tabIcon}/> 
                             </div>
                             <p className={styles.tabText}>En tiempo</p>
                         </div>
@@ -198,8 +198,8 @@ const BilledRents = () => {
                             onClick={() => {handleTabClick(2)}}
                             style={{background: state.selected === 2 ? 'var(--cancel)' : 'none', color: state.selected === 2 ? '#a5280e' : 'var(--cancel)'}}>
                             <div className={styles.tabInner}>
-                                <ErrorRoundedIcon className={styles.tabIcon}/> 
                                 <span className={styles.tabNumber}>{state.notPaid}</span>
+                                <ErrorRoundedIcon className={styles.tabIcon}/> 
                             </div>
                             <p className={styles.tabText}>Sin cobrar</p>
                         </div>
@@ -211,7 +211,7 @@ const BilledRents = () => {
                             <div key={i} className={styles.propertyRow}>
                                 <p className={styles.rowLabel}>{item.name}</p>
                                 <Tooltip title="Ver propiedad" placement='top'>
-                                    <IconButton onClick={() => {handlePropertyClick(item)}}>
+                                    <IconButton onClick={() => {handlePropertyClick(item)}} className={dash.icon__btn}>
                                         <InfoRoundedIcon className={styles.propertyIcon}/>
                                     </IconButton>
                                 </Tooltip>
