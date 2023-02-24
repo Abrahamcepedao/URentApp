@@ -255,6 +255,7 @@ export const PropertiesContextProvider = ({children}: {children:React.ReactNode}
         deletePayment,
         editPayment,
         updatePayment,
+        editReport,
         addReport,
         updateEditReport,
         updateReport,

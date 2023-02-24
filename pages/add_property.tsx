@@ -26,7 +26,6 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 import { useTheme } from '@mui/material/styles';
 
 //Material UI - icons
-import FileUploadRoundedIcon from '@mui/icons-material/FileUploadRounded';
 import ErrorRoundedIcon from '@mui/icons-material/ErrorRounded';
 import AttachFileRoundedIcon from '@mui/icons-material/AttachFileRounded';
 

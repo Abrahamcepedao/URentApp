@@ -82,7 +82,7 @@
 }
 .button {
     display: inline-block;
-    background: #E3C37E;
+    background: var(--background);
     border-radius: 50%;
     color: #957F35;
     text-align: center;

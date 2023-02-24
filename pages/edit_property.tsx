@@ -28,10 +28,9 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 import { useTheme } from '@mui/material/styles';
 
 //Material UI - icons
-import FileUploadRoundedIcon from '@mui/icons-material/FileUploadRounded';
 import ErrorRoundedIcon from '@mui/icons-material/ErrorRounded';
-import CheckCircleRoundedIcon from '@mui/icons-material/CheckCircleRounded';
 import DownloadRoundedIcon from '@mui/icons-material/DownloadRounded';
+import AttachFileRoundedIcon from '@mui/icons-material/AttachFileRounded';
 
 //Utils
 import { contractStatus } from '../components/utils/functions/contractStatus'
@@ -572,8 +571,7 @@ const EditProperty: NextPage = () => {
                                         <p className={styles.input__label}>Cambiar PDF</p>
                                         <div>
                                             <label htmlFor='file' className={styles.button}>
-                                                <p>Agregar archivo</p>
-                                                <FileUploadRoundedIcon className={dash.table__icon}/>
+                                                <AttachFileRoundedIcon className={dash.table__icon}/>
                                             </label>
                                             <input name='file' id='file' type="file" onChange={(e) => {handlePDFChange(e)}} className={styles.file__input}/>
                                             <p>{contract.newPdfName.length > 20 ? contract.newPdfName.substring(0,20) + "..." : contract.newPdfName}</p>

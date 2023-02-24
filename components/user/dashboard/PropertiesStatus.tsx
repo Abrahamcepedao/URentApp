@@ -17,9 +17,7 @@ import { IconButton, Tooltip } from '@mui/material';
 //Material UI - icons
 import CheckCircleOutlineRoundedIcon from '@mui/icons-material/CheckCircleOutlineRounded';
 import CancelRoundedIcon from '@mui/icons-material/CancelRounded';
-
-//constants
-import months from '../../utils/constants/months'
+import InfoRoundedIcon from '@mui/icons-material/InfoRounded';
 
 //Context
 import { useProperties } from '../../../context/PropertiesContext'
@@ -42,6 +40,9 @@ const PropertiesStatus = () => {
         pieData: [],
         occupied: 12,
         free: 4,
+        properties: [],
+        propertiesList: [],
+        selected: 0
     })
 
     //useEffect
@@ -52,12 +53,20 @@ const PropertiesStatus = () => {
     const setStatus = (data:Property[]) => {
         let occupied:number = 0
         let free:number = 0
-
+        let temp:any[] = []
         data.forEach((item:Property) => {
             if(item.status) {
                 occupied++;
+                temp.push({
+                    ...item,
+                    status: 0 // in use
+                })
             } else {
                 free++;
+                temp.push({
+                    ...item,
+                    status: 1 //rfee
+                })
             }
         })
 
@@ -77,7 +86,7 @@ const PropertiesStatus = () => {
         ]
 
         //@ts-ignore
-        setState({...state, occupied, free, pieData})
+        setState({...state, occupied, free, pieData, properties: temp, propertiesList: temp.filter((el:any) => el.status === state.selected)})
     }
 
     const setup = async() => {
@@ -89,6 +98,18 @@ const PropertiesStatus = () => {
         }
     }
 
+    /* handle tab click */
+    const handleTabClick = (num:number) => {
+        let temp = state.properties.filter((el:any) => el.status === num)
+        setState({...state, selected: num, propertiesList: temp})
+    }
+
+
+    /* handle property click */
+    const handlePropertyClick = (property:StatusProperty) => {
+        updateEditProperty(property)
+        router.push(`/edit_property`)
+    }
 
     return (
         <div className={styles.container}>
@@ -102,20 +123,43 @@ const PropertiesStatus = () => {
                 <div className={styles.dataContainer}>
                     {/* tabs */}
                     <div className={styles.tabsContainer}>
-                        <div className={styles.paidTab}>
+                        <div className={styles.paidTab}
+                            onClick={() => {handleTabClick(0)}}
+                            style={{background: state.selected === 0 ? 'var(--success)' : 'none', color: state.selected === 0 ? '#07592d' : 'var(--success)'}}
+                        >
                             <div className={styles.tabInner}>
-                                <CheckCircleOutlineRoundedIcon className={styles.tabIcon}/> 
                                 <span className={styles.tabNumber}>{state.occupied}</span>
+                                <CheckCircleOutlineRoundedIcon className={styles.tabIcon}/> 
                             </div>
                             <p className={styles.tabText}>Ocupadas</p>
                         </div>
-                        <div className={styles.notPaidTab} >
+                        <div className={styles.notPaidTab} 
+                            onClick={() => {handleTabClick(1)}}
+                            style={{background: state.selected === 2 ? 'var(--cancel)' : 'none', color: state.selected === 2 ? '#a5280e' : 'var(--cancel)'}}
+                        >
                             <div className={styles.tabInner}>
-                                <CancelRoundedIcon className={styles.tabIcon}/> 
                                 <span className={styles.tabNumber}>{state.free}</span>
+                                <CancelRoundedIcon className={styles.tabIcon}/> 
                             </div>
                             <p className={styles.tabText}>Libres</p>
                         </div>
+                    </div>
+
+                    {/* table */}
+                    <div className={styles.table}>
+                        {state.propertiesList.length !== 0 ? state.propertiesList.map((item:StatusProperty, i:number) => (
+                            <div key={i} className={styles.propertyRow}>
+                                <p className={styles.rowLabel}>{item.name}</p>
+                                <Tooltip title="Ver propiedad" placement='top'>
+                                    <IconButton onClick={() => {handlePropertyClick(item)}} className={dash.icon__btn}>
+                                        <InfoRoundedIcon className={styles.propertyIcon}/>
+                                    </IconButton>
+                                </Tooltip>
+                            </div>
+                        )) : (
+                            <div>
+                            </div>
+                        )}
                     </div>
                 </div>
                 

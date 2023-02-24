@@ -35,6 +35,7 @@ const registerReport = async(properties, property, uid, report) => {
                     date: report.date,
                     month: report.month,
                     year: report.year,
+                    amount: report.amount,
                     concept: report.concept,
                     fileName: report.fileName,
                     fileUrl: downloadURL,

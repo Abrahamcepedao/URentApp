@@ -49,45 +49,45 @@ const SideBar = () => {
 
                 {/* tabs */}
                 <div className={styles.tabs}>
-                    <Link className={styles.tab} href="/dashboard" style={{background: router.pathname === '/dashboard' ? 'rgba(255,255,255,0.05)' : 'none'}}>
+                    <Link className={styles.tab} href="/dashboard" style={{background: router.pathname === '/dashboard' ? 'rgba(255,255,255,0.05)' : 'none', opacity: router.pathname === '/dashboard' ? 1 : 0.5}}>
                         {router.pathname === '/dashboard' ? (
                             <AnalyticsRoundedIcon className={styles.tab__icon}/>
                         ) : (
                             <AnalyticsOutlinedIcon className={styles.tab__icon}/>
                         )}
-                        <p className={styles.tab__label} style={{opacity: router.pathname === '/dashboard' ? 1 : 0.5}}>Inicio</p>
+                        <p className={styles.tab__label}>Inicio</p>
                     </Link>
-                    <Link className={styles.tab} href="/properties" style={{background: router.pathname === '/properties' ? 'rgba(255,255,255,0.05)' : 'none'}}>
+                    <Link className={styles.tab} href="/properties" style={{background: router.pathname === '/properties' ? 'rgba(255,255,255,0.05)' : 'none', opacity: router.pathname === '/properties' ? 1 : 0.5}}>
                         {router.pathname === '/properties' ? (
                             <MapsHomeWorkRoundedIcon className={styles.tab__icon}/>
                         ) : (
                             <MapsHomeWorkOutlinedIcon className={styles.tab__icon}/>
                         )}
-                        <p className={styles.tab__label} style={{opacity: router.pathname === '/properties' ? 1 : 0.5}}>Propiedades</p>
+                        <p className={styles.tab__label}>Propiedades</p>
                     </Link>
-                    <Link className={styles.tab} href="/payments" style={{background: router.pathname === '/payments' ? 'rgba(255,255,255,0.05)' : 'none'}}>
+                    <Link className={styles.tab} href="/payments" style={{background: router.pathname === '/payments' ? 'rgba(255,255,255,0.05)' : 'none', opacity: router.pathname === '/payments' ? 1 : 0.5}}>
                         {router.pathname === '/payments' ? (
                             <PaymentsRoundedIcon className={styles.tab__icon}/>
                         ) : (
                             <PaymentsOutlinedIcon className={styles.tab__icon}/>
                         )}
-                        <p className={styles.tab__label} style={{opacity: router.pathname === '/payments' ? 1 : 0.5}}>Pagos</p>
+                        <p className={styles.tab__label}>Pagos</p>
                     </Link>
-                    <Link className={styles.tab} href="/reports" style={{background: router.pathname === '/reports' ? 'rgba(255,255,255,0.05)' : 'none'}}>
+                    <Link className={styles.tab} href="/reports" style={{background: router.pathname === '/reports' ? 'rgba(255,255,255,0.05)' : 'none', opacity: router.pathname === '/reports' ? 1 : 0.5}}>
                         {router.pathname === '/reports' ? (
                             <StickyNote2RoundedIcon className={styles.tab__icon}/>
                         ) : (
                             <StickyNote2OutlinedIcon className={styles.tab__icon}/>
                         )}
-                        <p className={styles.tab__label} style={{opacity: router.pathname === '/reports' ? 1 : 0.5}}>Reportes</p>
+                        <p className={styles.tab__label}>Reportes</p>
                     </Link>
-                    <Link className={styles.tab} href="/users" style={{background: router.pathname === '/users' ? 'rgba(255,255,255,0.05)' : 'none'}}>
+                    <Link className={styles.tab} href="/users" style={{background: router.pathname === '/users' ? 'rgba(255,255,255,0.05)' : 'none', opacity: router.pathname === '/users' ? 1 : 0.5}}>
                         {router.pathname === '/users' ? (
                             <PeopleRoundedIcon className={styles.tab__icon}/>
                         ) : (
                             <PeopleAltOutlinedIcon className={styles.tab__icon}/>
                         )}
-                        <p className={styles.tab__label} style={{opacity: router.pathname === '/users' ? 1 : 0.5}}>Usuarios</p>
+                        <p className={styles.tab__label}>Usuarios</p>
                     </Link>
                 </div>
 

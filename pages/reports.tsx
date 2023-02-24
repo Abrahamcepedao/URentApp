@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react'
 //next
 import type { NextPage } from 'next'
 import Head from 'next/head'
-import Link from 'next/link'
+import { useRouter } from 'next/router'
 
 //CSS
 import dash from '../styles/Dashboard.module.css'
@@ -20,6 +20,15 @@ import MuiAlert, { AlertProps } from '@mui/material/Alert';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import ListItemIcon from '@mui/material/ListItemIcon';
+import Popover from '@mui/material/Popover';
+import Typography from '@mui/material/Typography';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
+import useMediaQuery from '@mui/material/useMediaQuery';
+import { useTheme } from '@mui/material/styles';
 
 //Material UI - icons
 import SearchRoundedIcon from '@mui/icons-material/SearchRounded';
@@ -27,7 +36,6 @@ import AddCircleRoundedIcon from '@mui/icons-material/AddCircleRounded';
 import DeleteRoundedIcon from '@mui/icons-material/DeleteRounded';
 import EditRoundedIcon from '@mui/icons-material/EditRounded';
 import HighlightOffRoundedIcon from '@mui/icons-material/HighlightOffRounded';
-import ErrorRoundedIcon from '@mui/icons-material/ErrorRounded';
 import FileDownloadRoundedIcon from '@mui/icons-material/FileDownloadRounded';
 import FilterListRoundedIcon from '@mui/icons-material/FilterListRounded';
 import RefreshRoundedIcon from '@mui/icons-material/RefreshRounded';
@@ -48,6 +56,9 @@ import openInNewTab from '../components/utils/functions/openInNewTab'
 import Property from '../components/utils/interfaces/Property'
 import Report from '../components/utils/interfaces/Report'
 
+//utils
+import formatMoney from '../components/utils/functions/formatMoney'
+
 //Alert
 const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
   props,
@@ -60,19 +71,40 @@ const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
 const Reports: NextPage = () => {
     //Context
     const { user } = useAuth()
-    const { properties, fecthProperties, addPayment } = useProperties()
+    const { properties, fecthProperties, addReport, updateEditReport, deleteReport } = useProperties()
+
+    //Router
+    const router = useRouter()
+
+    //Material UI
+    const theme = useTheme();
+    const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
 
     //useState - menu
     const [menuAnchor, setMenuAnchor] = useState(null);
     const menuOpen = Boolean(menuAnchor);
+
+    //useState - comment popover anchor
+    const [commentAnchor, setCommentAnchor] = useState<HTMLElement | null>(null);
+    const [comment, setComment] = useState<string>("");
+    const commentOpen = Boolean(commentAnchor);
+
+    //useState - concept popover anchor
+    const [conceptAnchor, setConceptAnchor] = useState<HTMLElement | null>(null);
+    const [concept, setConcept] = useState<string>("");
+    const conceptOpen = Boolean(conceptAnchor);
 
     //useState
     const [state, setState] = useState({
         reports: [],
         reportsList: [],
         addOpen: false,
+        deleteOpen: false,
+        deleteReport: 0,
+        deleteProperty: "",
         open: false,
-        error: "",
+        message: "",
+        severity: "",
         properties: [],
         filter: "",
         sort: 0
@@ -103,6 +135,26 @@ const Reports: NextPage = () => {
         setState({...state, open: false})
     };
 
+     /* handle cancel click */
+    const handleCancelClick = () => {
+        
+        setState({...state, deleteReport: 0, deleteProperty: "", deleteOpen: false})
+    }
+
+    /* handle delete eport */
+    const handleDeleteReport = async() => {
+        const res = await deleteReport(state.deleteProperty, state.deleteReport)
+        if(res){
+            console.log(res)
+            //delete payment from state
+            let temp = state.reports.filter((el:Report) => el.id !== state.deleteReport)
+            setState({...state, reports: temp, reportsList: temp, deleteReport: 0, deleteProperty: "", deleteOpen: false})
+        } else {
+            //alert error
+            console.log("error")
+            setState({...state, deleteOpen: false, deleteReport: 0, deleteProperty: "",})
+        }
+    }
 
     /* order menu functions */
     const handleClick = (event:any) => {
@@ -132,6 +184,7 @@ const Reports: NextPage = () => {
                 }
             })
 
+            console.log(temp)
             //@ts-ignore
             setState({...state, properties: temp, reports: reports, reportsList: reports})
 
@@ -199,6 +252,7 @@ const Reports: NextPage = () => {
         } 
     }
 
+    /* handle input change */
     const handleInputChange = (e:React.ChangeEvent<HTMLInputElement>) => {
         setFormData({
         ...formData,
@@ -219,11 +273,14 @@ const Reports: NextPage = () => {
         })
     }
 
+    /* handle property change */
     const handlePropertyChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        console.log(state.properties)
+        console.log(e.target.value)
         const pr:Property|undefined = state.properties.find((el:Property) => el.name === e.target.value)
         if(pr !== undefined){
             //@ts-ignore
-            setFormData({...formData, property: e.target.value, amount: Number(pr.contract.cost)})
+            setFormData({...formData, property: e.target.value})
         }
         
     }
@@ -239,40 +296,91 @@ const Reports: NextPage = () => {
     /* handle register payment click */
     const verifyData = () => {
         if(formData.concept === ""){
+            //alert error
+            setState({...state, message: "Ingrese un concepto", severity: 'errorr'})
             return false
         }
         //check data
-        setState({...state, error: ""})
+        setState({...state, message: ""})
         return true
     }
 
+    /* handle register report */
     const handleRegisterReport = async() => {
         if(verifyData()){
             console.log(formData)
-            /* //save payment
+            //save payment
+            console.log(properties)
             let pr:Property|undefined = state.properties.find((el:Property) => el.name === formData.property)
+            console.log(pr)
             if(pr !== undefined) {
                 let temp = {
                     date: formData.date,
-                    amount: formData.amount,
+                    amount: Number(formData.amount),
                     concept: formData.concept,
                     fileName: formData.fileName,
                     file: formData.file,
-                    comment: formData.comment
+                    comment: formData.comment,
+                    property: formData.property,
+                    month: formData.month,
+                    year: formData.year
                 }
                 console.log(temp)
-                const res = await addPayment(pr,temp)
+                const res = await addReport(pr,temp)
                 if(res) {
                     //alert success
-                    setState({...state, error: "",  open: true})
+                    setState({...state, message: "Reporte registrado correctamente",  open: true, severity: 'success'})
                     setFormData({...formData, file: "", fileName: "", comment: ""})
                     await getProperties()
                 } else {
                     //alert error
-                    setState({...state, error: "Ocurrió un error al registrar el reporte"})
+                    setState({...state, message: "Ocurrió un error al registrar el reporte", severity: 'errorr'})
                 }
-            } */
+            } else {
+                //alert error
+                    setState({...state, message: "Ocurrió un error al registrar el reporte", severity: 'errorr'})
+            }
         }
+    }
+
+
+    /* comment - popover functions */
+    const handlePopoverOpen = (event: React.MouseEvent<HTMLElement>, val:string) => {
+        if(val.length > 25){
+            setCommentAnchor(event.currentTarget);
+            setComment(val)
+        }
+    };
+
+    const handlePopoverClose = () => {
+        setCommentAnchor(null);
+        setComment("")
+    };
+
+
+    /* concept - popover functions */
+    const handleConceptOpen = (event: React.MouseEvent<HTMLElement>, val:string) => {
+        if(val.length > 25){
+            setConceptAnchor(event.currentTarget);
+            setConcept(val)
+        }
+    };
+
+    const handleConceptClose = () => {
+        setConceptAnchor(null);
+        setConcept("")
+    };
+
+    /* handle edit payment click */
+    const handleEditClick = (report:Report) => {
+        updateEditReport(report)
+        router.push(`/edit_report`)
+    }
+
+    /* handle delete property click */
+    const handleDeleteClick = (report:number, property:string) => {
+        console.log(report)
+        setState({...state, deleteReport: report, deleteProperty: property, deleteOpen: true})
     }
 
     
@@ -391,12 +499,6 @@ const Reports: NextPage = () => {
                                         </div>
                                     </div>
                                 </div>
-                                {state.error !== "" && (
-                                    <div className={styles.error__container}>
-                                        <ErrorRoundedIcon className={styles.error__icon}/>
-                                        <p className={styles.error__lbl}>{state.error}</p>
-                                    </div>
-                                )}
                                 <button className={dash.gradient__btn} onClick={handleRegisterReport}>
                                     Registrar reporte
                                 </button>
@@ -407,13 +509,13 @@ const Reports: NextPage = () => {
                         <div className={styles.payments__table}>
                             {/* table header */}
                             <div className={styles.table__header}>
-                                <div className={styles.header__cell}>
+                                <div className={styles.header__cell2}>
                                     Propiedad
                                 </div>
                                 <div className={styles.header__cell__sm}>
                                     Fecha
                                 </div>
-                                <div className={styles.header__cell__sm}>
+                                <div className={styles.header__cell__md}>
                                     Concepto
                                 </div>
                                 <div className={styles.header__cell__sm}>
@@ -430,36 +532,50 @@ const Reports: NextPage = () => {
                             {/* table rows */}
                             {state.reportsList.length !== 0 ? state.reportsList.map((item:Report, i) => (
                                 <div key={i} className={styles.table__row}>
-                                    <div className={styles.header__cell}>
+                                    <div className={styles.header__cell2}>
                                         {item.property.length > 25 ? item.property.substring(0,25) + "..." : item.property}
                                     </div>
                                     <div className={styles.header__cell__sm}>
                                         {item.date}
                                     </div>
-                                    <div className={styles.header__cell__sm}>
-                                        {item.concept}
+                                    <div className={styles.header__cell__md}>
+                                        <Typography
+                                            aria-owns={conceptAnchor ? 'mouse-over-concept' : undefined}
+                                            aria-haspopup="true"
+                                            onMouseEnter={(e) => {handleConceptOpen(e, item.concept)}}
+                                            onMouseLeave={handleConceptClose}
+                                        >
+                                            {item.concept.length > 25 ? item.concept.substring(0,25) + "..." : item.concept}
+                                        </Typography>
                                     </div>
                                     <div className={styles.header__cell__sm}>
-                                        {item.amount}
+                                        {item.amount ? formatMoney(item.amount) : "-"}
                                     </div>
                                     <div className={styles.header__cell}>
-                                        {item.comment.length > 25 ? item.comment.substring(0,25) + "..." : item.comment}
+                                        <Typography
+                                            aria-owns={commentAnchor ? 'mouse-over-comment' : undefined}
+                                            aria-haspopup="true"
+                                            onMouseEnter={(e) => {handlePopoverOpen(e, item.comment)}}
+                                            onMouseLeave={handlePopoverClose}
+                                        >
+                                            {item.comment.length > 25 ? item.comment.substring(0,25) + "..." : item.comment}
+                                        </Typography>
                                     </div>
 
                                     <div className={styles.header__cell__lg}>
                                         <div className={styles.cell__btns}>
                                             <Tooltip title={item.fileName} placement='top'>
                                                 <IconButton disabled={item.fileUrl === ""} onClick={() => {openInNewTab(item.fileUrl)}}>
-                                                    <FileDownloadRoundedIcon className={dash.table__icon}/>
+                                                    <FileDownloadRoundedIcon className={dash.table__icon} style={{opacity: item.fileUrl !== "" ? 1 : 0.5}}/>
                                                 </IconButton>
                                             </Tooltip>
-                                            <Tooltip title="Editar pago" placement='top'>
-                                                <IconButton>
+                                            <Tooltip title="Editar reporte" placement='top'>
+                                                <IconButton onClick={() => {handleEditClick(item)}}>
                                                     <EditRoundedIcon className={dash.table__icon}/>
                                                 </IconButton>
                                             </Tooltip>
-                                            <Tooltip title="Eliminar pago" placement='top'>
-                                                <IconButton>
+                                            <Tooltip title="Eliminar reporte" placement='top'>
+                                                <IconButton onClick={() => {handleDeleteClick(item.id, item.property)}}>
                                                     <DeleteRoundedIcon className={dash.table__icon}/>
                                                 </IconButton>
                                             </Tooltip>
@@ -477,12 +593,78 @@ const Reports: NextPage = () => {
                     </div>
                 </div>
 
+                {/* Dialog */}
+                <Dialog
+                    fullScreen={fullScreen}
+                    open={state.deleteOpen}
+                    onClose={handleCancelClick}
+                    aria-labelledby="responsive-dialog-title"
+                >
+                    <DialogTitle id="responsive-dialog-title">
+                    {`¿Esta seguro de querer eliminar el reporte?`}
+                    </DialogTitle>
+                    <DialogContent>
+                    <DialogContentText>
+                        Esta acción no se puede deshacer
+                    </DialogContentText>
+                    </DialogContent>
+                    <DialogActions>
+                        <button className={dash.cancel__fill__btn} onClick={handleCancelClick}>Cancelar</button>
+                        <button className={dash.delete__fill__btn} onClick={handleDeleteReport}>Eliminar</button>
+                    </DialogActions>
+                </Dialog>
+
                 {/* snack bar */}
                 <Snackbar open={state.open} autoHideDuration={4000} onClose={handleClose}>
-                    <Alert onClose={handleClose} severity="success" sx={{ width: '100%' }}>
-                        ¡Se registró el reporte exitosamente!
+                    {/* @ts-ignore */}
+                    <Alert onClose={handleClose} severity={state.severity ? state.severity : "info"} sx={{ width: '100%' }}>
+                        {state.message}
                     </Alert>
                 </Snackbar>
+
+                {/* comment anchor */}
+                <Popover
+                    id="mouse-over-comment"
+                    sx={{
+                        pointerEvents: 'none',
+                    }}
+                    open={commentOpen}
+                    anchorEl={commentAnchor}
+                    anchorOrigin={{
+                        vertical: 'bottom',
+                        horizontal: 'right',
+                    }}
+                    transformOrigin={{
+                        vertical: 'top',
+                        horizontal: 'right',
+                    }}
+                    onClose={handlePopoverClose}
+                    disableRestoreFocus
+                >
+                    <Typography sx={{ p: 1 }}>{comment}</Typography>
+                </Popover>
+
+                {/* concept anchor */}
+                <Popover
+                    id="mouse-over-concept"
+                    sx={{
+                        pointerEvents: 'none',
+                    }}
+                    open={conceptOpen}
+                    anchorEl={conceptAnchor}
+                    anchorOrigin={{
+                        vertical: 'bottom',
+                        horizontal: 'right',
+                    }}
+                    transformOrigin={{
+                        vertical: 'top',
+                        horizontal: 'right',
+                    }}
+                    onClose={handleConceptClose}
+                    disableRestoreFocus
+                >
+                    <Typography sx={{ p: 1 }}>{concept}</Typography>
+                </Popover>
 
                 {/* Menu */}
                 <Menu

@@ -126,7 +126,7 @@ const ContractsStatus = () => {
                             <div key={i} className={styles.propertyRow}>
                                 <p className={styles.rowLabel}>{item.name}</p>
                                 <Tooltip title="Ver propiedad" placement='top'>
-                                    <IconButton onClick={() => {handlePropertyClick(item)}}>
+                                    <IconButton onClick={() => {handlePropertyClick(item)}} className={dash.icon__btn}>
                                         <InfoRoundedIcon className={styles.propertyIcon}/>
                                     </IconButton>
                                 </Tooltip>

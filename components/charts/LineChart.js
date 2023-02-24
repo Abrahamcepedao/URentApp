@@ -21,9 +21,7 @@ const CustomSymbol = ({ size, color, borderWidth, borderColor }) => (
 
 const LineChart = ({ data /* see data tab */ }) => (
     <ResponsiveLine
-        
-        height={300}
-        margin={{top: 20, right: 20, bottom: 80, left: 80 }}
+        margin={{top: 20, right: 20, bottom: 50, left: 80 }}
         colors={{datum: 'color'}}
         data={data}
         animate={true}
@@ -89,7 +87,8 @@ const LineChart = ({ data /* see data tab */ }) => (
             format: '%b %y',
             tickValues: 'every month',
             legendOffset: -12,
-            tickRotation: -70
+            tickRotation: -70,
+            tickSize: 2
         }}
         curve={'linear'}
         enablePointLabel={false}

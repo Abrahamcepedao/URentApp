@@ -74,7 +74,7 @@ const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
 //Dashboard page
 const Payments: NextPage = () => {
     //Context
-    const { properties, fecthProperties, addPayment, deletePayment, updateEditPayment } = useProperties()
+    const { fecthProperties, addPayment, deletePayment, updateEditPayment } = useProperties()
 
     //Router
     const router = useRouter()
@@ -319,21 +319,19 @@ const Payments: NextPage = () => {
         router.push(`/edit_payment`)
     }
 
-
-    /* delete payment functions */
-
     /* handle delete property click */
     const handleDeleteClick = (payment:number, property:string) => {
         console.log(payment)
         setState({...state, deletePayment: payment, deleteProperty: property, deleteOpen: true})
     }
+
      /* handle cancel click */
     const handleCancelClick = () => {
         //@ts-ignore
         setState({...state, deletePayment: 0, deleteProperty: "", deleteOpen: false})
     }
 
-    /* handle delete property */
+    /* handle delete payment */
     const handleDeletePayment = async() => {
         const res = await deletePayment(state.deleteProperty, state.deletePayment)
         if(res){
@@ -514,7 +512,7 @@ const Payments: NextPage = () => {
                         <div className={styles.payments__table}>
                             {/* table header */}
                             <div className={styles.table__header}>
-                                <div className={styles.header__cell}>
+                                <div className={styles.header__cell2}>
                                     Propiedad
                                 </div>
                                 <div className={styles.header__cell__sm}>
@@ -529,7 +527,7 @@ const Payments: NextPage = () => {
                                 <div className={styles.header__cell__sm}>
                                     M. Bruto
                                 </div>
-                                <div className={styles.header__cell__sm}>
+                                <div className={styles.header__cell__sm2}>
                                     M. Neto
                                 </div>
                                 <div className={styles.header__cell__sm}>
@@ -546,12 +544,13 @@ const Payments: NextPage = () => {
                             {/* table rows */}
                             {state.paymentsList.length !== 0 ? state.paymentsList.map((item:Payment, i) => (
                                 <div key={i} className={styles.table__row}>
-                                    <div className={styles.header__cell}>
+                                    <div className={styles.header__cell2}>
                                         <Typography
                                             aria-owns={propertyAnchor ? 'mouse-over-property' : undefined}
                                             aria-haspopup="true"
                                             onMouseEnter={(e) => {handlePropertyPopoverOpen(e, item.property)}}
                                             onMouseLeave={handlePropertyPopoverClose}
+                                            className={styles.table__text}
                                         >
                                             {item.property.length > 20 ? item.property.substring(0,20) + "..." : item.property}
                                         </Typography>
@@ -568,7 +567,7 @@ const Payments: NextPage = () => {
                                     <div className={styles.header__cell__sm}>
                                         {item.bruta !== 0 ? formatMoney(item.bruta) : "-"}
                                     </div>
-                                    <div className={styles.header__cell__sm}>
+                                    <div className={styles.header__cell__sm2}>
                                         {item.neta !== 0 ? formatMoney(item.neta) : "-"}
                                     </div>
                                     <div className={styles.header__cell__sm}>
@@ -683,8 +682,8 @@ const Payments: NextPage = () => {
                     </DialogContentText>
                     </DialogContent>
                     <DialogActions>
-                        <button className={styles.cancel__fill__btn} onClick={handleCancelClick}>Cancelar</button>
-                        <button className={styles.save__fill__btn} onClick={handleDeletePayment}>Eliminar</button>
+                        <button className={dash.cancel__fill__btn} onClick={handleCancelClick}>Cancelar</button>
+                        <button className={dash.delete__fill__btn} onClick={handleDeletePayment}>Eliminar</button>
                     </DialogActions>
                 </Dialog>
 

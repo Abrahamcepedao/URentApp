@@ -276,7 +276,7 @@ const Properties: NextPage = () => {
                 <div className={styles.header__cell}>
                     Nombre
                 </div>
-                <div className={styles.header__cell}>
+                <div className={styles.header__cell__md}>
                     Arrendatario
                 </div>
                 <div className={styles.header__cell__sm}>
@@ -305,11 +305,12 @@ const Properties: NextPage = () => {
                               aria-haspopup="true"
                               onMouseEnter={(e) => {handlePropertyPopoverOpen(e, item.name)}}
                               onMouseLeave={handlePropertyPopoverClose}
+                              className={styles.table__text}
                           >
                               {item.name.length > 25 ? item.name.substring(0,25) + "..." : item.name}
                           </Typography>
                     </div>
-                    <div className={styles.header__cell}>
+                    <div className={styles.header__cell__md}>
                         {item.tenant.name ? item.tenant.name : "-"}
                     </div>
                     <div className={styles.header__cell__sm}>
@@ -326,9 +327,9 @@ const Properties: NextPage = () => {
                     </div>
                     <div className={styles.header__cell__lg}>
                         {!item.status ? (
-                          <Chip title="Libre" background="#D24B4B" color="#782C2C"/>
+                          <Chip title="Libre" color="#903030"/>
                         ) : (
-                          <Chip title="En renta" background="#31B73F" color="#18571F"/>
+                          <Chip title="En renta"color="#21812B"/>
                         )}
                         <div className={styles.cell__btns}>
                             <Tooltip title="Editar propiedad" placement='top'>
@@ -396,8 +397,8 @@ const Properties: NextPage = () => {
           </DialogContentText>
           </DialogContent>
           <DialogActions>
-              <button className={styles.cancel__fill__btn} onClick={handleCancelClick}>Cancelar</button>
-              <button className={styles.save__fill__btn} onClick={handleDeleteProperty}>Eliminar</button>
+              <button className={dash.cancel__fill__btn} onClick={handleCancelClick}>Cancelar</button>
+              <button className={dash.delete__fill__btn} onClick={handleDeleteProperty}>Eliminar</button>
           </DialogActions>
       </Dialog>
 

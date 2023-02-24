@@ -204,8 +204,8 @@ const EditPayment: NextPage = () => {
                     date: formData.date,
                     month: formData.month,
                     year: formData.year,
-                    bruta: formData.bruta,
-                    neta: formData.neta,
+                    bruta: Number(formData.bruta),
+                    neta: Number(formData.neta),
                     method: formData.method,
                     comment: formData.comment,
                     fileName: editPayment.fileName,
@@ -214,6 +214,7 @@ const EditPayment: NextPage = () => {
                     fileUrl: editPayment.fileUrl,
                     newFileName: formData.newFileName
                 }
+                console.log(temp)
                 const res = await updatePayment(temp, editPayment.property !== formData.property ? formData.property : "", editPayment.property !== formData.property ? editPayment.property : "")
                 if(res) {
                     //alert success

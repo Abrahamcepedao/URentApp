@@ -12,7 +12,7 @@
 .infoContainer {
     display: flex;
     justify-content: space-between;
-    align-items: center;
+    align-items: flex-start;
     padding-top: 20px;
 }
 .dataContainer {
@@ -28,32 +28,35 @@
 /* tabs */
 .tabsContainer {
     display: grid;
-    grid-template-columns: auto;
-    row-gap: 20px;
+    grid-template-columns: auto auto auto;
+    column-gap: 10px;
+    margin-bottom: 20px;
 }
-.paidTab, .notPaidTab {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
+.paidTab, .onTimeTab, .notPaidTab {
     padding: 4px 8px;
     border-radius: 5px;
     cursor: pointer;
+    transition: transform 450ms;
 }
 .paidTab {
+    color: var(--success);
     border: 1px solid var(--success);
-    background: var(--success);
-    color: #07592d;
+}
+.paidTab:hover, .onTimeTab:hover, .notPaidTab:hover {
+    transform: scale(1.06);
+}
+.onTimeTab {
+    color: var(--medium);
+    border: 1px solid var(--medium);
 }
 .notPaidTab {
-    background: var(--cancel);
+    color: var(--cancel);
     border: 1px solid var(--cancel);
-    color: #a5280e;
 }
 
 .tabInner {
     display: flex;
-    justify-content: center;
+    justify-content: space-between;
     align-items: center;
 }
 .tabNumber {
@@ -62,22 +65,56 @@
     margin-left: 5px;
 }
 .tabIcon {
-    width: 30px !important;
-    height: 30px !important;
+    width: 25px !important;
+    height: 25px !important;
 }
 .tabText {
     margin: 0px;
     font-size: 14px;
 }
 
+/* table */
+.table {
+    max-height: 200px;
+    overflow-y: scroll;
+    color: var(--light__text);
+    opacity: 0.9;
+    font-size: 16px;
+}
+.propertyRow {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.rowLabel {
+    margin: 0px;
+}
+.propertyIcon {
+    color: var(--light__text);
+}
+
+
 
 /* <------responsive design--------> */
+/* 1500px */
+@media (max-width: 1500px){
+    .pieContainer {
+        width: 250px;
+        height: 250px;
+    }
+}
 
 /* 1350px */
 @media (max-width: 1350px){
     .pieContainer {
-        width: 250px;
-        height: 250px;
+        width: 210px;
+        height: 210px;
+    }
+    .paidTab, .onTimeTab, .notPaidTab {
+        padding: 2px 6px;
+    }
+    .tabNumber {
+        font-size: 22px;
     }
 }
 
@@ -86,6 +123,17 @@
     .pieContainer {
         width: 200px;
         height: 200px;
+    }
+    .table {
+        font-size: 14px;
+    }
+}
+
+
+/* 1080 */
+@media (max-width: 1080px){
+    .table {
+        font-size: 14px;
     }
 }
 
@@ -96,10 +144,6 @@
         align-items: center;
         justify-content: center;
     }
-    .tabsContainer {
-        grid-template-columns: auto auto;
-        column-gap: 20px;
-    }
 }
 
 /* 650 */
@@ -107,5 +151,11 @@
     .pieContainer {
         width: 150px;
         height: 150px;
+    }
+    .table {
+        font-size: 12px;
+    }
+    .table {
+        font-size: 12px;
     }
 }
