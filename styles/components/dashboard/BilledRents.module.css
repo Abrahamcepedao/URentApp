@@ -149,8 +149,8 @@
 /* 650 */
 @media (max-width: 650px){
     .pieContainer {
-        width: 150px;
-        height: 150px;
+        width: 200px;
+        height: 200px;
     }
     .table {
         font-size: 12px;
