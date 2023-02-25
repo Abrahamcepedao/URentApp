@@ -6,7 +6,9 @@ interface Report {
     comment: string,
     fileName: string, 
     fileUrl: string,
-    property: string
+    property: string,
+    year: number,
+    month: string
 }
 
 export default Report

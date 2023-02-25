@@ -44,10 +44,9 @@
   border-radius: 30px;
   border: none;
   color: var(--dark__text);
-  font-size: 18px;
+  font-size: 16px;
   cursor: pointer;
   transition: transform 450ms;
-  margin-bottom: 30px;
 }
 .gradient__btn:hover {
   transform: scale(1.1);
@@ -55,11 +54,11 @@
 /* dialog button */
 .delete__fill__btn, .cancel__fill__btn {
     border-radius: 25px;
-    padding: 10px;
+    padding: 10px  40px;
     margin: 0px;
-    width: 160px;
     cursor: pointer;
     transition: transform 450ms;
+    font-size: 16px;
 }
 .delete__fill__btn {
     background: var(--cancel);
@@ -101,7 +100,7 @@
 /* upper container */
 .upper__container {
     display: grid;
-    grid-template-columns: auto auto;
+    grid-template-columns: 1fr 1fr;
     grid-gap: 30px;
     margin-bottom: 30px;
     flex: 1;
@@ -177,6 +176,11 @@
     .table__icon {
         width: 20px !important;
         height: 20px !important;
+    }
+
+    .delete__fill__btn, .cancel__fill__btn, .gradient__btn {
+        padding: 8px  15px;
+        font-size: 14px;
     }
 }
 

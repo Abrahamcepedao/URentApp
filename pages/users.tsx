@@ -186,7 +186,7 @@ const Users: NextPage = () => {
                     <div className={styles.users__table}>
                         {/* table header */}
                         <div className={styles.table__header}>
-                            <div className={styles.header__cell}>
+                            <div className={styles.header__cell_sm}>
                                 Nombre
                             </div>
                             <div className={styles.header__cell}>
@@ -200,7 +200,7 @@ const Users: NextPage = () => {
                         {/* table rows */}
                         {state.users.length !== 0 && state.users.map((item:Manager, i:number) => (
                             <div className={styles.table__row} key={i}>
-                                <div className={styles.header__cell}>
+                                <div className={styles.header__cell_sm}>
                                     {item.name}
                                 </div>
                                 <div className={styles.header__cell}>

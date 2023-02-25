@@ -1,9 +1,10 @@
 /* container */
 .container {
-    height: 100vh;
+    max-height: 100vh;
     width: 100%;
     padding: 30px;
-    color: var(--light__text);   
+    color: var(--light__text);  
+    overflow-y: scroll; 
 }
 .inner__container {
     min-height: calc(100vh - 60px);
@@ -32,6 +33,7 @@
 }
 .input__label {
     opacity: 0.5;
+    font-size: 16px;
 }
 /* inputs */
 .inputs__row {
@@ -101,9 +103,7 @@
     margin-right: 10px;
 
 }
-.button:hover {
-    background: #E3C37E;
-}
+
 
 /* action buttons */
 .actions__container {
@@ -112,6 +112,7 @@
     justify-content: flex-start;
     align-items: center;
     padding: 10px 0px;
+    margin-top: 30px;
 }
 
 .cancel__btn, .save__btn, .cancel__fill__btn, .save__fill__btn {
@@ -176,12 +177,50 @@
 
 
 /* <------responsive design--------> */
+/* 1350 */
+@media (max-width: 1350px){
+    .container {
+        padding: 20px;
+    }
+    .input__label {
+        font-size: 15px;
+    }
+}
+
 /* 1080 */
 @media (max-width: 1080px){
     .container {
-        padding-bottom: 60px;
+        padding-bottom: 80px;
+        max-width: 100vw;
     }
     .inner__container {
-        min-height: calc(100vh - 120px);
+        min-height: calc(100vh - 100px);
+    }
+    .input__label {
+        font-size: 14px;
+    }
+}
+
+/* 650 */
+@media (max-width: 650px) {
+    .inputs__row, .tenant__container {
+        grid-template-columns: auto auto;
+    }
+    .input__label {
+        font-size: 12px;
+    }
+}
+
+/* 500 */
+@media (max-width: 500px) {
+    .container {
+        padding-bottom: 70px;
+    }
+}
+
+/* 350 */
+@media (max-width: 350px) {
+    .inputs__row, .tenant__container {
+        grid-template-columns: auto;
     }
 }

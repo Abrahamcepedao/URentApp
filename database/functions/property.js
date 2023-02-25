@@ -269,12 +269,15 @@ const updateNewContract = async(properties, property, uid) => {
               await setDoc(docRef, payload)
 
               //delete other PDF
-              const deleteRef = ref(storage, `files/${uid}/${property.type}/${property.contract.pdfName}`)
-              await deleteObject(deleteRef).then(() => {
-                console.log("File deleted")
-              }).catch((err) => {
-                console.log(err.message)
-              })
+              if(property.contract.pdfName !== "") {
+                const deleteRef = ref(storage, `files/${uid}/${property.type}/${property.contract.pdfName}`)
+                await deleteObject(deleteRef).then(() => {
+                  console.log("File deleted")
+                }).catch((err) => {
+                  console.log(err.message)
+                })
+              }
+              
               return true
           } catch (err) {
               console.log(err)

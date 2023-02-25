@@ -57,6 +57,7 @@
     overflow-x: scroll;
     padding-bottom: 15px;
     font-size: 16px;
+    max-height: calc(100vh - 230px);
 }
 .table__text {
     font-size: 16px;
@@ -135,7 +136,7 @@
     .inner__container {
         min-height: calc(100vh - 40px);
     }
-    .payments__table, .table__text {
+    .table__container, .table__text {
         font-size: 15px !important;
     }
 }
@@ -148,7 +149,7 @@
     .inner__container {
         min-height: calc(100vh - 100px);
     }
-    .payments__table, .table__text {
+    .table__container, .table__text {
         font-size: 14px !important;
     }
 }
@@ -167,8 +168,12 @@
     .header__cell__sm {
         display: none;
     }
-    .payments__table, .table__text {
+    .table__container, .table__text {
         font-size: 12px !important;
+    }
+    .header__cell {
+        width: 220px;
+        min-width: 220px;
     }
 }
 
@@ -176,5 +181,9 @@
 @media (max-width: 500px) {
     .inner__container {
         min-height: calc(100vh - 80px);
+        padding: 10px;
+    }
+    .search__input {
+        margin-left: 2px;
     }
 }
