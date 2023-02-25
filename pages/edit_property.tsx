@@ -26,6 +26,8 @@ import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { useTheme } from '@mui/material/styles';
+import Snackbar from '@mui/material/Snackbar';
+import MuiAlert, { AlertProps } from '@mui/material/Alert';
 
 //Material UI - icons
 import ErrorRoundedIcon from '@mui/icons-material/ErrorRounded';
@@ -43,6 +45,14 @@ import { ThreeDots } from 'react-loader-spinner'
 
 //Constants
 import { contractStatusList, contractStatusBackground, contractStatusColor } from '../components/utils/constants/contract'
+
+//MUI - Alert
+const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
+  props,
+  ref,
+) {
+  return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+});
 
 //Dashboard page
 const EditProperty: NextPage = () => {
@@ -87,6 +97,7 @@ const EditProperty: NextPage = () => {
         error: "",
         loading: false,
         open: false,
+        severity: "info"
     })
 
 
@@ -94,6 +105,7 @@ const EditProperty: NextPage = () => {
     useEffect(() => {
         if(editProperty){
             //set property data
+            console.log(editProperty)
             if(editProperty.status) {
                 //set tenant
                 setProperty({
@@ -134,7 +146,15 @@ const EditProperty: NextPage = () => {
     },[editProperty])
 
 
-    const handleClose = () => {
+    const handleClose = (event?: React.SyntheticEvent | Event, reason?: string) => {
+        if (reason === 'clickaway') {
+        return;
+        }
+
+        setUtils({...utils, open: false});
+    };
+
+    const handleClosee = () => {
         setUtils({...utils, open: false})
         setProperty({...property, 
             name: "", 
@@ -228,6 +248,89 @@ const EditProperty: NextPage = () => {
         }
     }
 
+    
+
+    /* handle input change (property and tenant) */
+    const handleInputChange = (e:React.ChangeEvent<HTMLInputElement>) => {
+        setProperty({
+        ...property,
+            [e.target.name]: e.target.value
+        })
+    }
+
+
+    /* handle pay day change */
+    const handleDayChange = (e:React.ChangeEvent<HTMLInputElement>) => {
+        let val:number = parseInt(e.target.value)
+        if(val >= 1 && val <= 31){
+            //udpdate dat
+            setContract({...contract, day: val})
+        }
+
+        if(e.target.value === ""){
+            setContract({...contract, day: parseInt(e.target.value)})
+        }
+    }
+    
+    /* handle cancel click */
+    const handleCancelClick = () => {
+        //router.push('/properties')
+        //delete data from property
+    }
+
+    /* handle verify data */
+    const verifyData = () => {
+        let flag = true
+        if(property.name === "") {
+            setUtils({...utils, error: "Agrega el nombre de la propiedad", open: true, severity: "error"})
+            return false
+        }
+        if(property.status){
+            if(property.tenantName === "") {
+                setUtils({...utils, error: "Agrega el nombre del arrendatario", open: true, severity: "error"})
+                return false
+            }
+            if(property.razon === "") {
+                setUtils({...utils, error: "Agrega la razón social del arrendatario", open: true, severity: "error"})
+                return false
+            }
+            if(property.phone === "") {
+                setUtils({...utils, error: "Agrega el teléfono del arrendatario", open: true, severity: "error"})
+                return false
+            }
+            if(property.mail === "") {
+                setUtils({...utils, error: "Agrega el mail del arrendatario", open: true, severity: "error"})
+                return false
+            }
+            if(contract.bruta === 0) {
+                setUtils({...utils, error: "Agrega la renta bruta del contrato", open: true, severity: "error"})
+                return false
+            }
+            if(contract.day < 0 && contract.day > 32) {
+                setUtils({...utils, error: "Agrega el día de pago del contrato", open: true, severity: "error"})
+                return false
+            }
+            if(contract.neta === 0) {
+                setUtils({...utils, error: "Agrega la renta neta del contrato", open: true, severity: "error"})
+                return false
+            }
+            if(contract.start === "") {
+                setUtils({...utils, error: "Agrega la fecha inicial del contrato", open: true, severity: "error"})
+                return false
+            }
+            if(contract.end === "") {
+                setUtils({...utils, error: "Agrega la fecha final del contrato", open: true, severity: "error"})
+                return false
+            }
+            if(contract.pdf === "") {
+                setUtils({...utils, error: "Agrega el pdf del contrato", open: true, severity: "error"})
+                return false
+            }
+        }
+        return flag
+    }
+
+
     /* check if property and tenant values change */
     const checkChanges = () => {
         if(editProperty.name !== property.name){
@@ -239,6 +342,7 @@ const EditProperty: NextPage = () => {
         if(editProperty.status !== property.status){
             return true
         }
+
         if(property.status){
             if(editProperty.tenant.name !== property.tenantName){
                 return true
@@ -274,92 +378,15 @@ const EditProperty: NextPage = () => {
                 return true
             }
         }
+        setUtils({...utils, error: "No se han hecho cambios", loading: false, open: true, severity: "error"})
         return false
     }
 
-    /* handle input change (property and tenant) */
-    const handleInputChange = (e:React.ChangeEvent<HTMLInputElement>) => {
-        setProperty({
-        ...property,
-            [e.target.name]: e.target.value
-        })
-    }
-
-
-    /* handle pay day change */
-    const handleDayChange = (e:React.ChangeEvent<HTMLInputElement>) => {
-        let val:number = parseInt(e.target.value)
-        if(val >= 1 && val <= 31){
-            //udpdate dat
-            setContract({...contract, day: val})
-        }
-
-        if(e.target.value === ""){
-            setContract({...contract, day: parseInt(e.target.value)})
-        }
-    }
-    
-    /* handle cancel click */
-    const handleCancelClick = () => {
-        //router.push('/properties')
-        //delete data from property
-    }
-
     /* handle save click */
-    const verifyData = () => {
-        let flag = true
-        if(property.name === "") {
-            setUtils({...utils, error: "Agrega el nombre de la propiedad"})
-            return false
-        }
-        if(property.status){
-            if(property.tenantName === "") {
-                setUtils({...utils, error: "Agrega el nombre del arrendatario"})
-                return false
-            }
-            if(property.razon === "") {
-                setUtils({...utils, error: "Agrega la razón social del arrendatario"})
-                return false
-            }
-            if(property.phone === "") {
-                setUtils({...utils, error: "Agrega el teléfono del arrendatario"})
-                return false
-            }
-            if(property.mail === "") {
-                setUtils({...utils, error: "Agrega el mail del arrendatario"})
-                return false
-            }
-            if(contract.bruta === 0) {
-                setUtils({...utils, error: "Agrega la renta bruta del contrato"})
-                return false
-            }
-            if(contract.day > 0 && contract.day < 32) {
-                setUtils({...utils, error: "Agrega el día de pago del contrato"})
-                return false
-            }
-            if(contract.neta === 0) {
-                setUtils({...utils, error: "Agrega la renta neta del contrato"})
-                return false
-            }
-            if(contract.start === "") {
-                setUtils({...utils, error: "Agrega la fecha inicial del contrato"})
-                return false
-            }
-            if(contract.end === "") {
-                setUtils({...utils, error: "Agrega la fecha final del contrato"})
-                return false
-            }
-            if(contract.pdf === "") {
-                setUtils({...utils, error: "Agrega el pdf del contrato"})
-                return false
-            }
-        }
-        return flag
-    }
-
-
     const handleSaveClick = async() => {
         setUtils({...utils, error: "", loading: true})
+        console.log(property)
+        console.log(contract)
         if(verifyData() && checkChanges()){
             //changes exist
             //update changes
@@ -429,182 +456,189 @@ const EditProperty: NextPage = () => {
                     setUtils({...utils, error: "Ocurrión un error al guardar los datos", loading: false})
                 }
             }
-       } else {
-            //there are no changes
-            setUtils({...utils, error: "No se han hecho cambios", loading: false})
-       }
+       } 
     }
 
     return (
         <div>
-        <Head>
-            <title>URent | Dashboard</title>
-            <meta name="description" content="URent - Property rental management web platform" />
-            <link rel="icon" href="/favicon.ico" />
-        </Head>
+            <Head>
+                <title>URent | Dashboard</title>
+                <meta name="description" content="URent - Property rental management web platform" />
+                <link rel="icon" href="/favicon.ico" />
+            </Head>
 
-        <main className={dash.main}>
-            {/* @ts-ignore */}
-            <SideBar/>
+            <main className={dash.main}>
+                {/* @ts-ignore */}
+                <SideBar/>
 
-            {/* content */}
-            <div className={styles.container}>
-                <div className={styles.inner__container}>
-                    {/* header */}
-                    <div className={styles.header}>
-                    {/* header title */}
-                    <p className={dash.subtitle}>Datos de propiedad</p>
-                    </div>
-
-                    {/* property data */}
-                    <div className={styles.form__container}>
-
-                        {/* property */}
-                        <div className={styles.inputs__row}>
-                            <div className={styles.input__container}>
-                                <p className={styles.input__label}>Nombre</p>
-                                <input placeholder='Ingrese el nombre' name="name" className={styles.input} value={property.name} onChange={(e) => {handleInputChange(e)}}/>
-                            </div>
-                            <div className={styles.input__container}>
-                                <p className={styles.input__label}>Tipo</p>
-                                <select 
-                                    name="type" 
-                                    id="type" 
-                                    className={styles.input}
-                                    value={property.type}
-                                    onChange={(e) => {setProperty({...property, type: e.target.value})}}
-                                >
-                                    <option value="house">Casa</option>
-                                    <option value="apartment">Departamento</option>
-                                    <option value="storage">Bodega</option>
-                                    <option value="ofice">Oficina</option>
-                                    <option value="land">Terreno</option>
-                                    <option value="local">Local</option>
-                                    <option value="roof">Azotea</option>
-                                    <option value="other">Otro</option>
-                                </select>
-                            </div>
-                            <div className={styles.input__container}>
-                                <p className={styles.input__label}>En renta</p>
-                                <GreenSwitch checked={property.status} onChange={(e: { target: { checked: any } }) => {setProperty({...property, status: e.target.checked})}}/>
-                            </div>
+                {/* content */}
+                <div className={styles.container}>
+                    <div className={styles.inner__container}>
+                        {/* header */}
+                        <div className={styles.header}>
+                        {/* header title */}
+                        <p className={dash.subtitle}>Datos de propiedad</p>
                         </div>
 
-                        {/* tenant */}
-                        <Collapse in={property.status}>
-                            <div className={styles.tenant}>
-                                <p className={dash.subtitle}>Datos de arrendatario</p>
-                                <div className={styles.tenant__container}>
-                                    <div className={styles.input__container}>
-                                        <p className={styles.input__label}>Nombre</p>
-                                        <input placeholder='Ingrese el nombre' name="tenantName" className={styles.input} value={property.tenantName} onChange={(e) => {handleInputChange(e)}}/>
-                                    </div>
-                                    <div className={styles.input__container}>
-                                        <p className={styles.input__label}>Razón social</p>
-                                        <input placeholder='Ingrese la razón social' name="razon" className={styles.input} value={property.razon} onChange={(e) => {handleInputChange(e)}}/>
-                                    </div>
-                                    <div className={styles.input__container}>
-                                        <p className={styles.input__label}>Teléfono</p>
-                                        <input type="number" className={styles.input} name="phone" value={property.phone} onChange={(e) => {handleInputChange(e)}}/>
-                                    </div>
-                                    <div className={styles.input__container}>
-                                        <p className={styles.input__label}>Email</p>
-                                        <input placeholder='Ingrese el mail' name="mail" className={styles.input} value={property.mail} onChange={(e) => {handleInputChange(e)}}/>
-                                    </div>
+                        {/* property data */}
+                        <div className={styles.form__container}>
 
-                                    {/* contract */}
-                                    <div className={styles.input__container}>
-                                        <p className={styles.input__label}>Renta bruta</p>
-                                        <input type="number" className={styles.input} value={contract.bruta} onChange={(e) => {setContract({...contract, bruta: parseFloat(e.target.value)})}}/>
-                                    </div>
-                                    <div className={styles.input__container}>
-                                        <p className={styles.input__label}>Renta neta</p>
-                                        <input type="number" className={styles.input} value={contract.neta} onChange={(e) => {setContract({...contract, neta: parseFloat(e.target.value)})}}/>
-                                    </div>
-                                    <div className={styles.input__container}>
-                                        <p className={styles.input__label}>Día de pago</p>
-                                        <input type="number" className={styles.input} value={contract.day} onChange={(e) => {handleDayChange(e)}}/>
-                                    </div>
+                            {/* property */}
+                            <div className={styles.inputs__row}>
+                                <div className={styles.input__container}>
+                                    <p className={styles.input__label}>Nombre</p>
+                                    <input placeholder='Ingrese el nombre' name="name" className={styles.input} value={property.name} onChange={(e) => {handleInputChange(e)}}/>
+                                </div>
+                                <div className={styles.input__container}>
+                                    <p className={styles.input__label}>Tipo</p>
+                                    <select 
+                                        name="type" 
+                                        id="type" 
+                                        className={styles.input}
+                                        value={property.type}
+                                        onChange={(e) => {setProperty({...property, type: e.target.value})}}
+                                    >
+                                        <option value="house">Casa</option>
+                                        <option value="apartment">Departamento</option>
+                                        <option value="storage">Bodega</option>
+                                        <option value="ofice">Oficina</option>
+                                        <option value="land">Terreno</option>
+                                        <option value="local">Local</option>
+                                        <option value="roof">Azotea</option>
+                                        <option value="other">Otro</option>
+                                    </select>
+                                </div>
+                                <div className={styles.input__container}>
+                                    <p className={styles.input__label}>En renta</p>
+                                    <GreenSwitch checked={property.status} onChange={(e: { target: { checked: any } }) => {
+                                        console.log(e.target.checked)
+                                        setProperty({...property, status: e.target.checked})
+                                    }}/>
+                                </div>
+                            </div>
 
-                                    <div className={styles.input__container}>
-                                        <p className={styles.input__label}>Tipo de renta</p>
-                                        <select 
-                                            name="type" 
-                                            id="type"
-                                            className={styles.input}
-                                            value={contract.type}
-                                            onChange={(e) => {setContract({...contract, type: e.target.value})}}
-                                        >
-                                            <option value="month">Mensual</option>
-                                            <option value="2months">2 Meses</option>
-                                            <option value="3months">3 Meses</option>
-                                            <option value="6months">6 Meses</option>
-                                            <option value="year">Anual</option>
-                                        </select>
-                                    </div>
-                                    <div className={styles.input__container}>
-                                        <p className={styles.input__label}>Inicio de contrato</p>
-                                        <input type="date" className={styles.input} value={contract.start} onChange={(e) => {handleDateChange(e,0)}}/>
-                                    </div>
-                                    <div className={styles.input__container}>
-                                        <p className={styles.input__label}>Fin de contrato</p>
-                                        <input type="date" className={styles.input} value={contract.end} onChange={(e) => {handleDateChange(e,1)}}/>
-                                    </div>
-                                    <div className={styles.input__container}>
-                                        <p className={styles.input__label}>Estado de contrato</p>
-                                        {contract.status !== -1 && (
-                                            <Chip title={contractStatusList[contract.status]} background={contractStatusBackground[contract.status]} color={contractStatusColor[contract.status]}/>
-                                        )}
-                                    </div>
-                                    <div className={styles.input__container}>
-                                        <p className={styles.input__label}>PDF de contrato</p>
-                                        {contract.pdfUrl !== "" && (
-                                            <Tooltip title={contract.pdfName} placement='top'>
-                                                <IconButton onClick={() => {openInNewTab(contract.pdfUrl)}}>
-                                                    <DownloadRoundedIcon className={dash.table__icon}/>
-                                                </IconButton>
-                                            </Tooltip>
-                                        )}
-                                    </div>
-                                    {/* add contract */}
-                                    <div className={styles.input__container}>
-                                        <p className={styles.input__label}>Cambiar PDF</p>
-                                        <div>
-                                            <label htmlFor='file' className={styles.button}>
-                                                <AttachFileRoundedIcon className={dash.table__icon}/>
-                                            </label>
-                                            <input name='file' id='file' type="file" onChange={(e) => {handlePDFChange(e)}} className={styles.file__input}/>
-                                            <p>{contract.newPdfName.length > 20 ? contract.newPdfName.substring(0,20) + "..." : contract.newPdfName}</p>
+                            {/* tenant */}
+                            <Collapse in={property.status}>
+                                <div className={styles.tenant}>
+                                    <p className={dash.subtitle}>Datos de arrendatario</p>
+                                    <div className={styles.tenant__container}>
+                                        <div className={styles.input__container}>
+                                            <p className={styles.input__label}>Nombre</p>
+                                            <input placeholder='Ingrese el nombre' name="tenantName" className={styles.input} value={property.tenantName} onChange={(e) => {handleInputChange(e)}}/>
+                                        </div>
+                                        <div className={styles.input__container}>
+                                            <p className={styles.input__label}>Razón social</p>
+                                            <input placeholder='Ingrese la razón social' name="razon" className={styles.input} value={property.razon} onChange={(e) => {handleInputChange(e)}}/>
+                                        </div>
+                                        <div className={styles.input__container}>
+                                            <p className={styles.input__label}>Teléfono</p>
+                                            <input type="number" className={styles.input} name="phone" value={property.phone} onChange={(e) => {handleInputChange(e)}}/>
+                                        </div>
+                                        <div className={styles.input__container}>
+                                            <p className={styles.input__label}>Email</p>
+                                            <input placeholder='Ingrese el mail' name="mail" className={styles.input} value={property.mail} onChange={(e) => {handleInputChange(e)}}/>
+                                        </div>
+
+                                        {/* renta bruta */}
+                                        <div className={styles.input__container}>
+                                            <p className={styles.input__label}>Renta bruta</p>
+                                            <input type="number" className={styles.input} value={contract.bruta} onChange={(e) => {setContract({...contract, bruta: parseFloat(e.target.value)})}}/>
+                                        </div>
+
+                                        {/* renta neta */}
+                                        <div className={styles.input__container}>
+                                            <p className={styles.input__label}>Renta neta</p>
+                                            <input type="number" className={styles.input} value={contract.neta} onChange={(e) => {setContract({...contract, neta: parseFloat(e.target.value)})}}/>
+                                        </div>
+
+                                        {/* dia de pago */}
+                                        <div className={styles.input__container}>
+                                            <p className={styles.input__label}>Día de pago</p>
+                                            <input type="number" className={styles.input} value={contract.day} onChange={(e) => {handleDayChange(e)}}/>
+                                        </div>
+
+                                        {/* type of rent */}
+                                        <div className={styles.input__container}>
+                                            <p className={styles.input__label}>Tipo de renta</p>
+                                            <select 
+                                                name="type" 
+                                                id="type"
+                                                className={styles.input}
+                                                value={contract.type}
+                                                onChange={(e) => {setContract({...contract, type: e.target.value})}}
+                                            >
+                                                <option value="month">Mensual</option>
+                                                <option value="2months">2 Meses</option>
+                                                <option value="3months">3 Meses</option>
+                                                <option value="6months">6 Meses</option>
+                                                <option value="year">Anual</option>
+                                            </select>
+                                        </div>
+
+                                        {/* contract */}
+                                        <div className={styles.input__container}>
+                                            <p className={styles.input__label}>Inicio de contrato</p>
+                                            <input type="date" className={styles.input} value={contract.start} onChange={(e) => {handleDateChange(e,0)}}/>
+                                        </div>
+                                        <div className={styles.input__container}>
+                                            <p className={styles.input__label}>Fin de contrato</p>
+                                            <input type="date" className={styles.input} value={contract.end} onChange={(e) => {handleDateChange(e,1)}}/>
+                                        </div>
+                                        <div className={styles.input__container}>
+                                            <p className={styles.input__label}>Estado de contrato</p>
+                                            {contract.status !== -1 && (
+                                                <Chip title={contractStatusList[contract.status]} background={contractStatusBackground[contract.status]} color={contractStatusColor[contract.status]}/>
+                                            )}
+                                        </div>
+                                        <div className={styles.input__container}>
+                                            <p className={styles.input__label}>PDF de contrato</p>
+                                            {contract.pdfUrl !== "" && (
+                                                <Tooltip title={contract.pdfName} placement='top'>
+                                                    <IconButton onClick={() => {openInNewTab(contract.pdfUrl)}}>
+                                                        <DownloadRoundedIcon className={dash.table__icon}/>
+                                                    </IconButton>
+                                                </Tooltip>
+                                            )}
+                                        </div>
+                                        {/* add contract */}
+                                        <div className={styles.input__container}>
+                                            <p className={styles.input__label}>Cambiar PDF</p>
+                                            <div className={styles.file__input__container}>
+                                                <label htmlFor='file' className={styles.button}>
+                                                    <AttachFileRoundedIcon className={dash.table__icon}/>
+                                                </label>
+                                                <input name='file' id='file' type="file" onChange={(e) => {handlePDFChange(e)}} className={styles.file__input}/>
+                                                <p>{contract.newPdfName.length > 20 ? contract.newPdfName.substring(0,20) + "..." : contract.newPdfName}</p>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                        </Collapse>
+                            </Collapse>
 
-                        {/* error message */}
-                        {utils.error !== "" && (
-                            <div className={styles.error__container}>
-                                <ErrorRoundedIcon className={styles.error__icon}/>
-                                <p className={styles.error__lbl}>{utils.error}</p>
-                            </div>
-                        )}
-                        {utils.loading && (
-                            <div className={styles.loader}>
-                                <ThreeDots color="#A58453" height={100} width={100} />
-                            </div>
-                        )}
-
-                        {/* Save or cancel property */}
-                        <div className={styles.actions__container} style={{marginTop: property.status ? "0px": "30px"}}>
-                            {property.status && (
-                                <button className={styles.cancel__btn} onClick={handleCancelClick}>Terminar contrato</button>    
+                            {utils.loading && (
+                                <div className={styles.loader}>
+                                    <ThreeDots color="#A58453" height={100} width={100} />
+                                </div>
                             )}
-                            <button className={styles.save__btn} onClick={handleSaveClick}>Guardar cambios</button>
+
+                            {/* Save or cancel property */}
+                            <div className={styles.actions__container} style={{marginTop: property.status ? "0px": "30px"}}>
+                                {property.status && (
+                                    <button className={dash.delete__fill__btn} onClick={handleCancelClick} style={{marginRight: '15px'}}>Terminar contrato</button>    
+                                )}
+                                <button className={dash.gradient__btn} onClick={handleSaveClick}>Guardar cambios</button>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-        </main>
+
+                <Snackbar open={utils.open} autoHideDuration={6000} onClose={handleClose}>
+                    {/* @ts-ignore */}
+                    <Alert onClose={handleClose} severity={utils.severity} sx={{ width: '100%' }}>
+                    {utils.error}
+                    </Alert>
+                </Snackbar>
+            </main>
         </div>
     )
 }

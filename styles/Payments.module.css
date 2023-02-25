@@ -7,7 +7,6 @@
     max-width: calc(100vw - 180px);
 }
 .inner__container {
-    overflow-y: scroll;
     min-height: calc(100vh - 60px);
     max-height: 100%;
     border-radius: 10px;
@@ -52,6 +51,7 @@
 .input__label {
     opacity: 0.5;
     text-align: left;
+    font-size: 16px;
 }
 
 /* file input */
@@ -145,6 +145,7 @@
     overflow-x: scroll;
     padding-bottom: 15px;
     font-size: 16px;
+    max-height: calc(100vh - 230px);
 }
 .table__header {
     display: flex;
@@ -224,7 +225,7 @@
     .container {
         padding: 20px;
     }
-    .payments__table, .table__text {
+    .payments__table, .table__text, .input__label {
         font-size: 15px !important;
     }
 }
@@ -237,7 +238,7 @@
     .inner__container {
         min-height: calc(100vh - 100px);
     }
-    .payments__table, .table__text {
+    .payments__table, .table__text, .input__label {
         font-size: 14px !important;
     }
 }
@@ -267,7 +268,7 @@
     .header__cell {
         display: none;
     }
-    .payments__table, .table__text {
+    .payments__table, .table__text, .input__label {
         font-size: 12px !important;
     }
 }

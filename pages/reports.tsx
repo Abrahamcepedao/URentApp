@@ -84,6 +84,11 @@ const Reports: NextPage = () => {
     const [menuAnchor, setMenuAnchor] = useState(null);
     const menuOpen = Boolean(menuAnchor);
 
+    //useState - property anchor
+    const [propertyAnchor, setPropertyAnchor] = useState<HTMLElement | null>(null);
+    const [property, setProperty] = useState<string>("");
+    const propertyOpen = Boolean(propertyAnchor);
+
     //useState - comment popover anchor
     const [commentAnchor, setCommentAnchor] = useState<HTMLElement | null>(null);
     const [comment, setComment] = useState<string>("");
@@ -94,7 +99,7 @@ const Reports: NextPage = () => {
     const [concept, setConcept] = useState<string>("");
     const conceptOpen = Boolean(conceptAnchor);
 
-    //useState
+    //useState - reports
     const [state, setState] = useState({
         reports: [],
         reportsList: [],
@@ -102,14 +107,12 @@ const Reports: NextPage = () => {
         deleteOpen: false,
         deleteReport: 0,
         deleteProperty: "",
-        open: false,
-        message: "",
-        severity: "",
         properties: [],
         filter: "",
         sort: 0
     })
 
+    //useState - form data
     const [formData, setFormData] = useState({
         date: "",
         month: "",
@@ -122,6 +125,14 @@ const Reports: NextPage = () => {
         concept: ""
     })
 
+    //useState - utils
+    const [utils, setUtils] = useState({
+        error: "",
+        loading: false,
+        open: false,
+        severity: "info"
+    })
+
     useEffect(() => {
         setUp()
     },[])
@@ -132,7 +143,7 @@ const Reports: NextPage = () => {
         return;
         }
 
-        setState({...state, open: false})
+        setUtils({...utils, open: false})
     };
 
      /* handle cancel click */
@@ -174,7 +185,7 @@ const Reports: NextPage = () => {
 
     const setUp = () => {
         if(properties.length !== 0){
-            let temp = properties.filter((pr:Property) => { return pr.status})
+            let temp = properties.filter((pr:Property) => pr.status)
             let reports:Report[] = []
             temp.forEach((item:Property) => {
                 if(item.reports){
@@ -192,7 +203,8 @@ const Reports: NextPage = () => {
             let today = new Date()
             let date = today.toISOString().split('T')[0]
             if(properties.length !== 0){
-                const pr:Property = properties[0]
+                const pr:Property = temp[0]
+                console.log(pr)
                 setFormData({...formData, date: date, property: pr.name, month: months[today.getMonth()].en, year: today.getFullYear()})
             } else {
                 setFormData({...formData, date: date, month: months[today.getMonth()].en, year: today.getFullYear()})
@@ -202,23 +214,6 @@ const Reports: NextPage = () => {
         }
     }
 
-
-    /* handle order change */
-    const handleOrderChange = (num:number) => {
-        let temp:Report[] = [...state.reportsList]
-        console.log(num, state.sort)
-        if(num === state.sort){
-            temp.reverse()
-        } else if(num === 0) {
-            temp.sort((a,b) => { return a.property < b.property ? -1 : 1})
-        } else if(num === 1){
-            temp.sort((a,b) => { return a.date < b.date ? -1 : 1})
-        } else if(num === 2){
-            temp.sort((a,b) => { return a.concept < b.concept ? -1 : 1})
-        }
-        //@ts-ignore
-        setState({...state, paymentsList: temp, sort: num})
-    }
 
     /* get proopertiess */
     const getProperties = async() => {
@@ -244,12 +239,30 @@ const Reports: NextPage = () => {
             console.log(temp)
             if(temp.length !== 0){
                 const pr:Property = temp[0]
-                setFormData({...formData, date: date, property: pr.name})
+                console.log(pr)
+                setFormData({...formData, date: date, property: pr.name, month: months[today.getMonth()].en, year: today.getFullYear()})
             } else {
-                setFormData({...formData, date: date})
+                setFormData({...formData, date: date, month: months[today.getMonth()].en, year: today.getFullYear()})
             }
 
         } 
+    }
+
+    /* handle order change */
+    const handleOrderChange = (num:number) => {
+        let temp:Report[] = [...state.reportsList]
+        console.log(num, state.sort)
+        if(num === state.sort){
+            temp.reverse()
+        } else if(num === 0) {
+            temp.sort((a,b) => { return a.property < b.property ? -1 : 1})
+        } else if(num === 1){
+            temp.sort((a,b) => { return a.date < b.date ? -1 : 1})
+        } else if(num === 2){
+            temp.sort((a,b) => { return a.concept < b.concept ? -1 : 1})
+        }
+        //@ts-ignore
+        setState({...state, paymentsList: temp, sort: num})
     }
 
     /* handle input change */
@@ -297,11 +310,11 @@ const Reports: NextPage = () => {
     const verifyData = () => {
         if(formData.concept === ""){
             //alert error
-            setState({...state, message: "Ingrese un concepto", severity: 'errorr'})
+            setUtils({...utils, error: "Ingrese un concepto", severity: 'error', open: true})
             return false
         }
         //check data
-        setState({...state, message: ""})
+        setUtils({...utils, error: "", open: false})
         return true
     }
 
@@ -329,23 +342,37 @@ const Reports: NextPage = () => {
                 const res = await addReport(pr,temp)
                 if(res) {
                     //alert success
-                    setState({...state, message: "Reporte registrado correctamente",  open: true, severity: 'success'})
+                    setUtils({...utils, error: "Reporte registrado correctamente",  open: true, severity: 'success'})
                     setFormData({...formData, file: "", fileName: "", comment: ""})
                     await getProperties()
                 } else {
                     //alert error
-                    setState({...state, message: "Ocurrió un error al registrar el reporte", severity: 'errorr'})
+                    setUtils({...utils, error: "Ocurrió un error al registrar el reporte", severity: 'error', open: true})
                 }
             } else {
                 //alert error
-                    setState({...state, message: "Ocurrió un error al registrar el reporte", severity: 'errorr'})
+                    setUtils({...utils, error: "Ocurrió un error al registrar el reporte", severity: 'error', open: true})
             }
         }
     }
 
+    /* property - popover functions */
+    const handlePropertyPopoverOpen = (event: React.MouseEvent<HTMLElement>, val:string) => {
+        console.log(val)
+        if(val.length > 25){
+            setPropertyAnchor(event.currentTarget);
+            setProperty(val)
+        }
+    };
+
+    const handlePropertyPopoverClose = () => {
+        setPropertyAnchor(null);
+        setProperty("")
+    };
 
     /* comment - popover functions */
     const handlePopoverOpen = (event: React.MouseEvent<HTMLElement>, val:string) => {
+        console.log(val)
         if(val.length > 25){
             setCommentAnchor(event.currentTarget);
             setComment(val)
@@ -506,7 +533,7 @@ const Reports: NextPage = () => {
                         </Collapse>
 
                         {/* payments list */}
-                        <div className={styles.payments__table}>
+                        <div className={styles.payments__table} style={{maxHeight: state.addOpen ? "calc(100vh - 450px)" : "calc(100vh - 220px)"}}>
                             {/* table header */}
                             <div className={styles.table__header}>
                                 <div className={styles.header__cell2}>
@@ -533,7 +560,15 @@ const Reports: NextPage = () => {
                             {state.reportsList.length !== 0 ? state.reportsList.map((item:Report, i) => (
                                 <div key={i} className={styles.table__row}>
                                     <div className={styles.header__cell2}>
-                                        {item.property.length > 25 ? item.property.substring(0,25) + "..." : item.property}
+                                        <Typography
+                                            aria-owns={propertyAnchor ? 'mouse-over-property' : undefined}
+                                            aria-haspopup="true"
+                                            onMouseEnter={(e) => {handlePropertyPopoverOpen(e, item.property)}}
+                                            onMouseLeave={handlePropertyPopoverClose}
+                                            className={styles.table__text}
+                                        >
+                                            {item.property.length > 25 ? item.property.substring(0,25) + "..." : item.property}
+                                        </Typography>
                                     </div>
                                     <div className={styles.header__cell__sm}>
                                         {item.date}
@@ -544,8 +579,9 @@ const Reports: NextPage = () => {
                                             aria-haspopup="true"
                                             onMouseEnter={(e) => {handleConceptOpen(e, item.concept)}}
                                             onMouseLeave={handleConceptClose}
+                                            className={styles.table__text}
                                         >
-                                            {item.concept.length > 25 ? item.concept.substring(0,25) + "..." : item.concept}
+                                            {item.concept.length > 20 ? item.concept.substring(0,20) + "..." : item.concept}
                                         </Typography>
                                     </div>
                                     <div className={styles.header__cell__sm}>
@@ -557,6 +593,7 @@ const Reports: NextPage = () => {
                                             aria-haspopup="true"
                                             onMouseEnter={(e) => {handlePopoverOpen(e, item.comment)}}
                                             onMouseLeave={handlePopoverClose}
+                                            className={styles.table__text}
                                         >
                                             {item.comment.length > 25 ? item.comment.substring(0,25) + "..." : item.comment}
                                         </Typography>
@@ -584,11 +621,12 @@ const Reports: NextPage = () => {
                                 </div>
                             )) : (
                                 <div className={styles.table__row}>
-                                <div className={styles.header__cell}>
-                                    Todavía no hay reportes
-                                </div>
+                                    <div className={styles.header__cell}>
+                                        Todavía no hay reportes
+                                    </div>
                                 </div>
                             )}
+
                         </div>
                     </div>
                 </div>
@@ -615,12 +653,34 @@ const Reports: NextPage = () => {
                 </Dialog>
 
                 {/* snack bar */}
-                <Snackbar open={state.open} autoHideDuration={4000} onClose={handleClose}>
+                <Snackbar open={utils.open} autoHideDuration={4000} onClose={handleClose}>
                     {/* @ts-ignore */}
-                    <Alert onClose={handleClose} severity={state.severity ? state.severity : "info"} sx={{ width: '100%' }}>
-                        {state.message}
+                    <Alert onClose={handleClose} severity={utils.severity !== "" ? utils.severity : "info"} sx={{ width: '100%' }}>
+                        {utils.error}
                     </Alert>
                 </Snackbar>
+
+                {/* property anchor */}
+                <Popover
+                    id="mouse-over-property"
+                    sx={{
+                        pointerEvents: 'none',
+                    }}
+                    open={propertyOpen}
+                    anchorEl={propertyAnchor}
+                    anchorOrigin={{
+                        vertical: 'bottom',
+                        horizontal: 'right',
+                    }}
+                    transformOrigin={{
+                        vertical: 'top',
+                        horizontal: 'right',
+                    }}
+                    onClose={handlePopoverClose}
+                    disableRestoreFocus
+                >
+                    <Typography sx={{ p: 1 }}>{property}</Typography>
+                </Popover>
 
                 {/* comment anchor */}
                 <Popover

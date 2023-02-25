@@ -18,7 +18,7 @@ a {
 /* root colors */
 :root {
   --logo__primary: #A58453;
-  --dark__text: #957F35;
+  --dark__text: #605120;
   --light__text: #E6E3D9;
   --dark__back: #1C1F2C;
   --background: #0D0F16;
@@ -26,17 +26,9 @@ a {
   --medium: #e99517;
   --success: #01AA55;
 }
-/* @media (prefers-color-scheme: dark) {
-  html {
-    //color-scheme: dark;
-  }
-  body {
-    color: white;
-    background: black;
-  }
-} */
 
 
+/* autofill */
 input:-webkit-autofill,
 input:-webkit-autofill:hover, 
 input:-webkit-autofill:focus, 
@@ -49,6 +41,10 @@ input:-internal-autofill-selected {
   background-color: transparent !important;
 }
 
+/* date input */
+::-webkit-calendar-picker-indicator {
+    filter: invert(1);
+}
 
 /* hide number arrows */
 /* Chrome, Safari, Edge, Opera */
@@ -76,6 +72,6 @@ input::-webkit-inner-spin-button {
   height: 10px;
 }
 
-::-webkit-scrollbar-thumb:hover {
-  //background: #555; 
-} 
+::-webkit-scrollbar-corner {
+  background: none;
+}

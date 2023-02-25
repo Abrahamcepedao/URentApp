@@ -31,7 +31,7 @@ const CenteredMetric = ({ dataWithArc, centerX, centerY }) => {
                 color: '#FFFFFF !important'
             }}
         >
-            {per}%
+            {per.toFixed(1)}%
         </text>
     )
 }
