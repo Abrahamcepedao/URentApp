@@ -24,14 +24,14 @@ const CenteredMetric = ({ dataWithArc, centerX, centerY }) => {
             textAnchor="middle"
             dominantBaseline="central"
             fill='white'
-            opacity={0.75}
+            opacity={0.5}
             style={{
-                fontSize: '40px',
+                fontSize: '35px',
                 fontWeight: 600,
                 color: '#FFFFFF !important'
             }}
         >
-            {per.toFixed(1)}%
+            {per.toFixed(0)}%
         </text>
     )
 }
@@ -39,7 +39,7 @@ const CenteredMetric = ({ dataWithArc, centerX, centerY }) => {
 const TwoColorPie = ({ data /* see data tab */ }) => (
     <ResponsivePie
         data={data}
-        margin={{ top: 20, right: 20, bottom: 20, left: 20 }}
+        margin={{ top: 0, right: 0, bottom: 0, left: 0 }}
         innerRadius={0.75}
         padAngle={5}
         //width={300}

@@ -21,3 +21,10 @@
         height: 220px;
     }
 }
+
+/* 650 */
+@media (max-width: 650px) {
+    .container {
+        padding: 10px;
+    }
+}

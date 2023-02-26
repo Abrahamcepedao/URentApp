@@ -27,7 +27,7 @@ const LineChart = ({ data /* see data tab */ }) => (
         animate={true}
         enableSlices={'x'}
         enableArea={true}
-        areaOpacity={0.15}
+        areaOpacity={0.05}
         enableGridX={false}
         enableGridY={false}
         pointLabel={false}
@@ -37,7 +37,7 @@ const LineChart = ({ data /* see data tab */ }) => (
                 "domain": {
                     "line": {
                         "stroke": "#fff",
-                        opacity: "0.5"
+                        opacity: "0"
                     }
                 }
             }
@@ -82,18 +82,21 @@ const LineChart = ({ data /* see data tab */ }) => (
                 `$ ${Number(value).toLocaleString('ru-RU', {
                     minimumFractionDigits: 0,
                 })}`,
+            tickSize: 0,
+            tickPadding: 10,
+            tickValues: 4
         }}
         axisBottom={{
             format: '%b %y',
             tickValues: 'every month',
-            legendOffset: -12,
             tickRotation: -70,
-            tickSize: 2
+            tickSize: 0,
+            tickPadding: 10
         }}
         curve={'linear'}
         enablePointLabel={false}
         pointSymbol={CustomSymbol}
-        pointSize={16}
+        pointSize={10}
         pointBorderWidth={1}
         pointBorderColor={{
             from: 'color',
