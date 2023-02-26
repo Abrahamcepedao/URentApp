@@ -34,7 +34,7 @@ import HighlightOffRoundedIcon from '@mui/icons-material/HighlightOffRounded';
 
 
 interface formData {
-  mail: string,
+  email: string,
   name: string,
   orgName: string,
   phone: string,
@@ -52,7 +52,7 @@ const Home: NextPage = () => {
   
   //useState
   const [formData, setFormData] = useState<formData>({
-    mail: "",
+    email: "",
     name: "",
     orgName: "",
     phone: "",
@@ -94,8 +94,8 @@ const Home: NextPage = () => {
       })
 
       try {
-        const { mail, password, name, phone, orgName } = formData
-        await signup(mail, password, name, phone, orgName)
+        const { email, password, name, phone, orgName } = formData
+        await signup(email, password, name, phone, orgName)
         router.push('/dashboard')
       } catch (err) {
         console.log(err)
@@ -134,7 +134,7 @@ const Home: NextPage = () => {
             <div className={styles.form__inputs_container}>
               <div className={styles.input__container}>
                 <EmailRoundedIcon className={styles.input__icon}/>
-                <input placeholder='Correo electrónico' name='mail' value={formData.mail} onChange={(e) => {handleInputChange(e)}} className={styles.input}/>
+                <input placeholder='Correo electrónico' name='emaail' value={formData.email} onChange={(e) => {handleInputChange(e)}} className={styles.input}/>
               </div>
               <div className={styles.input__container}>
                 <PersonRoundedIcon className={styles.input__icon}/>

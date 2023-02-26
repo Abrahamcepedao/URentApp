@@ -189,4 +189,7 @@
     .upper__container,  .lower__container {
         grid-gap: 10px;
     }
+    .subtitle {
+        font-size: 18px;
+    }
 }

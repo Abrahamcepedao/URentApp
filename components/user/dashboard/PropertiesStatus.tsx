@@ -5,7 +5,7 @@ import React, { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
 
 //CSS
-import styles from '../../../styles/components/dashboard/PropertiesStatus.module.css'
+import styles from '../../../styles/components/dashboard/BilledRents.module.css'
 import dash from '../../../styles/Dashboard.module.css'
 
 //Nivo
@@ -122,7 +122,7 @@ const PropertiesStatus = () => {
                 )}
                 <div className={styles.dataContainer}>
                     {/* tabs */}
-                    <div className={styles.tabsContainer}>
+                    <div className={styles.tabsContainer2}>
                         <div className={styles.paidTab}
                             onClick={() => {handleTabClick(0)}}
                             style={{background: state.selected === 0 ? 'var(--success)' : 'none', color: state.selected === 0 ? '#07592d' : 'var(--success)'}}
