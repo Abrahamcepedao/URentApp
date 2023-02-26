@@ -13,6 +13,8 @@ import PropertiesStatus from '../components/user/dashboard/PropertiesStatus'
 import ContractsStatus from '../components/user/dashboard/ContractsStatus'
 import MonthlyRent from '../components/user/dashboard/MonthlyRent'
 import RentFacts from '../components/user/dashboard/RentFacts'
+import MobileHeader from '../components/user/MobileHeader'
+
 //Context
 import { useProperties } from '../context/PropertiesContext'
 
@@ -46,7 +48,7 @@ const Dashboard: NextPage = () => {
       </Head>
 
       <main className={styles.main}>
-        {/* @ts-ignore */}
+        <MobileHeader/>
         <SideBar/>
         <div className={styles.container}>
           <div className={styles.inner__container}>

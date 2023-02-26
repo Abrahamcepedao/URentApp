@@ -1,0 +1,33 @@
+.container {
+    display: none;
+}
+
+/* <------responsive-------> */
+/* 1080 */
+@media (max-width: 1080px) {
+    .container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 15px 15px 0px 15px;
+        color: var(--light__text);
+    }
+
+    .container p {
+        margin: 0px;
+        font-weight: bolder;
+        font-size: 16px;
+    }
+
+    .header__btn {
+        padding: 2px;
+    }
+}
+
+
+/* 5000 */
+@media (max-width: 500px) {
+    .container {
+        padding: 10px 10px 0px 10px;
+    }
+}

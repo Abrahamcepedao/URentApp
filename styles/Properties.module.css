@@ -179,8 +179,11 @@
 
 /* 500 */
 @media (max-width: 500px) {
+    .container {
+        padding: 10px;
+    }
     .inner__container {
-        min-height: calc(100vh - 80px);
+        min-height: calc(100vh - 70px);
         padding: 10px;
     }
     .search__input {

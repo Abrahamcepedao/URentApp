@@ -260,7 +260,10 @@
 /* 650 */
 @media (max-width: 650px) {
     .container {
-        padding: 15px;
+        padding: 10px;
+    }
+    .inner__container {
+        padding: 10px;
     }
     .header__cell__sm {
         display: none;
@@ -286,6 +289,10 @@
 /* 500 */
 @media (max-width: 500px) {
     .inner__container {
-        min-height: calc(100vh - 80px);
+        min-height: calc(100vh - 70px);
     }
+    .container {
+        padding: 10px;
+    }
+    
 }
