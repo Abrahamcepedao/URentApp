@@ -143,6 +143,9 @@
 
 /* 1080 */
 @media (max-width: 1080px){
+    .main {
+        display: block;
+    }
     .lower__container {
         padding-bottom: 60px;
     }
@@ -186,6 +189,9 @@
 
 /* 400 */
 @media (max-width: 400px) {
+    .inner__container {
+        padding: 10px;
+    }
     .upper__container,  .lower__container {
         grid-gap: 10px;
     }
